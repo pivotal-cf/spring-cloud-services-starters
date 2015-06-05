@@ -30,6 +30,7 @@
 		<module>spring-cloud-services-starter-parent</module>
 		<module>spring-cloud-services-starter-circuit-breaker</module>
 		<module>spring-cloud-services-starter-config-server</module>
+		<module>spring-cloud-services-starter-service-registry</module>
 	</modules>
 
 	<build>
