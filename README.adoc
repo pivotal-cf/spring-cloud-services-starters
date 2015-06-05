@@ -17,7 +17,7 @@ dependencyManagement {
 
 dependencies {
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-circuit-breaker")
-    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-server")
+    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-client")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry")
 }
 ```

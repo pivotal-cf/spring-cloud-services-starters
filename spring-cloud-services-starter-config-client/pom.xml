@@ -8,8 +8,8 @@
 		<version>1.0.0.BUILD-SNAPSHOT</version>
 		<relativePath>../spring-cloud-services-starter-parent</relativePath>
 	</parent>
-	<artifactId>spring-cloud-services-starter-config-server</artifactId>
-	<name>spring-cloud-services-starter-config-server</name>
+	<artifactId>spring-cloud-services-starter-config-client</artifactId>
+	<name>spring-cloud-services-starter-config-client</name>
 	<description>Spring Cloud Services Starter</description>
 	<packaging>pom</packaging>
 	<url>http://projects.spring.io/spring-cloud</url>
