@@ -1,7 +1,23 @@
 # spring-cloud-services-starters
 
-Install to local repository
+Install to local repository:
 
 ```sh
 mvn install -s .settings.xml
+```
+
+Usage:
+
+```groovy
+dependencyManagement {
+    imports {
+        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.BUILD-SNAPSHOT"
+    }
+}
+
+dependencies {
+    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-circuit-breaker")
+    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-server")
+    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry")
+}
 ```
