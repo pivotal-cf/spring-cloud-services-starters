@@ -1,12 +1,18 @@
-# spring-cloud-services-starters
+= Spring Cloud Services Starters
 
-Install to local repository:
+* spring-cloud-services-starter-circuit-breaker
+* spring-cloud-services-starter-config-client
+* spring-cloud-services-starter-service-registry
+
+== Build and Deploy
+
+Use the following command to install the starter POMs to your local Maven repository:
 
 ```sh
 mvn install -s .settings.xml
 ```
 
-Usage:
+== Usage
 
 ```groovy
 dependencyManagement {
