@@ -22,10 +22,30 @@
 	</organization>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
+		<spring-cloud-services-starters.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-starters.version>
 		<pivotal-cloud-connectors.version>1.0.0.M1</pivotal-cloud-connectors.version>
 		<!-- override the managed versions of the Pivotal Cloud Connectors dependencies -->
 		<spring-cloud-connectors.version>1.2.0.RC1</spring-cloud-connectors.version>
 	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
+				<version>${spring-cloud-services-starters.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-starter-config-server</artifactId>
+				<version>${spring-cloud-services-starters.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
+				<version>${spring-cloud-services-starters.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
