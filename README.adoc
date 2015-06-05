@@ -1,1 +1,7 @@
 # spring-cloud-services-starters
+
+Install to local repository
+
+```sh
+mvn install -s .settings.xml
+```
