@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-parent</artifactId>
+		<version>1.0.2.RELEASE</version>
+	</parent>
+	<!-- override the parent's groupId -->
+	<groupId>io.pivotal.spring.cloud</groupId>
+	<artifactId>spring-cloud-services-starter-parent</artifactId>
+	<!-- override the parent's version -->
+	<version>1.0.0.BUILD-SNAPSHOT</version>
+	<name>spring-cloud-services-starter-parent</name>
+	<description>Spring Cloud Services Starter</description>
+	<packaging>pom</packaging>
+	<url>http://projects.spring.io/spring-cloud</url>
+	<organization>
+		<name>Pivotal Software, Inc.</name>
+		<url>http://www.spring.io</url>
+	</organization>
+	<properties>
+		<main.basedir>${basedir}/../..</main.basedir>
+		<pivotal-cloud-connectors.version>1.0.0.M1</pivotal-cloud-connectors.version>
+		<!-- override the managed versions of the Pivotal Cloud Connectors dependencies -->
+		<spring-cloud-connectors.version>1.2.0.RC1</spring-cloud-connectors.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-pivotal-cloudfoundry-connector</artifactId>
+			<version>${pivotal-cloud-connectors.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-pivotal-spring-connector</artifactId>
+			<version>${pivotal-cloud-connectors.version}</version>
+		</dependency>
+	</dependencies>
+</project>

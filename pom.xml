@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.pivotal.spring.cloud</groupId>
+	<artifactId>spring-cloud-services-starter-build</artifactId>
+	<version>1.0.0.BUILD.SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Spring Cloud Services Starter Build</name>
+	<description>Spring Cloud Services Starter Build</description>
+	<parent>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-build</artifactId>
+		<version>1.0.1.RELEASE</version>
+		<relativePath />
+	</parent>
+
+	<scm>
+		<url>https://github.com/pivotal-cf/spring-cloud-services-starters</url>
+		<connection>scm:git:git://github.com/pivotal-cf/spring-cloud-services-starters.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/pivotal-cf/spring-cloud-services-starters.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<properties>
+		<bintray.package>starters</bintray.package>
+	</properties>
+
+	<modules>
+		<module>spring-cloud-services-starter-parent</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>enforce-rules</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<exclude>commons-logging:*:*</exclude>
+									</excludes>
+									<searchTransitive>true</searchTransitive>
+								</bannedDependencies>
+								<!--dependencyConvergence / -->
+							</rules>
+							<fail>true</fail>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
