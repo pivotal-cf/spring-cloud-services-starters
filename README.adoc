@@ -8,7 +8,7 @@ image::https://travis-ci.org/pivotal-cf/spring-cloud-services-starters.svg[Travi
 
 == Build and Deploy
 
-Use the following command to install the starter POMs to your local Maven repository:
+Install the starter POMs to your local Maven repository:
 
 ```sh
 mvn install -s .settings.xml
@@ -16,7 +16,100 @@ mvn install -s .settings.xml
 
 == Usage
 
+Include the starter dependencies in your project using Maven or Gradle.
+
+=== Maven
+
+`pom.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.demo</groupId>
+    <artifactId>spring-cloud-services-demo</artifactId>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>io.pivotal.spring.cloud</groupId>
+        <artifactId>spring-cloud-services-starter-parent</artifactId>
+        <version>1.0.0.BUILD-SNAPSHOT</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-config-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-service-registry</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/libs-snapshot</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/libs-snapshot</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
+
+```
+
+=== Gradle
+
+`build.gradle`
+
 ```groovy
+buildscript {
+    repositories {
+        maven { url "https://repo.spring.io/plugins-release/" }
+        maven { url "https://repo.spring.io/libs-release/" }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE")
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
+    }
+}
+
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "idea"
+apply plugin: "spring-boot"
+apply plugin: "io.spring.dependency-management"
+
+jar {
+    baseName = "spring-cloud-services-demo"
+    version =  "0.1.0"
+}
+
 dependencyManagement {
     imports {
         mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.BUILD-SNAPSHOT"
@@ -27,5 +120,10 @@ dependencies {
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-circuit-breaker")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-client")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry")
+}
+
+repositories {
+    maven { url "https://repo.spring.io/libs-snapshot/" }
+    mavenCentral()
 }
 ```
