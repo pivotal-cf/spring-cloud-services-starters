@@ -11,7 +11,6 @@
 	<artifactId>spring-cloud-services-starter-config-client</artifactId>
 	<name>spring-cloud-services-starter-config-client</name>
 	<description>Spring Cloud Services Starter</description>
-	<packaging>pom</packaging>
 	<url>http://projects.spring.io/spring-cloud</url>
 	<organization>
 		<name>Pivotal Software, Inc.</name>
