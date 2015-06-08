@@ -1,3 +1,5 @@
+image::https://travis-ci.org/pivotal-cf/spring-cloud-services-starters.svg[Travis CI]
+
 = Spring Cloud Services Starters
 
 * spring-cloud-services-starter-circuit-breaker
