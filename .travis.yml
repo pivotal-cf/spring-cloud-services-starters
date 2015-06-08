@@ -3,14 +3,6 @@ cache:
   directories:
   - $HOME/.m2
 language: java
-before_install:
-- git config user.name "$GIT_NAME"
-- git config user.email "$GIT_EMAIL"
-- git config credential.helper "store --file=.git/credentials"
-- echo "https://$GH_TOKEN:@github.com" > .git/credentials
-- gem install asciidoctor
-install:
-- mvn --settings .settings.xml install -P docs -q -U -DskipTests=true -Dmaven.test.redirectTestOutputToFile=true
 script:
 - '[ "${TRAVIS_PULL_REQUEST}" != "false" ] || mvn --settings .settings.xml deploy
   -DaltSnapshotDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-snapshot-local
@@ -22,4 +14,4 @@ env:
   - GIT_NAME="Roy Clarkson"
   - GIT_EMAIL=rclarkson@pivotal.io
   - CI_DEPLOY_USERNAME=buildmaster
-  - secure: "hd8ajSmIoCy3TQuzBsQ6r0+6y2UpcmPhT4ZVECP0NjwLgEMJFcmdbAlatFp+HLI4PKWcVKPdD0/oqoAAvKcCoDZuNitQYmRN8Y9gpFtqHQ528Fwv6CimBvA3jCi08dY7mILzx7X0j8ySGlQQ4kPjetQIQRn2K2S7uJM6R4iI+e8ok9HKMXiHzuQ43/5H4vHrL2qd9lvpFlf7U88MqY1PSC0t2QKaDejKqXH4euVtdD5FSyh+LhmM6W+Vry3oXGJFBzXAMCId5f5Oh6qVSBE67anlxnVy8gkNLHgHpPD+tXjWWY5MBmnQ0nT6UVqoq74tjy0v2i04G51+iBEcPIqGRIbkJrX3iKT7nV8naLZ6GMb//BJ1loaY4o/5Tgz9g++ElPzZRlD8tVVm0/tjgMfP/rfr3b/UYWOZnFL6hHFgW26BoxCo9z1+6DK1i0Dkt5ko2xjFLMsDxdtlUMY72cwHBoYA1YvmtKZhxwjci8bprehxuAGwmAW/G4XYmpM74WHenGYXsOD0cg5exOK4XXLMo9w8IKo5lib52nO8XbgzJeX89CE0tewonMfejqVmAghTjW+j8EFTMaGHEDm0rYSDi/crZo5kHwNB50chSsUABaQhN4CUwuaeomoZm92bFoo5Xj444qtPqg117ZbTOvdfLGmAx0qk7ZegZnxt257cQb4="
+  - secure: HvO/c5ytqcO2kccGdNsZ16cGSl+9Z2kgwpaocxZXQvk9WDUE1gnMyTgPH/UsPwRHNBqAl6kRGjzQbddf5QU0pB/zHKud+zqfBZuA1vLEMSgMCUQtQEk4Avw5weuk7KVk6SlEasH4crOL0+YuBLMQlGR3J85zYW902TGoiuYHAhr4h634+E3mYY20TsjQ1Gv49yuoO3/VRzYxQ17Cg8RJcR9uFkKD5xKK8BfaGUuYEcGREqTwzwOFgfOFoD1qLykeJX2zaeVgz3tUxLtnnGuKVEmZQtMUFUQlumB5dp1ertcBr48wy+rTScZShWfyCXyFbo82xoRs97Qzwk688OGFSDcwT12lftG0Fawa0BTdgdTO5QnjI495TS3oKkwzxnERWKjiB/BWuLil6030E2oupVfSmhIlzQAob06m+nE/S/yLuO7Gs058K3pDyS2Kpf5AFVcj1qKq/2SoqKO27dfJaHwIDMSylQzGMsNy+beCDJEhkaDHhfB0+dYu1WS/kbvT/HLd4DeQkN5fp08PQDBmoJu0cHegXMqIMHTdbIXoInswT1N08ptCz7cyZayFxHWHSdaoInuII0HOb0wRP8yuMZibjmwZBkerlXyEiYejpMZAaZYNZ3L6RMOaR9vL/U3LeHYlLadfjEOfOkiDf9m0LkOMgEMLUInvKROd64Uq+eo=
