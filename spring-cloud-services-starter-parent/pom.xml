@@ -36,7 +36,7 @@
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
-				<artifactId>spring-cloud-services-starter-config-server</artifactId>
+				<artifactId>spring-cloud-services-starter-config-client</artifactId>
 				<version>${spring-cloud-services-starters.version}</version>
 			</dependency>
 			<dependency>
