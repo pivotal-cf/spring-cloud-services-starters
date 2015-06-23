@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-parent</artifactId>
-		<version>1.0.2.RELEASE</version>
+		<version>Angel.SR2</version>
 	</parent>
 	<!-- override the parent's groupId -->
 	<groupId>io.pivotal.spring.cloud</groupId>
