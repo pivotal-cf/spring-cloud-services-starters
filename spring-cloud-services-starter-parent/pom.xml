@@ -23,8 +23,8 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-starters.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-starters.version>
-		<pivotal-cloud-connectors.version>1.0.0.M1</pivotal-cloud-connectors.version>
-		<!-- override the managed versions of the Pivotal Cloud Connectors dependencies -->
+		<spring-cloud-services-connectors.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
+		<!-- override the managed versions of the Spring Cloud Connectors dependencies -->
 		<spring-cloud-connectors.version>1.2.0.RC1</spring-cloud-connectors.version>
 	</properties>
 	<dependencyManagement>
@@ -49,13 +49,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
-			<artifactId>spring-cloud-pivotal-cloudfoundry-connector</artifactId>
-			<version>${pivotal-cloud-connectors.version}</version>
+			<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
+			<version>${spring-cloud-services-connectors.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
-			<artifactId>spring-cloud-pivotal-spring-connector</artifactId>
-			<version>${pivotal-cloud-connectors.version}</version>
+			<artifactId>spring-cloud-services-spring-connector</artifactId>
+			<version>${spring-cloud-services-connectors.version}</version>
 		</dependency>
 	</dependencies>
 </project>
