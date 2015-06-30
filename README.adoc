@@ -36,7 +36,7 @@ Include the starter dependencies in your project using Maven or Gradle.
     <parent>
         <groupId>io.pivotal.spring.cloud</groupId>
         <artifactId>spring-cloud-services-starter-parent</artifactId>
-        <version>1.0.0.BUILD-SNAPSHOT</version>
+        <version>1.0.0.M1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -66,15 +66,15 @@ Include the starter dependencies in your project using Maven or Gradle.
 
     <repositories>
         <repository>
-            <id>spring-snapshots</id>
-            <url>https://repo.spring.io/libs-snapshot</url>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/libs-milestone</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>spring-snapshots</id>
-            <url>https://repo.spring.io/libs-snapshot</url>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/libs-milestone</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -112,7 +112,7 @@ jar {
 
 dependencyManagement {
     imports {
-        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.BUILD-SNAPSHOT"
+        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.M1"
     }
 }
 
@@ -123,7 +123,7 @@ dependencies {
 }
 
 repositories {
-    maven { url "https://repo.spring.io/libs-snapshot/" }
+    maven { url "https://repo.spring.io/libs-milestone/" }
     mavenCentral()
 }
 ```
