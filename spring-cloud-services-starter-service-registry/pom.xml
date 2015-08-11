@@ -35,7 +35,15 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.security</groupId>
-					<artifactId>*</artifactId>
+					<artifactId>spring-security-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-config</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-web</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
