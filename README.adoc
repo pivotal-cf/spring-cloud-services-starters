@@ -10,9 +10,27 @@ image::https://travis-ci.org/pivotal-cf/spring-cloud-services-starters.svg[Travi
 
 Install the starter POMs to your local Maven repository:
 
-```sh
-mvn install -s .settings.xml
-```
+----
+mvn clean install -s .settings.xml
+----
+
+Deploy SNAPSHOT builds
+
+----
+$ mvn clean install deploy -DaltSnapshotDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-snapshot-local
+----
+
+Deploy MILESTONE artifacts (including release candidates)
+
+----
+$ mvn clean install deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-milestone-local
+----
+
+Deploy RELEASE artifacts
+
+----
+$ mvn clean install deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-release-local
+----
 
 == Usage
 
