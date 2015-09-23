@@ -48,6 +48,16 @@
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
+				<version>${spring-cloud-services-connectors.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-spring-connector</artifactId>
+				<version>${spring-cloud-services-connectors.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>cloudfoundry-certificate-truster</artifactId>
 				<version>${cloudfoundry-certificate-truster.version}</version>
 			</dependency>
@@ -57,12 +67,10 @@
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
 			<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
-			<version>${spring-cloud-services-connectors.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
 			<artifactId>spring-cloud-services-spring-connector</artifactId>
-			<version>${spring-cloud-services-connectors.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.pivotal.spring.cloud</groupId>
