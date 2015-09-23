@@ -12,7 +12,7 @@
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-parent</artifactId>
 	<!-- override the parent's version -->
-	<version>1.0.0.RC1</version>
+	<version>1.0.0.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-starter-parent</name>
 	<description>Spring Cloud Services Starter</description>
 	<packaging>pom</packaging>
@@ -23,7 +23,7 @@
 	</organization>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-starters.version>1.0.0.RC1</spring-cloud-services-starters.version>
+		<spring-cloud-services-starters.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-starters.version>
 		<spring-cloud-services-connectors.version>1.0.0.RC1</spring-cloud-services-connectors.version>
 		<!-- override the managed versions of the Spring Cloud Connectors dependencies -->
 		<spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
