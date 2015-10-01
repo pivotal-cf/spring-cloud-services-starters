@@ -54,7 +54,7 @@ Include the starter dependencies in your project using Maven or Gradle.
     <parent>
         <groupId>io.pivotal.spring.cloud</groupId>
         <artifactId>spring-cloud-services-starter-parent</artifactId>
-        <version>1.0.0.RC1</version>
+        <version>1.0.0.RC2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -130,7 +130,7 @@ jar {
 
 dependencyManagement {
     imports {
-        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.RC1"
+        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-starter-parent:1.0.0.RC2"
     }
 }
 
