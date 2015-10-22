@@ -24,7 +24,7 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-starters.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-starters.version>
-		<spring-cloud-services-connectors.version>1.0.0.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
+		<spring-cloud-services-connectors.version>1.0.0.RC3</spring-cloud-services-connectors.version>
 		<!-- override the managed versions of the Spring Cloud Connectors dependencies -->
 		<spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.0.RC1</cloudfoundry-certificate-truster.version>
