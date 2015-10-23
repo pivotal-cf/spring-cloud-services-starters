@@ -1,6 +1,8 @@
-image::https://travis-ci.org/pivotal-cf/spring-cloud-services-starters.svg[Travis CI]
+image::https://travis-ci.org/pivotal-cf/spring-cloud-services-starters.svg[Travis CI, link=https://travis-ci.org/pivotal-cf/spring-cloud-services-starters]
 
 = Spring Cloud Services Starters
+
+Spring Cloud Services Starters are a curated set of dependencies for use with link:http://docs.pivotal.io/spring-cloud-services/index.html[Spring Cloud Services] in a link:http://pivotal.io/platform[Pivotal Cloud Foundry] environment. Easily take advantage of the various features by including the corresponding parent and starter. See the example Maven POM and Gradle build file below.
 
 * spring-cloud-services-starter-circuit-breaker
 * spring-cloud-services-starter-config-client
@@ -14,27 +16,27 @@ Install the starter POMs to your local Maven repository:
 mvn clean install -s .settings.xml
 ----
 
-Deploy SNAPSHOT builds
+Deploy snapshot builds
 
 ----
-$ mvn clean install deploy -DaltSnapshotDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-snapshot-local
+$ mvn deploy -DaltSnapshotDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-snapshot-local
 ----
 
-Deploy MILESTONE artifacts (including release candidates)
+Deploy milestone artifacts (including release candidates)
 
 ----
-$ mvn clean install deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-milestone-local
+$ mvn deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-milestone-local
 ----
 
-Deploy RELEASE artifacts
+Deploy release artifacts
 
 ----
-$ mvn clean install deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-release-local
+$ mvn deploy -DaltReleaseDeploymentRepository=repo.spring.io::default::https://repo.spring.io/libs-release-local
 ----
 
 == Usage
 
-Include the starter dependencies in your project using Maven or Gradle.
+Include the parent and starter dependencies in your project using Maven or Gradle.
 
 === Maven
 
