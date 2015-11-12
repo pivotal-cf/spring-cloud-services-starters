@@ -26,18 +26,12 @@
 		</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-
-	<properties>
-		<bintray.package>spring-cloud-services-starters</bintray.package>
-	</properties>
-
 	<modules>
 		<module>spring-cloud-services-starter-parent</module>
 		<module>spring-cloud-services-starter-circuit-breaker</module>
 		<module>spring-cloud-services-starter-config-client</module>
 		<module>spring-cloud-services-starter-service-registry</module>
 	</modules>
-
 	<build>
 		<plugins>
 			<plugin>
