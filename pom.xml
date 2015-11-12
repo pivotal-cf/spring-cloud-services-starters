@@ -8,13 +8,6 @@
 	<packaging>pom</packaging>
 	<name>Spring Cloud Services Starter Build</name>
 	<description>Spring Cloud Services Starter Build</description>
-	<parent>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-build</artifactId>
-		<version>1.0.2.RELEASE</version>
-		<relativePath />
-	</parent>
-
 	<scm>
 		<url>https://github.com/pivotal-cf/spring-cloud-services-starters</url>
 		<connection>scm:git:git://github.com/pivotal-cf/spring-cloud-services-starters.git</connection>
