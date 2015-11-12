@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-parent</artifactId>
 		<version>Angel.SR3</version>
-		<relativePath/>
+		<relativePath />
 	</parent>
 	<!-- override the parent's groupId and version -->
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-parent</artifactId>
-	<version>1.0.1.BUILD-SNAPSHOT</version>
+	<version>1.0.1.M1</version>
 	<name>spring-cloud-services-starter-parent</name>
 	<description>Spring Cloud Services Starter</description>
 	<packaging>pom</packaging>
@@ -33,17 +32,17 @@
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>1.0.1.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-config-client</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>1.0.1.M1</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>1.0.1.M1</version>
 			</dependency>
 			<!-- dependencies -->
 			<dependency>
