@@ -8,10 +8,22 @@
 	<packaging>pom</packaging>
 	<name>Spring Cloud Services Starter Build</name>
 	<description>Spring Cloud Services Starter Build</description>
+	<url>http://projects.spring.io/spring-cloud/</url>
+	<organization>
+		<name>Pivotal Software, Inc.</name>
+		<url>http://www.spring.io</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
 	<scm>
 		<url>https://github.com/pivotal-cf/spring-cloud-services-starters</url>
 		<connection>scm:git:git://github.com/pivotal-cf/spring-cloud-services-starters.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/pivotal-cf/spring-cloud-services-starters.git</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com/pivotal-cf/spring-cloud-services-starters.git
+		</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
