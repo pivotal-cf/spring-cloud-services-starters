@@ -54,18 +54,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>bintray</id>
-			<distributionManagement>
-				<repository>
-					<id>bintray</id>
-					<name>Jcenter Repository</name>
-					<url>https://api.bintray.com/maven/spring/jars/io.pivotal.spring.cloud:${bintray.package}</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-	</profiles>
-
 </project>
