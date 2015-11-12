@@ -22,13 +22,14 @@
 	</organization>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>1.0.1.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
 		<!-- override the managed versions of the Spring Cloud Connectors dependencies -->
 		<spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
-		<cloudfoundry-certificate-truster.version>1.0.2.BUILD-SNAPSHOT</cloudfoundry-certificate-truster.version>
+		<spring-cloud-services-connectors.version>1.0.0.RELEASE</spring-cloud-services-connectors.version>
+		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<!-- starters -->
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
@@ -44,6 +45,7 @@
 				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
 				<version>1.0.1.BUILD-SNAPSHOT</version>
 			</dependency>
+			<!-- dependencies -->
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
