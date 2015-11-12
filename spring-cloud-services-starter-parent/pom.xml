@@ -49,7 +49,7 @@
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
-				<version>1.0.1.BUILD-SNAPSHOT</version>
+				<version>${spring-cloud-services-connectors.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
