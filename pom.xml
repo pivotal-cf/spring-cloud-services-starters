@@ -35,6 +35,9 @@
 			<organizationUrl>http://www.spring.io</organizationUrl>
 		</developer>
 	</developers>
+	<properties>
+		<bintray.package>io.pivotal.spring.cloud:scs-starters</bintray.package>
+	</properties>
 	<modules>
 		<module>spring-cloud-services-starter-parent</module>
 		<module>spring-cloud-services-starter-circuit-breaker</module>
