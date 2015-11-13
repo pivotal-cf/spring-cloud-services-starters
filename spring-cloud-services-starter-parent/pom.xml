@@ -20,6 +20,28 @@
 		<name>Pivotal Software, Inc.</name>
 		<url>http://www.spring.io</url>
 	</organization>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/pivotal-cf/spring-cloud-services-starters</url>
+		<connection>scm:git:git://github.com/pivotal-cf/spring-cloud-services-starters.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/pivotal-cf/spring-cloud-services-starters.git
+		</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	<developers>
+		<developer>
+			<id>royclarkson</id>
+			<name>Roy Clarkson</name>
+			<email>rclarkson@pivotal.io</email>
+			<organization>Pivotal Software, Inc.</organization>
+			<organizationUrl>http://www.spring.io</organizationUrl>
+		</developer>
+	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<!-- override the managed versions of the Spring Cloud Connectors dependencies -->
