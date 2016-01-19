@@ -90,6 +90,10 @@ This example illustrates how to use the Spring Cloud Services parent in your POM
     <pluginRepositories>
         <pluginRepository>
             <id>spring-repository</id>
+            <url>https://repo.spring.io/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-repository</id>
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
@@ -119,7 +123,7 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.4.RELEASE</version>
+        <version>1.2.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -175,6 +179,10 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
     <pluginRepositories>
         <pluginRepository>
             <id>spring-repository</id>
+            <url>https://repo.spring.io/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-repository</id>
             <url>https://repo.spring.io/libs-release</url>
         </pluginRepository>
     </pluginRepositories>
@@ -189,12 +197,12 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
 ```groovy
 buildscript {
     repositories {
+        mavenCentral()
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/libs-release/" }
-        mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.8.RELEASE")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE")
     }
 }
@@ -223,8 +231,8 @@ dependencies {
 }
 
 repositories {
-    maven { url "https://repo.spring.io/libs-release/" }
     mavenCentral()
+    maven { url "https://repo.spring.io/libs-release/" }
 }
 ```
 
