@@ -1,6 +1,15 @@
 = Spring Cloud Services Starters image:https://build.spring.io/plugins/servlet/buildStatusImage/CLOUD-SCSSTART["Build Status", link="https://build.spring.io/browse/CLOUD-SCSSTART"]
 
-Spring Cloud Services Starters are a curated set of dependencies for use with link:http://docs.pivotal.io/spring-cloud-services/index.html[Spring Cloud Services] in a link:http://pivotal.io/platform[Pivotal Cloud Foundry] environment. Easily take advantage of the various features by including the corresponding parent and starter. See the example Maven POM and Gradle build file below.
+Spring Cloud Services Starters are a curated set of dependencies for use with link:http://docs.pivotal.io/spring-cloud-services/index.html[Spring Cloud Services] in a link:http://pivotal.io/platform[Pivotal Cloud Foundry] environment.
+
+:toc:
+:toc-placement!:
+
+toc::[]
+
+== Features
+
+Easily take advantage of the various services by including the corresponding parent and starter. See the example Maven POM and Gradle build files below.
 
 * spring-cloud-services-starter-circuit-breaker
 * spring-cloud-services-starter-config-client
@@ -18,7 +27,9 @@ mvn clean install -s .settings.xml
 
 Include the parent and starter dependencies in your project using Maven or Gradle.
 
-=== Maven
+=== Maven Parent
+
+This example illustrates how to use the Spring Cloud Services parent in your POM.
 
 `pom.xml`
 
@@ -39,6 +50,11 @@ Include the parent and starter dependencies in your project using Maven or Gradl
         <version>1.0.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -79,7 +95,91 @@ Include the parent and starter dependencies in your project using Maven or Gradl
     </pluginRepositories>
 
 </project>
+```
 
+=== Maven BOM
+
+If your requirements disallow the use of the Spring Cloud Services starters parent in your POM, you may include it as a BOM in the dependency management section.
+
+NOTE: You must override the Spring Cloud Connectors version in the properties section, as Spring Boot includes an older version of the dependency.
+
+`pom.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.demo</groupId>
+    <artifactId>spring-cloud-services-demo</artifactId>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.2.4.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-config-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.pivotal.spring.cloud</groupId>
+            <artifactId>spring-cloud-services-starter-service-registry</artifactId>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.pivotal.spring.cloud</groupId>
+                <artifactId>spring-cloud-services-starter-parent</artifactId>
+                <version>1.0.1.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>spring-repository</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-repository</id>
+            <url>https://repo.spring.io/libs-release</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
 ```
 
 === Gradle
@@ -94,7 +194,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.4.RELEASE")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE")
     }
 }
