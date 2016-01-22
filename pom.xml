@@ -6,7 +6,7 @@
 	<artifactId>spring-cloud-services-starter-build</artifactId>
 	<version>1.0.2.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Spring Cloud Services Starter Build</name>
+	<name>spring-cloud-services-starter-build</name>
 	<description>Spring Cloud Services Starter Build</description>
 	<url>http://projects.spring.io/spring-cloud/</url>
 	<organization>
@@ -39,6 +39,8 @@
 		<bintray.package>io.pivotal.spring.cloud:scs-starters</bintray.package>
 	</properties>
 	<modules>
+		<module>spring-cloud-services-dependencies</module>
+		<module>spring-cloud-services-dependencies-parent</module>
 		<module>spring-cloud-services-starter-parent</module>
 		<module>spring-cloud-services-starter-circuit-breaker</module>
 		<module>spring-cloud-services-starter-config-client</module>
