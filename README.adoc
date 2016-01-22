@@ -130,7 +130,7 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
+        <spring-cloud-connectors.version>1.2.1.RELEASE</spring-cloud-connectors.version>
     </properties>
 
     <dependencies>
@@ -152,8 +152,15 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
         <dependencies>
             <dependency>
                 <groupId>io.pivotal.spring.cloud</groupId>
-                <artifactId>spring-cloud-services-starter-parent</artifactId>
-                <version>1.0.1.RELEASE</version>
+                <artifactId>spring-cloud-services-dependencies</artifactId>
+                <version>1.0.2.BUILD-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Angel.BUILD-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -172,7 +179,10 @@ NOTE: You must override the Spring Cloud Connectors version in the properties se
     <repositories>
         <repository>
             <id>spring-repository</id>
-            <url>https://repo.spring.io/libs-release</url>
+            <url>https://repo.spring.io/libs-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
