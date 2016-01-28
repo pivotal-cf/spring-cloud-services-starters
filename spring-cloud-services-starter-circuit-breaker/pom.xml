@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.pivotal.spring.cloud</groupId>
 		<artifactId>spring-cloud-services-starter-parent</artifactId>
-		<version>1.0.2.RELEASE</version>
+		<version>1.0.3.BUILD-SNAPSHOT</version>
 		<relativePath>../spring-cloud-services-starter-parent</relativePath>
 	</parent>
 	<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>

@@ -10,7 +10,7 @@
 	<!-- override the parent's groupId and version -->
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-parent</artifactId>
-	<version>1.0.2.RELEASE</version>
+	<version>1.0.3.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-starter-parent</name>
 	<description>Spring Cloud Services Starter</description>
 	<packaging>pom</packaging>
@@ -55,17 +55,17 @@
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
-				<version>1.0.2.RELEASE</version>
+				<version>1.0.3.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-config-client</artifactId>
-				<version>1.0.2.RELEASE</version>
+				<version>1.0.3.BUILD-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
-				<version>1.0.2.RELEASE</version>
+				<version>1.0.3.BUILD-SNAPSHOT</version>
 			</dependency>
 			<!-- dependencies -->
 			<dependency>
