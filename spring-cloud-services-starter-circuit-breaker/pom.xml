@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>io.pivotal.spring.cloud</groupId>
-		<artifactId>spring-cloud-services-dependencies-parent</artifactId>
+		<artifactId>spring-cloud-services-starter-parent</artifactId>
 		<version>1.0.2.BUILD-SNAPSHOT</version>
-		<relativePath>../spring-cloud-services-dependencies-parent</relativePath>
+		<relativePath>../spring-cloud-services-starter-parent</relativePath>
 	</parent>
 	<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
 	<name>spring-cloud-services-starter-circuit-breaker</name>
@@ -20,6 +20,10 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-hystrix</artifactId>

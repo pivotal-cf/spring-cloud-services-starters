@@ -45,17 +45,59 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<!-- override the managed versions from Spring Boot -->
-		<spring-cloud-connectors.version>1.2.1.RELEASE</spring-cloud-connectors.version>
+		<spring-cloud-connectors.version>1.2.0.RELEASE</spring-cloud-connectors.version>
+		<!-- Spring Cloud Services -->
+		<spring-cloud-services-connectors.version>1.0.1.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
+		<cloudfoundry-certificate-truster.version>1.0.2.BUILD-SNAPSHOT</cloudfoundry-certificate-truster.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
+			<!-- starters -->
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
-				<artifactId>spring-cloud-services-dependencies</artifactId>
+				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
 				<version>1.0.2.BUILD-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-starter-config-client</artifactId>
+				<version>1.0.2.BUILD-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
+				<version>1.0.2.BUILD-SNAPSHOT</version>
+			</dependency>
+			<!-- dependencies -->
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
+				<version>${spring-cloud-services-connectors.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>spring-cloud-services-spring-connector</artifactId>
+				<version>${spring-cloud-services-connectors.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.pivotal.spring.cloud</groupId>
+				<artifactId>cloudfoundry-certificate-truster</artifactId>
+				<version>${cloudfoundry-certificate-truster.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-services-spring-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>cloudfoundry-certificate-truster</artifactId>
+		</dependency>
+	</dependencies>
 </project>
