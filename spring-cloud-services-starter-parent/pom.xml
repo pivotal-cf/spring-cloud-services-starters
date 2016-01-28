@@ -46,8 +46,8 @@
 		<!-- override the managed versions from Spring Boot -->
 		<spring-cloud-connectors.version>1.2.1.RELEASE</spring-cloud-connectors.version>
 		<!-- Spring Cloud Services -->
-		<spring-cloud-services-connectors.version>1.0.1.RELEASE</spring-cloud-services-connectors.version>
-		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
+		<spring-cloud-services-connectors.version>1.0.2.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
+		<cloudfoundry-certificate-truster.version>1.0.2.BUILD-SNAPSHOT</cloudfoundry-certificate-truster.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
