@@ -10,7 +10,7 @@
 	<!-- override the parent's groupId and version -->
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-parent</artifactId>
-	<version>1.0.3.BUILD-SNAPSHOT</version>
+	<version>1.1.0.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-starter-parent</name>
 	<description>Spring Cloud Services Starter</description>
 	<packaging>pom</packaging>
@@ -43,15 +43,13 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<!-- override the managed versions from Spring Boot -->
-		<spring-cloud-connectors.version>1.2.1.RELEASE</spring-cloud-connectors.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-dependencies</artifactId>
-				<version>1.0.3.BUILD-SNAPSHOT</version>
+				<version>1.1.0.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
