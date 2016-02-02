@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.cloud</groupId>
-		<artifactId>spring-cloud-starter-parent</artifactId>
-		<version>Angel.SR6</version>
-		<relativePath />
-	</parent>
-	<!-- override the parent's groupId and version -->
 	<groupId>io.pivotal.spring.cloud</groupId>
-	<artifactId>spring-cloud-services-starter-parent</artifactId>
+	<artifactId>spring-cloud-services-dependencies-parent</artifactId>
 	<version>1.0.3.BUILD-SNAPSHOT</version>
-	<name>spring-cloud-services-starter-parent</name>
-	<description>Spring Cloud Services Starter</description>
+	<name>spring-cloud-services-dependencies-parent</name>
+	<description>Spring Cloud Services Dependencies Parent</description>
 	<packaging>pom</packaging>
 	<url>http://projects.spring.io/spring-cloud</url>
 	<organization>
@@ -43,8 +37,6 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<!-- override the managed versions from Spring Boot -->
-		<spring-cloud-connectors.version>1.2.1.RELEASE</spring-cloud-connectors.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -57,4 +49,22 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-services-cloudfoundry-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>spring-cloud-services-spring-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.pivotal.spring.cloud</groupId>
+			<artifactId>cloudfoundry-certificate-truster</artifactId>
+		</dependency>
+	</dependencies>
 </project>
