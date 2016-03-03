@@ -47,7 +47,7 @@ This example illustrates how to use the Spring Cloud Services parent in your POM
     <parent>
         <groupId>io.pivotal.spring.cloud</groupId>
         <artifactId>spring-cloud-services-starter-parent</artifactId>
-        <version>1.0.1.RELEASE</version>
+        <version>1.0.2.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
