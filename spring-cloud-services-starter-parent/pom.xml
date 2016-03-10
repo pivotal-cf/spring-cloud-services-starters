@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
 		<artifactId>spring-cloud-starter-parent</artifactId>
-		<version>Brixton.BUILD-SNAPSHOT</version>
+		<version>Brixton.M5</version>
 		<relativePath />
 	</parent>
 	<!-- override the parent's groupId and version -->
