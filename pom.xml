@@ -40,7 +40,6 @@
 	<modules>
 		<module>spring-cloud-services-dependencies</module>
 		<module>spring-cloud-services-dependencies-parent</module>
-		<module>spring-cloud-services-starter-parent</module>
 		<module>spring-cloud-services-starter-circuit-breaker</module>
 		<module>spring-cloud-services-starter-config-client</module>
 		<module>spring-cloud-services-starter-service-registry</module>
