@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-dependencies-parent</artifactId>
-	<version>1.1.0.M5</version>
+	<version>1.1.0.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-dependencies-parent</name>
 	<description>Spring Cloud Services Dependencies Parent</description>
 	<packaging>pom</packaging>
@@ -42,7 +42,7 @@
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-dependencies</artifactId>
-				<version>1.1.0.M5</version>
+				<version>1.1.0.BUILD-SNAPSHOT</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
