@@ -29,10 +29,6 @@ Include the parent and starter dependencies in your project using Maven or Gradl
 
 === Maven BOM
 
-If your requirements disallow the use of the Spring Cloud Services starters parent in your POM, you may include it as a BOM in the dependency management section.
-
-NOTE: You must override the Spring Cloud Connectors version in the properties section, as Spring Boot includes an older version of the dependency.
-
 `pom.xml`
 
 ```xml
