@@ -36,8 +36,8 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>1.1.0.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
-		<cloudfoundry-certificate-truster.version>1.0.2.BUILD-SNAPSHOT</cloudfoundry-certificate-truster.version>
+		<spring-cloud-services-connectors.version>1.1.0.RELEASE</spring-cloud-services-connectors.version>
+		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
