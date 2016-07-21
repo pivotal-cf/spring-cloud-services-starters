@@ -17,7 +17,7 @@ Easily take advantage of the various services by including the BOM and correspon
 
 == Build and Deploy
 
-Install the starter POMs to your local Maven repository:
+The release artifacts are available from Maven Central. You may also build and install the starter POMs to your local Maven repository:
 
 ----
 mvn clean install -s .settings.xml
@@ -74,7 +74,7 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
             <dependency>
                 <groupId>io.pivotal.spring.cloud</groupId>
                 <artifactId>spring-cloud-services-dependencies</artifactId>
-                <version>1.1.0.RELEASE</version>
+                <version>1.1.1.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -149,7 +149,7 @@ jar {
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.SR1"
-        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:1.1.0.RELEASE"
+        mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:1.1.1.RELEASE"
     }
 }
 
