@@ -38,6 +38,7 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-connectors.version>1.2.0.M1</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
+		<amqp-client.version>3.6.5</amqp-client.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -72,6 +73,11 @@
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>cloudfoundry-certificate-truster</artifactId>
 				<version>${cloudfoundry-certificate-truster.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.rabbitmq</groupId>
+				<artifactId>amqp-client</artifactId>
+				<version>${amqp-client.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
