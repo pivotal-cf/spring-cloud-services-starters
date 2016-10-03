@@ -36,7 +36,7 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>1.2.0.RELEASE</spring-cloud-services-connectors.version>
+		<spring-cloud-services-connectors.version>1.2.1.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 		<amqp-client.version>3.6.5</amqp-client.version>
 	</properties>
