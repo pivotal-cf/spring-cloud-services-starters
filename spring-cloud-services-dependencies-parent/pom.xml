@@ -37,7 +37,7 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-		<spring-cloud.version>Camden.BUILD-SNAPSHOT</spring-cloud.version>
+		<spring-cloud.version>Camden.SR2</spring-cloud.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
