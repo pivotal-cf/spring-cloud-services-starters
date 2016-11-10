@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-starter-build</artifactId>
-	<version>1.3.0.BUILD-SNAPSHOT</version>
+	<version>1.3.0.RELEASE</version>
 	<packaging>pom</packaging>
 	<name>spring-cloud-services-starter-build</name>
 	<description>Spring Cloud Services Starter Build</description>
