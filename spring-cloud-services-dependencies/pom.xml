@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-dependencies</artifactId>
-	<version>1.2.1.BUILD-SNAPSHOT</version>
+	<version>1.2.1.RELEASE</version>
 	<name>spring-cloud-services-dependencies</name>
 	<description>Spring Cloud Services Dependencies</description>
 	<packaging>pom</packaging>
@@ -46,17 +46,17 @@
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
-				<version>1.2.1.BUILD-SNAPSHOT</version>
+				<version>1.2.1.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-config-client</artifactId>
-				<version>1.2.1.BUILD-SNAPSHOT</version>
+				<version>1.2.1.RELEASE</version>
 			</dependency>
 			<dependency>
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>spring-cloud-services-starter-service-registry</artifactId>
-				<version>1.2.1.BUILD-SNAPSHOT</version>
+				<version>1.2.1.RELEASE</version>
 			</dependency>
 			<!-- dependencies -->
 			<dependency>
