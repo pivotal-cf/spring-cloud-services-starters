@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.pivotal.spring.cloud</groupId>
 		<artifactId>spring-cloud-services-dependencies-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
+		<version>1.4.2.BUILD-SNAPSHOT</version>
 		<relativePath>../spring-cloud-services-dependencies-parent</relativePath>
 	</parent>
 	<artifactId>spring-cloud-services-starter-service-registry</artifactId>
