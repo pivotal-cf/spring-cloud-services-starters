@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-dependencies</artifactId>
-	<version>1.4.2.BUILD-SNAPSHOT</version>
+	<version>1.5.0.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-dependencies</name>
 	<description>Spring Cloud Services Dependencies</description>
 	<packaging>pom</packaging>
@@ -36,7 +36,7 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>1.4.2.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
+		<spring-cloud-services-connectors.version>1.5.0.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 		<amqp-client.version>3.6.5</amqp-client.version>
 	</properties>
