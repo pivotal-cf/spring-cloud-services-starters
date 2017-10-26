@@ -37,8 +37,20 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-boot.version>1.5.2.RELEASE</spring-boot.version>
-		<spring-cloud.version>Dalston.SR1</spring-cloud.version>
+		<spring-cloud.version>Edgware.RC1</spring-cloud.version>
 	</properties>
+	
+	<repositories>
+	    <repository>
+	        <id>spring-milestones</id>
+	        <name>Spring Milestones</name>
+	        <url>https://repo.spring.io/libs-milestone</url>
+	        <snapshots>
+	            <enabled>false</enabled>
+	        </snapshots>
+	    </repository>
+	</repositories>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
