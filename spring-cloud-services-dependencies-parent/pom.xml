@@ -36,8 +36,8 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-boot.version>1.5.2.RELEASE</spring-boot.version>
-		<spring-cloud.version>Edgware.RC1</spring-cloud.version>
+		<spring-boot.version>1.5.6.RELEASE</spring-boot.version>
+		<spring-cloud.version>Edgware.RELEASE</spring-cloud.version>
 	</properties>
 	
 	<repositories>
