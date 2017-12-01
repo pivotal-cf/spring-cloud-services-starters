@@ -40,25 +40,6 @@
 		<spring-cloud.version>Edgware.RELEASE</spring-cloud.version>
 	</properties>
 	
-	<repositories>
-	    <repository>
-	        <id>spring-milestones</id>
-	        <name>Spring Milestones</name>
-	        <url>https://repo.spring.io/libs-milestone</url>
-	        <snapshots>
-	            <enabled>false</enabled>
-	        </snapshots>
-	    </repository>
-	    <repository>
-	        <id>spring-snapshot</id>
-	        <name>Spring Milestones</name>
-	        <url>https://repo.spring.io/libs-snapshot</url>
-	        <releases>
-	            <enabled>false</enabled>
-	        </releases>
-	    </repository>
-	</repositories>
-	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
