@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.pivotal.spring.cloud</groupId>
 	<artifactId>spring-cloud-services-dependencies-parent</artifactId>
-	<version>1.6.2.RELEASE</version>
+	<version>1.6.3.BUILD-SNAPSHOT</version>
 	<name>spring-cloud-services-dependencies-parent</name>
 	<description>Spring Cloud Services Dependencies Parent</description>
 	<packaging>pom</packaging>
@@ -39,7 +39,7 @@
 		<spring-boot.version>1.5.10.RELEASE</spring-boot.version>
 		<spring-cloud.version>Edgware.SR3</spring-cloud.version>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
