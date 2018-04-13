@@ -38,7 +38,6 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-connectors.version>2.0.0.M1</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
-		<amqp-client.version>3.6.5</amqp-client.version>
 		<spring-cloud-security.version>5.0.4.RELEASE</spring-cloud-security.version>
 	</properties>
 	<dependencyManagement>
@@ -79,11 +78,6 @@
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-oauth2-client</artifactId>
 				<version>${spring-cloud-security.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.rabbitmq</groupId>
-				<artifactId>amqp-client</artifactId>
-				<version>${amqp-client.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
