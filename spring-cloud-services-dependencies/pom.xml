@@ -38,7 +38,6 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-connectors.version>2.0.0.M1</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
-		<spring-cloud-security.version>5.0.4.RELEASE</spring-cloud-security.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -73,11 +72,6 @@
 				<groupId>io.pivotal.spring.cloud</groupId>
 				<artifactId>cloudfoundry-certificate-truster</artifactId>
 				<version>${cloudfoundry-certificate-truster.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-oauth2-client</artifactId>
-				<version>${spring-cloud-security.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
