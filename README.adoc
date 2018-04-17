@@ -1,4 +1,4 @@
-= Spring Cloud Services Starters image:https://build.spring.io/plugins/servlet/buildStatusImage/CLOUD-SCSSTART["Build Status", link="https://build.spring.io/browse/CLOUD-SCSSTART"]
+= Spring Cloud Services Starters image:https://build.spring.io/plugins/servlet/wittified/build-status/CLOUD-SCSSTART["Build Status", link="https://build.spring.io/browse/CLOUD-SCSSTART"]
 
 Spring Cloud Services Starters are a curated set of dependencies for use with link:http://docs.pivotal.io/spring-cloud-services/index.html[Spring Cloud Services] in a link:http://pivotal.io/platform[Pivotal Cloud Foundry] environment.
 
