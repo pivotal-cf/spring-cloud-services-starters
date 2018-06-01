@@ -38,7 +38,7 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-connectors.version>2.0.0.BUILD-SNAPSHOT</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
-		<spring-oauth2.version>2.3.2.RELEASE</spring-oauth2.version>
+		<spring-security-oauth2.version>2.3.2.RELEASE</spring-security-oauth2.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -78,7 +78,7 @@
 				<groupId>org.springframework.security.oauth</groupId>
 				<artifactId>spring-security-oauth2</artifactId>
 				<scope>runtime</scope>
-				<version>${spring-oauth2.version}</version>
+				<version>${spring-security-oauth2.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

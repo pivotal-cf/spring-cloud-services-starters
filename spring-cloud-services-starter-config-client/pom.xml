@@ -39,7 +39,6 @@
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<scope>runtime</scope>
-			<version>2.3.2.RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>
