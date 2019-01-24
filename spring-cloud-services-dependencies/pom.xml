@@ -36,7 +36,7 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>2.1.0.M1</spring-cloud-services-connectors.version>
+		<spring-cloud-services-connectors.version>2.1.0.RELEASE</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 		<spring-security-oauth2.version>2.3.4.RELEASE</spring-security-oauth2.version>
 	</properties>
