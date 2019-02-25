@@ -37,7 +37,7 @@
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-boot.version>2.1.1.RELEASE</spring-boot.version>
-		<spring-cloud.version>Greenwich.RC2</spring-cloud.version>
+		<spring-cloud.version>Greenwich.RELEASE</spring-cloud.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -64,12 +64,4 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
-	<repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>https://repo.spring.io/milestone/</url>
-		</repository>
-	</repositories>
 </project>
