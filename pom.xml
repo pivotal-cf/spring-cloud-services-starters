@@ -7,15 +7,15 @@
 	<packaging>pom</packaging>
 	<name>spring-cloud-services-starter-build</name>
 	<description>Spring Cloud Services Starter Build</description>
-	<url>http://projects.spring.io/spring-cloud/</url>
+	<url>https://projects.spring.io/spring-cloud/</url>
 	<organization>
 		<name>Pivotal Software, Inc.</name>
-		<url>http://www.spring.io</url>
+		<url>https://www.spring.io</url>
 	</organization>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
 		</license>
 	</licenses>
 	<scm>
@@ -31,7 +31,7 @@
 			<name>Roy Clarkson</name>
 			<email>rclarkson@pivotal.io</email>
 			<organization>Pivotal Software, Inc.</organization>
-			<organizationUrl>http://www.spring.io</organizationUrl>
+			<organizationUrl>https://www.spring.io</organizationUrl>
 		</developer>
 	</developers>
 	<properties>
