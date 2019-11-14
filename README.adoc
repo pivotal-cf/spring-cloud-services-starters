@@ -13,7 +13,6 @@ toc::[]
 
 Easily take advantage of the various services by including the BOM and corresponding starter. See the example Maven POM and Gradle build files below.
 
-* spring-cloud-services-starter-circuit-breaker
 * spring-cloud-services-starter-config-client
 * spring-cloud-services-starter-service-registry
 
@@ -57,10 +56,6 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>io.pivotal.spring.cloud</groupId>
-            <artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.pivotal.spring.cloud</groupId>
             <artifactId>spring-cloud-services-starter-config-client</artifactId>
@@ -156,7 +151,6 @@ dependencyManagement {
 }
 
 dependencies {
-    compile("io.pivotal.spring.cloud:spring-cloud-services-starter-circuit-breaker")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-client")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry")
 }
@@ -170,4 +164,4 @@ repositories {
 == License
 
 Spring Cloud Services Starters is Open Source software released under the
-https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
+http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: test-app
+    
+  cloud:
+    config:
+      server:
+        default-label: default-label-test
+  mvc:
+    pathmatch:
+      use-suffix-pattern: true
+      use-registered-suffix-pattern: false

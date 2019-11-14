@@ -1,0 +1,19 @@
+---
+platform: linux
+inputs:
+  - name: git-repo
+  - name: artifactory-repo
+outputs:
+  - name: version
+params:
+  ARTIFACTORY_SERVER:
+  ARTIFACTORY_USERNAME:
+  ARTIFACTORY_PASSWORD:
+  BINTRAY_SUBJECT:
+  BINTRAY_REPO:
+  BINTRAY_USERNAME:
+  BINTRAY_API_KEY:
+  BINTRAY_PACKAGE:
+  BINTRAY_DISTRIBUTION_REPO:
+run:
+  path: git-repo/ci/scripts/distribute.sh
