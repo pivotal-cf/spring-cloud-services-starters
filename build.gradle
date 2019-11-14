@@ -1,0 +1,269 @@
+/*
+ * Copyright 2002-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+buildscript {
+	repositories {
+		maven { url "https://repo.spring.io/plugins-release" }
+	}
+	dependencies {
+		classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
+		classpath("io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE")
+		classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.6.1")
+		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.9.9")
+		classpath("io.spring.nohttp:nohttp-gradle:0.0.3.RELEASE")
+	}
+}
+
+// NoHttp has to be applied at the root level
+// so that it reads all the root files, including the gradle ones.
+apply plugin: "io.spring.nohttp"
+
+checkstyle {
+	toolVersion = 8.16
+}
+
+configure(allprojects) {
+	group = "io.pivotal.spring.cloud"
+
+	apply plugin: "java-library"
+	apply plugin: "maven"
+	apply plugin: "eclipse"
+	apply plugin: "idea"
+	apply plugin: "jacoco"
+	apply plugin: "checkstyle"
+	apply plugin: "propdeps"
+	apply plugin: "propdeps-idea"
+	apply plugin: "propdeps-eclipse"
+	apply plugin: "io.spring.dependency-management"
+
+	ext {
+		springCloudVersion = "Greenwich.SR3"
+		springBootVersion = project.findProperty("springBootVersion") ?: "2.1.10.RELEASE"
+		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.1.11.RELEASE"
+		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
+		jerseyClientVersion = "1.19.4"
+		javaCfenvVersion = "1.1.2.RELEASE"
+	}
+
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/libs-release" }
+	}
+
+	dependencies {
+		testRuntimeOnly("io.spring.nohttp:nohttp:0.0.3.RELEASE")
+	}
+
+	if (project.hasProperty("springFrameworkVersion") || project.hasProperty("springBootVersion") ) {
+		repositories {
+			maven { url "https://repo.spring.io/libs-snapshot" }
+		}
+	}
+
+	ext.javadocLinks = [
+		"https://docs.oracle.com/javase/8/docs/api/",
+		"https://docs.spring.io/spring/docs/${springFrameworkVersion}/javadoc-api/",
+	] as String[]
+}
+
+subprojects {
+	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+}
+
+configure(subprojects - [project(":spring-cloud-services-starter-config-client"),
+						 project(":spring-cloud-services-starter-service-registry"),
+						 project(":spring-cloud-services-dependencies")]) {
+	compileJava {
+		sourceCompatibility=1.8
+		targetCompatibility=1.8
+		options.encoding = "UTF-8"
+	}
+	compileTestJava {
+		sourceCompatibility=1.8
+		targetCompatibility=1.8
+		options.encoding = "UTF-8"
+	}
+
+	[compileJava, compileTestJava]*.options*.compilerArgs = [
+		"-Xlint:all",
+		"-Werror"
+	]
+
+	test {
+		// enable JUnit 5
+		useJUnitPlatform()
+
+		testLogging {
+			// display all the events
+			events 'PASSED', 'FAILED', 'SKIPPED'
+			// display stdout and stderr
+			showStandardStreams = true
+		}
+
+		// create a summary after the execution
+		afterSuite { desc, result ->
+			if (!desc.parent) {
+				println "\nTest result: ${result.resultType}"
+				println "Test summary: ${result.testCount} tests, " +
+					"${result.successfulTestCount} succeeded, " +
+					"${result.failedTestCount} failed, " +
+					"${result.skippedTestCount} skipped"
+			}
+		}
+
+		// print failed tests after the execution
+		def failedTests = []
+
+		afterTest { test, result ->
+			if (result.resultType == TestResult.ResultType.FAILURE) {
+				failedTests << test
+			}
+		}
+
+		afterSuite {
+			failedTests.each { test -> println "FAILED test: ${test.className} > ${test.name}" }
+		}
+
+	}
+
+	checkstyle {
+		configDir = file("${project.rootDir}/ci/config/")
+		toolVersion = 8.16
+	}
+
+	jar {
+		manifest.attributes["Created-By"] =
+				"${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+		manifest.attributes["Implementation-Title"] = project.name
+		manifest.attributes["Implementation-Version"] = project.version
+
+		from("${rootProject.projectDir}/src/dist") {
+			include "license.txt"
+			include "notice.txt"
+			into "META-INF"
+			expand(copyright: new Date().format("yyyy"), version: project.version)
+		}
+	}
+
+	javadoc {
+		description = "Generates project-level javadoc for use in -javadoc jar"
+
+		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.author = true
+		options.header = project.name
+		options.links(project.ext.javadocLinks)
+		options.addStringOption('Xdoclint:none', '-quiet')
+	}
+
+	task sourcesJar(type: Jar, dependsOn:classes) {
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+		classifier = "sources"
+		from sourceSets.main.allJava
+	}
+
+	task javadocJar(type: Jar) {
+		classifier = "javadoc"
+		from javadoc
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+
+	task allDependencyInsight(type: DependencyInsightReportTask) {}
+	task allDependencies(type: DependencyReportTask) {}
+}
+
+configure(rootProject) {
+	description = "Spring Cloud Services Starter Build"
+
+	// don't publish the default jar for the root project
+	configurations.archives.artifacts.clear()
+
+	dependencies {
+		// for integration tests
+	}
+
+	task api(type: Javadoc) {
+		group = "Documentation"
+		description = "Generates aggregated Javadoc API documentation."
+		title = "${rootProject.description} ${version} API"
+		options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+		options.author = true
+		options.header = rootProject.description
+		options.links(project.ext.javadocLinks)
+		options.addStringOption('Xdoclint:none', '-quiet')
+
+		source subprojects.collect { project ->
+			project.sourceSets.main.allJava
+		}
+
+		classpath = files(subprojects.collect { project ->
+			project.sourceSets.main.compileClasspath
+		})
+
+		maxMemory = "1024m"
+		destinationDir = new File(buildDir, "api")
+	}
+
+}
+
+task codeCoverageReport(type: JacocoReport) {
+	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+	subprojects.each { subproject ->
+		if (subproject.name.endsWith("-integration-tests") || subproject.name.endsWith("-acceptance-tests")) {
+			// Work-around for issue with jacoco and multiple-release jar files
+			// (like Log4J 2.10 and above)
+			// see https://github.com/jacoco/jacoco/issues/407
+			sourceDirectories = subproject.sourceSets.main.java
+			classDirectories = subproject.sourceSets.main.output.classesDirs
+		} else {
+			 sourceSets subproject.sourceSets.main
+		}
+	}
+
+	reports {
+		xml.enabled true
+		xml.destination new File("${buildDir}/reports/jacoco/report.xml")
+		html.enabled false
+		csv.enabled false
+	}
+}
+
+codeCoverageReport.dependsOn {
+	subprojects*.test
+}
+
+configure(subprojects - project(":spring-cloud-services-dependencies")) {
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+		}
+	}
+}
+
+configure(subprojects) {
+	dependencyManagement {
+		dependencies {
+			dependency "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
+			dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfenvVersion}"
+			dependency "com.sun.jersey:jersey-client:${jerseyClientVersion}"
+		}
+	}
+}
