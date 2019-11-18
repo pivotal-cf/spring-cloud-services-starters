@@ -55,12 +55,13 @@ configure(allprojects) {
 		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.1.11.RELEASE"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
 		jerseyClientVersion = "1.19.4"
-		javaCfenvVersion = "1.1.2.RELEASE"
+		javaCfenvVersion = "2.0.0.BUILD-SNAPSHOT"
 	}
 
 	repositories {
 		mavenCentral()
 		maven { url "https://repo.spring.io/libs-release" }
+		maven { url "https://repo.spring.io/snapshot" }
 	}
 
 	dependencies {
