@@ -32,6 +32,7 @@ WAIT_ATTEMPTS=120
 artifacts_published=false
 retry_counter=0
 while [ $artifacts_published == "false" ] && [ $retry_counter -lt $WAIT_ATTEMPTS ]; do
+  echo "Trying to distribute"
   result=$(curl -s -f -u "${BINTRAY_USERNAME}":"${BINTRAY_API_KEY}" https://api.bintray.com/packages/"${BINTRAY_SUBJECT}"/"${BINTRAY_REPO}"/"${BINTRAY_PACKAGE}")
   if [ $? -eq 0 ]; then
     versions=$(echo "$result" | jq -r '.versions')
@@ -40,11 +41,12 @@ while [ $artifacts_published == "false" ] && [ $retry_counter -lt $WAIT_ATTEMPTS
       artifacts_published=true
     fi
   fi
+  echo "testing123"
   retry_counter=$((retry_counter + 1))
   sleep $WAIT_TIME
 done
 if [[ $artifacts_published == "false" ]]; then
-  echo "Failed to ditribute"
+  echo "Failed to distribute"
   exit 1
 fi
 
