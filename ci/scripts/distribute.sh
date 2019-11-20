@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # shellcheck source=scripts/common.sh
 source "$(dirname "$0")/common.sh"
