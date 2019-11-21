@@ -50,7 +50,7 @@ configure(allprojects) {
 	apply plugin: "io.spring.dependency-management"
 
 	ext {
-		springCloudVersion = "Greenwich.SR3"
+		springCloudVersion = "Greenwich.SR4"
 		springBootVersion = project.findProperty("springBootVersion") ?: "2.1.10.RELEASE"
 		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.1.11.RELEASE"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
