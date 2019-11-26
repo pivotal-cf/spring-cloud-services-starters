@@ -18,6 +18,8 @@ jobs:
     - do:
       - task: build-project
         file: git-repo/ci/tasks/build-project.yml
+        vars:
+          branch: ((branch))
     - put: artifactory-repo
       params: &artifactory-params
         repo: libs-snapshot-local
@@ -34,8 +36,9 @@ jobs:
       - get: git-repo
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: M
+        vars:
+          branch: ((branch))
+          release-type: M
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -49,8 +52,9 @@ jobs:
       - get: git-repo
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: RC
+        vars:
+          branch: ((branch))
+          release-type: RC
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -64,8 +68,9 @@ jobs:
       - get: git-repo
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: RELEASE
+        vars:
+          branch: ((branch))
+          release-type: RELEASE
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -83,8 +88,10 @@ jobs:
           save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: M
+        vars:
+          branch: ((branch))
+          release-type: M
+          artifactory-server: ((artifactory-server))
   - name: promote-rc
     serial: true
     plan:
@@ -95,8 +102,10 @@ jobs:
           save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: RC
+        vars:
+          branch: ((branch))
+          release-type: RC
+          artifactory-server: ((artifactory-server))
   - name: promote-release
     serial: true
     plan:
@@ -107,8 +116,10 @@ jobs:
           save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: RELEASE
+        vars:
+          branch: ((branch))
+          release-type: RELEASE
+          artifactory-server: ((artifactory-server))
   - name: distribute-release
     serial: true
     plan:
@@ -119,6 +130,13 @@ jobs:
           save_build_info: true
       - task: distribute
         file: git-repo/ci/tasks/distribute.yml
+        vars:
+          branch: ((branch))
+          artifactory-server: ((artifactory-server))
+          bintray-subject: ((bintray-subject))
+          bintray-repo: ((bintray-repo))
+          bintray-package: ((bintray-package))
+          bintray-distribution-repo: ((bintray-distribution-repo))
   - name: sync-to-maven-central
     serial: true
     plan:
@@ -129,6 +147,11 @@ jobs:
           save_build_info: true
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
+        vars:
+          branch: ((branch))
+          bintray-subject: ((bintray-subject))
+          bintray-repo: ((bintray-repo))
+          bintray-package: ((bintray-package))
 
 resource_types:
   - name: artifactory-resource
