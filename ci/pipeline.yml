@@ -13,12 +13,10 @@ jobs:
     serial: true
     public: true
     plan:
-    - get: release-ci-image
     - get: git-repo
       trigger: true
     - do:
       - task: build-project
-        image: release-ci-image
         file: git-repo/ci/tasks/build-project.yml
     - put: artifactory-repo
       params: &artifactory-params
@@ -33,10 +31,8 @@ jobs:
   - name: stage-milestone
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - task: stage
-        image: release-ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: M
@@ -50,10 +46,8 @@ jobs:
   - name: stage-rc
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - task: stage
-        image: release-ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RC
@@ -67,10 +61,8 @@ jobs:
   - name: stage-release
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - task: stage
-        image: release-ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RELEASE
@@ -84,68 +76,58 @@ jobs:
   - name: promote-milestone
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - get: artifactory-repo
         passed: [stage-milestone]
         params:
           save_build_info: true
       - task: promote
-        image: release-ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: M
   - name: promote-rc
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - get: artifactory-repo
         passed: [stage-rc]
         params:
           save_build_info: true
       - task: promote
-        image: release-ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RC
   - name: promote-release
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - get: artifactory-repo
         passed: [stage-release]
         params:
           save_build_info: true
       - task: promote
-        image: release-ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RELEASE
   - name: distribute-release
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - get: artifactory-repo
         passed: [promote-release]
         params:
           save_build_info: true
       - task: distribute
-        image: release-ci-image
         file: git-repo/ci/tasks/distribute.yml
   - name: sync-to-maven-central
     serial: true
     plan:
-      - get: release-ci-image
       - get: git-repo
       - get: artifactory-repo
         passed: [distribute-release]
         params:
           save_build_info: true
       - task: sync-to-maven-central
-        image: release-ci-image
         file: git-repo/ci/tasks/sync-to-maven-central.yml
 
 resource_types:
@@ -169,13 +151,6 @@ resources:
       password: ((github-password))
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
-  - name: release-ci-image
-    type: docker-image
-    source:
-      repository: ((docker-hub-organization))/release-ci-image
-      username: ((docker-hub-username))
-      password: ((docker-hub-password))
-      tag: ((branch))
   - name: artifactory-repo
     type: artifactory-resource
     source:

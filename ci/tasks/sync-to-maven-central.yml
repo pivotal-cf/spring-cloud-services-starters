@@ -1,5 +1,12 @@
 ---
 platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: ((docker-hub-organization))/release-ci-image
+    username: ((docker-hub-username))
+    password: ((docker-hub-password))
+    tag: ((branch))
 inputs:
   - name: git-repo
   - name: artifactory-repo
