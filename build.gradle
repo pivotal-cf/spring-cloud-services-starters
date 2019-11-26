@@ -267,3 +267,31 @@ configure(subprojects) {
 		}
 	}
 }
+
+allprojects {
+	tasks.withType(Test).forEach { Test task ->
+		task.with {
+			testLogging {
+				exceptionFormat = "full"
+				events = ["passed", "skipped", "failed"]
+				showStandardStreams = false
+			}
+
+			StringBuilder testOutput = new StringBuilder()
+
+			beforeTest {
+				testOutput.setLength(0)
+			}
+
+			onOutput { descriptor, TestOutputEvent event ->
+				testOutput.append(event.message)
+			}
+
+			afterTest { TestDescriptor descriptor, TestResult result ->
+				if (result.resultType == TestResult.ResultType.FAILURE && testOutput.size() > 0) {
+					logger.lifecycle("\n\n${testOutput}")
+				}
+			}
+		}
+	}
+}
