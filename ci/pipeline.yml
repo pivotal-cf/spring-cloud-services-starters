@@ -95,9 +95,6 @@ jobs:
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: M
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((artifactory-username))
-          ARTIFACTORY_PASSWORD: ((artifactory-password))
   - name: promote-rc
     serial: true
     plan:
@@ -112,9 +109,6 @@ jobs:
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RC
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((artifactory-username))
-          ARTIFACTORY_PASSWORD: ((artifactory-password))
   - name: promote-release
     serial: true
     plan:
@@ -129,15 +123,6 @@ jobs:
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RELEASE
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((artifactory-username))
-          ARTIFACTORY_PASSWORD: ((artifactory-password))
-          BINTRAY_SUBJECT: ((bintray-subject))
-          BINTRAY_REPO: ((bintray-repo))
-          BINTRAY_USERNAME: ((bintray-username))
-          BINTRAY_API_KEY: ((bintray-api-key))
-          BINTRAY_PACKAGE: ((bintray-package))
-          BINTRAY_DISTRIBUTION_REPO: ((bintray-distribution-repo))
   - name: distribute-release
     serial: true
     plan:
@@ -150,16 +135,6 @@ jobs:
       - task: distribute
         image: release-ci-image
         file: git-repo/ci/tasks/distribute.yml
-        params:
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((artifactory-username))
-          ARTIFACTORY_PASSWORD: ((artifactory-password))
-          BINTRAY_SUBJECT: ((bintray-subject))
-          BINTRAY_REPO: ((bintray-repo))
-          BINTRAY_USERNAME: ((bintray-username))
-          BINTRAY_API_KEY: ((bintray-api-key))
-          BINTRAY_PACKAGE: ((bintray-package))
-          BINTRAY_DISTRIBUTION_REPO: ((bintray-distribution-repo))
   - name: sync-to-maven-central
     serial: true
     plan:
@@ -172,14 +147,6 @@ jobs:
       - task: sync-to-maven-central
         image: release-ci-image
         file: git-repo/ci/tasks/sync-to-maven-central.yml
-        params:
-          BINTRAY_USERNAME: ((bintray-username))
-          BINTRAY_API_KEY: ((bintray-api-key))
-          SONATYPE_USER_TOKEN: ((sonatype-user-token))
-          SONATYPE_PASSWORD_TOKEN: ((sonatype-user-token-password))
-          BINTRAY_SUBJECT: ((bintray-subject))
-          BINTRAY_REPO: ((bintray-repo))
-          BINTRAY_PACKAGE: ((bintray-package))
 
 resource_types:
   - name: artifactory-resource
@@ -213,13 +180,13 @@ resources:
     type: artifactory-resource
     source:
       uri: ((artifactory-server))
-      username: ((artifactory-username))
-      password: ((artifactory-password))
+      username: ((scs-artifactory-username))
+      password: ((scs-artifactory-password))
       build_name: ((build-name))
   - name: alert
     type: slack-notification
     source:
-      url: {{scs-slack-webhook}}
+      url: ((scs-slack-webhook))
 groups:
   - name: "Build"
     jobs: ["build"]
