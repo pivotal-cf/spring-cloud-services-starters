@@ -93,7 +93,7 @@ public class VaultPropertyMaskingContextInitializer implements ApplicationContex
 				new PropertiesPropertySource(
 						SANITIZE_ENV_KEY, mergeClientProperties(propertySources, propertiesToSanitize));
 
-		environment.getPropertySources().addFirst(envKeysToSanitize);
+		environment.getPropertySources().addLast(envKeysToSanitize);
 		applicationContext.setEnvironment(environment);
 
 	}
