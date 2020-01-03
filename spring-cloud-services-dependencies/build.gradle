@@ -22,6 +22,7 @@ dependencyManagement {
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-config-client-autoconfigure:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-service-registry-autoconfigure:${project.version}"
+        dependency "io.pivotal.spring.cloud:java-cfenv-boot-pivotal-scs:${project.version}"
     }
 }
 

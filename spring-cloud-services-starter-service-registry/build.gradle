@@ -22,7 +22,7 @@ dependencies {
     api "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
     implementation "com.sun.jersey:jersey-client"
     api project(":spring-cloud-services-service-registry-autoconfigure")
-    api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
+	api project(":java-cfenv-boot-pivotal-scs")
 }
 
 install {
