@@ -17,6 +17,6 @@
 description = "Java CF Env Pivotal Spring Cloud Services"
 
 dependencies {
-	implementation("io.pivotal.cfenv:java-cfenv-boot")
+	implementation("io.pivotal.cfenv:java-cfenv-boot:${javaCfenvVersion}")
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
