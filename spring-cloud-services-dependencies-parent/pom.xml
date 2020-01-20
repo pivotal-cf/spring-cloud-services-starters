@@ -36,9 +36,9 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-boot.version>2.1.4.RELEASE</spring-boot.version>
-		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
-		<spring-cloud-oauth.version>2.3.5.RELEASE</spring-cloud-oauth.version>
+		<spring-boot.version>2.1.12.RELEASE</spring-boot.version>
+		<spring-cloud.version>Greenwich.SR4</spring-cloud.version>
+		<spring-cloud-oauth.version>2.3.8.RELEASE</spring-cloud-oauth.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
