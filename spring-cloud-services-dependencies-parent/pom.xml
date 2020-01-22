@@ -36,8 +36,8 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-boot.version>2.2.3.RELEASE</spring-boot.version>
-		<spring-cloud.version>Hoxton.RELEASE</spring-cloud.version>
+		<spring-boot.version>2.2.4.RELEASE</spring-boot.version>
+		<spring-cloud.version>Hoxton.SR1</spring-cloud.version>
 		<spring-cloud-oauth.version>2.4.0.RELEASE</spring-cloud-oauth.version>
 	</properties>
 	<dependencyManagement>
