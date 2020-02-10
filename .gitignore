@@ -13,3 +13,4 @@ target/
 .idea
 *.iml
 .factorypath
+.flattened-pom.xml
