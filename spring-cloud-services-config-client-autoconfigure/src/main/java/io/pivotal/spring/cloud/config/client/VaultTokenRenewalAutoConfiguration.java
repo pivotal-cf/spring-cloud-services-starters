@@ -83,8 +83,7 @@ public class VaultTokenRenewalAutoConfiguration {
 		return new VaultTokenRefresher(restTemplate, obscuredToken, renewTTL, refreshUri, request);
 	}
 
-	@Qualifier("vaultTokenRenewal")
-	@Bean
+	@Bean("vaultTokenRenewal")
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
