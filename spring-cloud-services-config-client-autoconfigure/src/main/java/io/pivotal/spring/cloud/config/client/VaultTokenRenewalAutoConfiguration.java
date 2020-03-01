@@ -117,10 +117,11 @@ public class VaultTokenRenewalAutoConfiguration {
 		@Scheduled(fixedRateString="${vault.token.renew.rate:60000}")  // <-- Default to renew token every 60 seconds
 		public void refreshVaultToken() {
 			try {
-				LOGGER.info("Renewing Vault token " + obscuredToken + " for " + renewTTL + " milliseconds.");
+				LOGGER.debug("Vault token={}", obscuredToken);
+				LOGGER.info("Renewing Vault token for " + renewTTL + " milliseconds.");
 				restTemplate.postForObject(refreshUri, request, String.class);
 			} catch (RestClientException e) {
-				LOGGER.error("Unable to renew Vault token " + obscuredToken + ". Is the token invalid or expired?");
+				LOGGER.error("Unable to renew Vault token. Is the token invalid or expired?");
 			}
 		}
 	}
