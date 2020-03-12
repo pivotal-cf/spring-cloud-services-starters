@@ -120,7 +120,7 @@ public class VaultTokenRenewalAutoConfiguration {
 				LOGGER.debug("Renewing Vault token " + obscuredToken + " for " + renewTTL + " milliseconds.");
 				restTemplate.postForObject(refreshUri, request, String.class);
 			} catch (RestClientException e) {
-				LOGGER.error("Unable to renew Vault token. Is the token invalid or expired?");
+				LOGGER.error("Unable to renew Vault token " + obscuredToken + ". Is the token invalid or expired?");
 			}
 		}
 	}
