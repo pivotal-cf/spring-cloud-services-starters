@@ -97,7 +97,7 @@ public class VaultTokenRenewalAutoConfiguration {
 		return new HttpEntity<Map<String,Long>>(requestBody, headers);
 	}
 
-	static final class VaultTokenRefresher {
+	static class VaultTokenRefresher {
 
 		private final String obscuredToken;
 		private final long renewTTL;
