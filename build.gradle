@@ -55,7 +55,7 @@ configure(allprojects) {
 		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.2.5.RELEASE"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
 		jerseyClientVersion = "1.19.4"
-		javaCfenvVersion = "2.1.2.BUILD-SNAPSHOT"
+		javaCfenvVersion = "2.1.2.RELEASE"
 	}
 
 	repositories {
