@@ -3,6 +3,6 @@ io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration,\
 io.pivotal.spring.cloud.config.client.ConfigResourceClientAutoConfiguration
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-io.pivotal.spring.cloud.config.client.VaultPropertyMaskingContextInitializer,\
+io.pivotal.spring.cloud.config.client.PropertyMaskingContextInitializer,\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapConfiguration,\
 io.pivotal.spring.cloud.config.client.BootStrapConfiguration
