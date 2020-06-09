@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.pivotal.spring.cloud.config.client;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,17 +34,17 @@ import org.springframework.web.client.RestTemplate;
  * @author Dylan Roberts
  */
 @Configuration
-@ConditionalOnClass({ConfigClientProperties.class})
-@ConditionalOnProperty(prefix = "spring.cloud.config.client.oauth2",
-		name = { "client-id", "client-secret", "access-token-uri" })
-@AutoConfigureAfter({ ConfigClientAutoConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class })
-@EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
-public class PlainTextConfigClientAutoConfiguration {
+@ConditionalOnClass({ ConfigClientProperties.class })
+@AutoConfigureAfter({ ConfigClientAutoConfiguration.class,
+		ConfigClientOAuth2BootstrapConfiguration.class })
+public class ConfigResourceClientAutoConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean(PlainTextConfigClient.class)
-	public PlainTextConfigClient plainTextConfigClient(ConfigClientProperties configClientProperties,
-													   ConfigClientOAuth2Properties configClientOAuth2Properties) {
+	@ConditionalOnMissingBean(ConfigResourceClient.class)
+	@ConditionalOnProperty(prefix = "spring.cloud.config.client.oauth2",
+			name = { "client-id", "client-secret", "access-token-uri" })
+	public ConfigResourceClient configResourceClient(ConfigClientProperties configClientProperties,
+			ConfigClientOAuth2Properties configClientOAuth2Properties) {
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
 				.clientId(configClientOAuth2Properties.getClientId())
 				.clientSecret(configClientOAuth2Properties.getClientSecret())
@@ -53,6 +53,7 @@ public class PlainTextConfigClientAutoConfiguration {
 				.build();
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
-		return new PlainTextConfigClientImpl(restTemplate, configClientProperties);
+		return new OAuth2ConfigResourceClient(restTemplate, configClientProperties);
 	}
+
 }
