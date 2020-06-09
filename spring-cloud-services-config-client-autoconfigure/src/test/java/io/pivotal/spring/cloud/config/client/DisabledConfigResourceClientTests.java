@@ -31,10 +31,10 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Daniel Lavoie
  */
 @RunWith(SpringRunner.class)
-@Import(PlainTextConfigClientAutoConfiguration.class)
-@SpringBootTest(classes = DisabledPlainTextConfigClientTests.class)
+@Import(ConfigResourceClientAutoConfiguration.class)
+@SpringBootTest(classes = DisabledConfigResourceClientTests.class)
 @ActiveProfiles("integration-test")
-public class DisabledPlainTextConfigClientTests {
+public class DisabledConfigResourceClientTests {
 
 	@Autowired(required = false)
 	private PlainTextConfigClient plainTextConfigClient;

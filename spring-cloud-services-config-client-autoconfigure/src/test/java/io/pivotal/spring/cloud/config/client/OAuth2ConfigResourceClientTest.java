@@ -42,7 +42,7 @@ import org.springframework.web.client.RestTemplate;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
 		"spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true", "eureka.client.enabled=false"})
-public class PlainTextConfigClientImplTests {
+public class OAuth2ConfigResourceClientTest {
 	// @formatter:off
 	private static final String NGINX_CONFIG = "server {\n"
 			+ "    listen              80;\n"
@@ -65,7 +65,7 @@ public class PlainTextConfigClientImplTests {
 
 	private ConfigClientProperties configClientProperties;
 
-	private PlainTextConfigClient configClient;
+	private ConfigResourceClient configClient;
 
 	@Before
 	public void setUp() {
@@ -73,7 +73,7 @@ public class PlainTextConfigClientImplTests {
 		configClientProperties.setName("app");
 		configClientProperties.setProfile(null);
 		configClientProperties.setUri(new String[] {"http://localhost:" + port});
-		configClient = new PlainTextConfigClientImpl(new RestTemplate(), configClientProperties);
+		configClient = new OAuth2ConfigResourceClient(new RestTemplate(), configClientProperties);
 	}
 
 	@Test

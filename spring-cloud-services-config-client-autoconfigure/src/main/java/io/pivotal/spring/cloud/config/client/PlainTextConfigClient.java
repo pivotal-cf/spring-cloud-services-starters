@@ -31,20 +31,38 @@ public interface PlainTextConfigClient {
 	 * @throws IllegalArgumentException when application name or Config Server url is
 	 * undefined.
 	 * @throws HttpClientErrorException when a config file is not found.
-	 * @return a resource
 	 */
-	Resource getConfigFile(String path);
+	Resource getPlainTextResource(String path);
 
 	/**
 	 * Retrieves a config file.
-	 * 
+	 *
 	 * @throws IllegalArgumentException when application name or Config Server url is
 	 * undefined.
 	 * @throws HttpClientErrorException when a config file is not found.
-	 * @param profile the profile name
-	 * @param label the label
-	 * @param path config file name
-	 * @return resource
 	 */
-	Resource getConfigFile(String profile, String label, String path);
+	Resource getPlainTextResource(String profile, String label, String path);
+
+	/**
+	 * Retrieves a config file using the defaults profiles and labels.
+	 * @param path config file name
+	 * @throws IllegalArgumentException when application name or Config Server url is
+	 * undefined.
+	 * @throws HttpClientErrorException when a config file is not found.
+	 */
+	default Resource getConfigFile(String path) {
+		return this.getPlainTextResource(path);
+	}
+
+	/**
+	 * Retrieves a config file.
+	 *
+	 * @throws IllegalArgumentException when application name or Config Server url is
+	 * undefined.
+	 * @throws HttpClientErrorException when a config file is not found.
+	 */
+	default Resource getConfigFile(String profile, String label, String path) {
+		return this.getPlainTextResource(profile, label, path);
+	}
+
 }

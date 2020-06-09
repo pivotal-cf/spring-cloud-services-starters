@@ -40,7 +40,7 @@ import org.springframework.web.client.RestTemplate;
 		"spring.cloud.config.enabled=true",
 		"eureka.client.enabled=false"
 })
-public class PlainTextDefaultLabelTests {
+public class ConfigResourceClientDefaultLabelTest {
 
 	// @formatter:off
 	private static final String NGINX_CONFIG = "server {\n"
@@ -59,7 +59,7 @@ public class PlainTextDefaultLabelTests {
 		ConfigClientProperties configClientProperties = new ConfigClientProperties(new MockEnvironment());
 		configClientProperties.setName("spring-application-name");
 		configClientProperties.setUri(new String[] {"http://localhost:" + port});
-		configClient = new PlainTextConfigClientImpl(new RestTemplate(), configClientProperties);
+		configClient = new OAuth2ConfigResourceClient(new RestTemplate(), configClientProperties);
 	}
 
 	@Test
