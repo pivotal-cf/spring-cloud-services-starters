@@ -15,7 +15,6 @@
  */
 package io.pivotal.spring.cloud.config.client;
 
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -42,21 +41,25 @@ import org.springframework.util.StringUtils;
  * Ensure client applications have `keys-to-sanitize` set so boot will automatically mask sensitive properties.
  * If client has manually set this property, merge it with any SCS specific keys that need to be sanitized
  * <p>
- * Need to search the `bootstrapProperties` property source, for the composite source `configService:vault:...`
- * and add them to `keys-to-sanitize` because Boot doesn't support recursively sanitizing all properties in a single source
+ * Need to search the `bootstrapProperties` property source, for the composite source `configService:vault:...` or
+ * `configService:credhub-` and add them to `keys-to-sanitize` because Boot doesn't support recursively sanitizing
+ * all properties in a single source
  *
  * @author Ollie Hughes
+ * @author Craig Walls
+ * @see <a href="https://github.com/spring-projects/spring-boot/issues/6587"/>
  * @see <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">
  * Spring Boot Common application properties</a>
  */
 @Component
 @ConditionalOnClass(ConfigServicePropertySourceLocator.class)
-public class VaultPropertyMaskingContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class PropertyMaskingContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
 	static final String SANITIZE_ENV_KEY = "management.endpoint.env.keys-to-sanitize";
 	private static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrapProperties";
 	private static final String CONFIG_SERVICE_PROPERTY_SOURCE_NAME = "configService";
 	private static final String VAULT_PROPERTY_PATTERN = "vault:";
+	private static final String CREDHUB_PROPERTY_PATTERN = "credhub-";
 
 	@Override
 	public void initialize(ConfigurableApplicationContext applicationContext) {
@@ -65,13 +68,13 @@ public class VaultPropertyMaskingContextInitializer implements ApplicationContex
 
 		String[] defaultKeys = {"password", "secret", "key", "token", ".*credentials.*", "vcap_services"};
 		Set<String> propertiesToSanitize = Stream.of(defaultKeys)
-												 .collect(Collectors.toSet());
+				.collect(Collectors.toSet());
 
 		PropertySource<?> bootstrapProperties = propertySources.get(BOOTSTRAP_PROPERTY_SOURCE_NAME);
 		Set<PropertySource<?>> bootstrapNestedPropertySources = new HashSet<>();
 		Set<PropertySource<?>> configServiceNestedPropertySources = new HashSet<>();
 
-		if (bootstrapProperties instanceof CompositePropertySource) {
+		if (bootstrapProperties != null && bootstrapProperties instanceof CompositePropertySource) {
 			bootstrapNestedPropertySources.addAll(((CompositePropertySource) bootstrapProperties).getPropertySources());
 		}
 		for (PropertySource<?> nestedProperty : bootstrapNestedPropertySources) {
@@ -82,10 +85,10 @@ public class VaultPropertyMaskingContextInitializer implements ApplicationContex
 
 		Stream<String> vaultKeyNameStream =
 				configServiceNestedPropertySources.stream()
-												  .filter(ps -> ps instanceof EnumerablePropertySource)
-												  .filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN))
-												  .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
-												  .flatMap(Arrays::<String>stream);
+						.filter(ps -> ps instanceof EnumerablePropertySource)
+						.filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN) || ps.getName().startsWith(CREDHUB_PROPERTY_PATTERN))
+						.map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+						.flatMap(Arrays::<String>stream);
 
 		propertiesToSanitize.addAll(vaultKeyNameStream.collect(Collectors.toSet()));
 
@@ -93,7 +96,7 @@ public class VaultPropertyMaskingContextInitializer implements ApplicationContex
 				new PropertiesPropertySource(
 						SANITIZE_ENV_KEY, mergeClientProperties(propertySources, propertiesToSanitize));
 
-		environment.getPropertySources().addLast(envKeysToSanitize);
+		environment.getPropertySources().addFirst(envKeysToSanitize);
 		applicationContext.setEnvironment(environment);
 
 	}

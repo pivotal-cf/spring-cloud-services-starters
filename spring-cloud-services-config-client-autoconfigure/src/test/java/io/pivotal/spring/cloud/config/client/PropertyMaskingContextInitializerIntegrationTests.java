@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.test.context.ActiveProfiles;
@@ -37,10 +37,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class VaultPropertyMaskingContextInitializerIntegrationTests {
+public class PropertyMaskingContextInitializerIntegrationTests {
 
-	static final String VAULT_TEST_SANITIZE_PROPERTY = "MyHiddenData";
-	static final String GIT_TEST_NON_SANITIZE_PROPERTY = "ReadableProperty";
+	private static final String VAULT_TEST_SANITIZE_PROPERTY = "MyHiddenVaultData";
+	private static final String CREDHUB_TEST_SANITIZE_PROPERTY = "MyHiddenCredhubData";
+	private static final String GIT_TEST_NON_SANITIZE_PROPERTY = "ReadableProperty";
 
 	@SpringBootApplication
 	public static class TestVaultApplication {}
@@ -52,12 +53,16 @@ public class VaultPropertyMaskingContextInitializerIntegrationTests {
 			//Bootstrap properties contain all the Config Server properties
 			CompositePropertySource bootstrapPropSource = new CompositePropertySource("bootstrapProperties");
 
-			//Add vault properties that will be masked
 			String vaultPropertySourceName = "configService";
 			CompositePropertySource compositeProps = new CompositePropertySource(vaultPropertySourceName);
+			//Add vault properties that will be masked
 			Map<String, Object> fakeVaultProperties = new HashMap<>();
-			fakeVaultProperties.put(VaultPropertyMaskingContextInitializerIntegrationTests.VAULT_TEST_SANITIZE_PROPERTY, "SecretValue");
+			fakeVaultProperties.put(VAULT_TEST_SANITIZE_PROPERTY, "SecretVaultValue");
 			compositeProps.addPropertySource(new MapPropertySource("vault:test-data", fakeVaultProperties));
+			//Add credhub properties that will be masked
+			Map<String, Object> fakeCredhubProperties = new HashMap<>();
+			fakeCredhubProperties.put(CREDHUB_TEST_SANITIZE_PROPERTY, "SecretCredhubValue");
+			compositeProps.addPropertySource(new MapPropertySource("credhub-test-data", fakeCredhubProperties));
 
 			//Add Git properties that will not be masked (except the my-password which is part of the default sainitze keys)
 			Map<String, Object> fakeGitProperties = new HashMap<>();
@@ -73,42 +78,38 @@ public class VaultPropertyMaskingContextInitializerIntegrationTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes = {VaultPropertyMaskingContextInitializerIntegrationTests.TestVaultApplication.class},
+	@SpringBootTest(classes = { TestVaultApplication.class},
 			webEnvironment = WebEnvironment.RANDOM_PORT)
 	@ActiveProfiles("integration-test,native")
-	@ContextConfiguration(classes = VaultPropertyMaskingContextInitializerIntegrationTests.TestVaultApplication.class,
-			loader = VaultPropertyMaskingContextInitializerIntegrationTests.VaultPropertySourceContextLoader.class)
+	@ContextConfiguration(classes = TestVaultApplication.class,
+			loader = VaultPropertySourceContextLoader.class)
 	public static class TestVaultConfigClientProperties {
 
 		@Autowired
-		EnvironmentEndpoint environmentEndpoint;
+		Environment environment;
 
 		@Test
 		public void vaultPropertyIsIncludedInSantizeEndpoints() {
-			EnvironmentEndpoint.PropertySummaryDescriptor sanitizeEndpointsProp = environmentEndpoint
-					.environmentEntry(VaultPropertyMaskingContextInitializer.SANITIZE_ENV_KEY).getProperty();
+			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
 
-			assertThat(sanitizeEndpointsProp)
-					.withFailMessage("Sanitize endpoints property not found in environment")
-					.isNotNull();
+			assertThat(sanitizeEndpointsProp).isNotNull();
+			assertThat(sanitizeEndpointsProp).contains(VAULT_TEST_SANITIZE_PROPERTY);
+		}
+		
+		@Test
+		public void credhubPropertyIsIncludedInSantizeEndpoints() {
+			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
 
-			assertThat(sanitizeEndpointsProp.getValue().toString())
-					.withFailMessage("Sanitize endpoints property not equal to " + sanitizeEndpointsProp.getValue())
-					.contains(VAULT_TEST_SANITIZE_PROPERTY);
+			assertThat(sanitizeEndpointsProp).isNotNull();
+			assertThat(sanitizeEndpointsProp).contains(CREDHUB_TEST_SANITIZE_PROPERTY);
 		}
 
 		@Test
 		public void gitPropertyIsNotIncludedInSantizeEndpoints() {
-			EnvironmentEndpoint.PropertySummaryDescriptor sanitizeEndpointsProp = environmentEndpoint
-					.environmentEntry(VaultPropertyMaskingContextInitializer.SANITIZE_ENV_KEY).getProperty();
+			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
 
-			assertThat(sanitizeEndpointsProp)
-					.withFailMessage("Sanitize endpoints property not found in environment")
-					.isNotNull();
-
-			assertThat(sanitizeEndpointsProp.getValue().toString())
-					.withFailMessage("Sanitize endpoints property not equal to " + sanitizeEndpointsProp.getValue())
-					.doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);
+			assertThat(sanitizeEndpointsProp).isNotNull();
+			assertThat(sanitizeEndpointsProp).doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);
 		}
 
 	}
