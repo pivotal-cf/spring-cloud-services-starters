@@ -33,18 +33,20 @@ import org.springframework.web.client.RestTemplate;
  * @author Dylan Roberts
  */
 @Configuration
-@ConditionalOnClass({ConfigServicePropertySourceLocator.class})
+@ConditionalOnClass({ ConfigServicePropertySourceLocator.class })
 @ConditionalOnProperty(prefix = "spring.cloud.config.client.oauth2",
-		name = { "client-id", "client-secret", "access-token-uri"})
+		name = { "client-id", "client-secret", "access-token-uri" })
 @EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
 public class ConfigClientOAuth2BootstrapConfiguration {
+
 	private final ConfigServicePropertySourceLocator locator;
+
 	private final ConfigClientOAuth2Properties configClientOAuth2Properties;
 
 	public ConfigClientOAuth2BootstrapConfiguration(ConfigServicePropertySourceLocator locator,
-				ConfigClientOAuth2Properties configClientOAuth2Properties) {
-		Assert.notNull(locator, "Error injecting ConfigServicePropertySourceLocator, this can occur" +
-				"using self signed certificates in Cloud Foundry without setting the TRUST_CERTS environment variable");
+			ConfigClientOAuth2Properties configClientOAuth2Properties) {
+		Assert.notNull(locator, "Error injecting ConfigServicePropertySourceLocator, this can occur"
+				+ "using self signed certificates in Cloud Foundry without setting the TRUST_CERTS environment variable");
 		this.locator = locator;
 		this.configClientOAuth2Properties = configClientOAuth2Properties;
 	}
@@ -56,9 +58,9 @@ public class ConfigClientOAuth2BootstrapConfiguration {
 				.clientId(configClientOAuth2Properties.getClientId())
 				.clientSecret(configClientOAuth2Properties.getClientSecret())
 				.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.build();
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 		locator.setRestTemplate(restTemplate);
 	}
+
 }

@@ -38,25 +38,27 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
  */
 public class OAuth2AuthorizedClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    final ClientRegistration clientRegistration;
+	final ClientRegistration clientRegistration;
 
-    private OAuth2AccessToken accessToken;
+	private OAuth2AccessToken accessToken;
 
-    public OAuth2AuthorizedClientHttpRequestInterceptor(ClientRegistration clientRegistration) {
-        this.clientRegistration = clientRegistration;
-    }
+	public OAuth2AuthorizedClientHttpRequestInterceptor(ClientRegistration clientRegistration) {
+		this.clientRegistration = clientRegistration;
+	}
 
-    @Override
-    public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        Instant now = Clock.systemUTC().instant();
-        if (accessToken == null || now.isAfter(accessToken.getExpiresAt())) {
-            DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
-            OAuth2ClientCredentialsGrantRequest clientCredentialsGrantRequest = new OAuth2ClientCredentialsGrantRequest(clientRegistration);
-            accessToken = tokenResponseClient.getTokenResponse(clientCredentialsGrantRequest).getAccessToken();
-        }
+	@Override
+	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+			throws IOException {
+		Instant now = Clock.systemUTC().instant();
+		if (accessToken == null || now.isAfter(accessToken.getExpiresAt())) {
+			DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
+			OAuth2ClientCredentialsGrantRequest clientCredentialsGrantRequest = new OAuth2ClientCredentialsGrantRequest(
+					clientRegistration);
+			accessToken = tokenResponseClient.getTokenResponse(clientCredentialsGrantRequest).getAccessToken();
+		}
 
-        request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue());
-        return execution.execute(request, body);
-    }
+		request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue());
+		return execution.execute(request, body);
+	}
 
 }

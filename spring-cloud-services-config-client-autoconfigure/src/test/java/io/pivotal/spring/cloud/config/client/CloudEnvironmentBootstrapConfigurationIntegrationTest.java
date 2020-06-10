@@ -15,6 +15,7 @@
  */
 
 package io.pivotal.spring.cloud.config.client;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,7 +33,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CloudEnvironmentBootstrapConfigurationIntegrationTest.TestApplication.class,
-		properties = {"vcap.application.name=app-name"})
+		properties = { "vcap.application.name=app-name" })
 public class CloudEnvironmentBootstrapConfigurationIntegrationTest {
 
 	@Autowired
@@ -45,6 +46,8 @@ public class CloudEnvironmentBootstrapConfigurationIntegrationTest {
 	}
 
 	@SpringBootApplication
-	static class TestApplication {}
+	static class TestApplication {
+
+	}
 
 }

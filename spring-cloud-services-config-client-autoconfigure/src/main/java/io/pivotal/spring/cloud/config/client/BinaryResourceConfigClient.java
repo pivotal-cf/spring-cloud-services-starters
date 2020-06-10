@@ -20,14 +20,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
 
 /**
- * Provides access to binary resource files served by a Spring Cloud Config
- * Server.
+ * Provides access to binary resource files served by a Spring Cloud Config Server.
  *
  * @author Craig Walls
  * @author Anshul Mehra
  */
 public interface BinaryResourceConfigClient {
-	
+
 	/**
 	 * Retrieves a binary config file using the defaults profiles and labels.
 	 * @param path config file path relative to spring application folder
@@ -49,5 +48,5 @@ public interface BinaryResourceConfigClient {
 	 * @throws HttpClientErrorException when a config file is not found.
 	 */
 	Resource getBinaryResource(String profile, String label, String path);
-	
+
 }

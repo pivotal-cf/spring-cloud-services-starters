@@ -35,8 +35,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @ConditionalOnClass({ ConfigClientProperties.class })
-@AutoConfigureAfter({ ConfigClientAutoConfiguration.class,
-		ConfigClientOAuth2BootstrapConfiguration.class })
+@AutoConfigureAfter({ ConfigClientAutoConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class })
 public class ConfigResourceClientAutoConfiguration {
 
 	@Bean
@@ -49,8 +48,7 @@ public class ConfigResourceClientAutoConfiguration {
 				.clientId(configClientOAuth2Properties.getClientId())
 				.clientSecret(configClientOAuth2Properties.getClientSecret())
 				.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.build();
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 		return new OAuth2ConfigResourceClient(restTemplate, configClientProperties);

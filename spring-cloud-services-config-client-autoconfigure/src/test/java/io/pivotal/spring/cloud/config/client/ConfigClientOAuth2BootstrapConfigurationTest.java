@@ -36,50 +36,51 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Dylan Roberts
  */
 public class ConfigClientOAuth2BootstrapConfigurationTest {
-    private static final String CLIENT_ID = "clientId";
-    private static final String CLIENT_SECRET = "clientSecret";
-    private static final String TOKEN_URI = "tokenUri";
 
-    private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(
-                    ConfigClientAutoConfiguration.class,
-                    ConfigServiceBootstrapConfiguration.class,
-                    ConfigClientOAuth2BootstrapConfiguration.class));
+	private static final String CLIENT_ID = "clientId";
 
-    @Test
-    public void configServicePropertySourceLocatorHasOAuth2AuthorizedClientHttpRequestInterceptor() throws Exception {
-        this.contextRunner
-                .withPropertyValues(
-                        "spring.cloud.config.client.oauth2.client-id=" + CLIENT_ID,
-                        "spring.cloud.config.client.oauth2.client-secret=" + CLIENT_SECRET,
-                        "spring.cloud.config.client.oauth2.access-token-uri=" + TOKEN_URI)
-                .run(context -> {
-                    assertThat(context).hasSingleBean(ConfigServicePropertySourceLocator.class);
-                    ConfigServicePropertySourceLocator locator = context.getBean(ConfigServicePropertySourceLocator.class);
-                    RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(locator, "restTemplate");
-                    assertThat(restTemplate).isNotNull();
-                    assertThat(restTemplate.getInterceptors()).hasSize(1);
-                    assertThat(restTemplate.getInterceptors().get(0)).isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
-                    OAuth2AuthorizedClientHttpRequestInterceptor interceptor =
-                            (OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate.getInterceptors().get(0);
-                    ClientRegistration clientRegistration = interceptor.clientRegistration;
-                    assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
-                    assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
-                    assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
-                    assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
-                });
-    }
+	private static final String CLIENT_SECRET = "clientSecret";
 
-    @Test
-    public void configServicePropertySourceLocatorIsUnchanged() throws Exception {
-        this.contextRunner
-                .run(context -> {
-                    assertThat(context).hasSingleBean(ConfigServicePropertySourceLocator.class);
-                    ConfigServicePropertySourceLocator locator = context.getBean(ConfigServicePropertySourceLocator.class);
-                    Field restTemplateField = ReflectionUtils.findField(ConfigServicePropertySourceLocator.class, "restTemplate");
-                    restTemplateField.setAccessible(true);
-                    assertThat(ReflectionUtils.getField(restTemplateField, locator)).isNull();
-                });
-    }
+	private static final String TOKEN_URI = "tokenUri";
+
+	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(ConfigClientAutoConfiguration.class,
+					ConfigServiceBootstrapConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class));
+
+	@Test
+	public void configServicePropertySourceLocatorHasOAuth2AuthorizedClientHttpRequestInterceptor() throws Exception {
+		this.contextRunner.withPropertyValues("spring.cloud.config.client.oauth2.client-id=" + CLIENT_ID,
+				"spring.cloud.config.client.oauth2.client-secret=" + CLIENT_SECRET,
+				"spring.cloud.config.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
+					assertThat(context).hasSingleBean(ConfigServicePropertySourceLocator.class);
+					ConfigServicePropertySourceLocator locator = context
+							.getBean(ConfigServicePropertySourceLocator.class);
+					RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(locator, "restTemplate");
+					assertThat(restTemplate).isNotNull();
+					assertThat(restTemplate.getInterceptors()).hasSize(1);
+					assertThat(restTemplate.getInterceptors().get(0))
+							.isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
+					OAuth2AuthorizedClientHttpRequestInterceptor interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate
+							.getInterceptors().get(0);
+					ClientRegistration clientRegistration = interceptor.clientRegistration;
+					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
+					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
+					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
+					assertThat(clientRegistration.getAuthorizationGrantType())
+							.isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
+				});
+	}
+
+	@Test
+	public void configServicePropertySourceLocatorIsUnchanged() throws Exception {
+		this.contextRunner.run(context -> {
+			assertThat(context).hasSingleBean(ConfigServicePropertySourceLocator.class);
+			ConfigServicePropertySourceLocator locator = context.getBean(ConfigServicePropertySourceLocator.class);
+			Field restTemplateField = ReflectionUtils.findField(ConfigServicePropertySourceLocator.class,
+					"restTemplate");
+			restTemplateField.setAccessible(true);
+			assertThat(ReflectionUtils.getField(restTemplateField, locator)).isNull();
+		});
+	}
 
 }

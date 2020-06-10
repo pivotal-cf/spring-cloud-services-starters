@@ -22,6 +22,8 @@ import org.springframework.context.annotation.PropertySource;
  * @author Mark Pollack
  */
 @Configuration
-@PropertySource(name="springCloudServicesBootstrap", value= "classpath:/io/pivotal/spring/cloud/config/client/app-name.properties")
+@PropertySource(name = "springCloudServicesBootstrap",
+		value = "classpath:/io/pivotal/spring/cloud/config/client/app-name.properties")
 public class BootStrapConfiguration {
+
 }

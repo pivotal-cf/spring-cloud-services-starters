@@ -34,7 +34,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
 /**
- * 
  * @author Will Tran
  * @author Dylan Roberts
  *
@@ -42,21 +41,20 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 @Configuration
 @EnableConfigurationProperties(EurekaClientOAuth2Properties.class)
 @ConditionalOnClass({ EurekaClientConfig.class })
-@ConditionalOnProperty(prefix = "eureka.client.oauth2",
-		name = { "client-id", "client-secret", "access-token-uri" })
+@ConditionalOnProperty(prefix = "eureka.client.oauth2", name = { "client-id", "client-secret", "access-token-uri" })
 @AutoConfigureBefore(EurekaClientAutoConfiguration.class)
 public class EurekaClientOAuth2AutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(DiscoveryClientOptionalArgs.class)
-	public DiscoveryClientOptionalArgs discoveryClientOptionalArgs(EurekaClientOAuth2Properties eurekaClientOAuth2Properties) {
+	public DiscoveryClientOptionalArgs discoveryClientOptionalArgs(
+			EurekaClientOAuth2Properties eurekaClientOAuth2Properties) {
 		List<ClientFilter> filters = new ArrayList<>();
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
 				.clientId(eurekaClientOAuth2Properties.getClientId())
 				.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
 				.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.build();
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
 		filters.add(new EurekaOAuth2ClientFilterAdapter(clientRegistration));
 
 		DiscoveryClientOptionalArgs args = new DiscoveryClientOptionalArgs();
@@ -64,4 +62,5 @@ public class EurekaClientOAuth2AutoConfiguration {
 
 		return args;
 	}
+
 }

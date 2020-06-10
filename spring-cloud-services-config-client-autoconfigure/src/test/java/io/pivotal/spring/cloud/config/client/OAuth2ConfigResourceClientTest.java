@@ -40,9 +40,11 @@ import org.springframework.web.client.RestTemplate;
  * @author Dylan Roberts
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {
-		"spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true", "eureka.client.enabled=false"})
+@SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = { "spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true",
+				"eureka.client.enabled=false" })
 public class OAuth2ConfigResourceClientTest {
+
 	// @formatter:off
 	private static final String NGINX_CONFIG = "server {\n"
 			+ "    listen              80;\n"
@@ -51,14 +53,14 @@ public class OAuth2ConfigResourceClientTest {
 
 	private static final String DEV_NGINX_CONFIG = "server {\n"
 			+ "    listen              80;\n"
-			+ "    server_name         dev.example.com;\n" 
+			+ "    server_name         dev.example.com;\n"
 			+ "}";
 
 	private static final String TEST_NGINX_CONFIG = "server {\n"
 			+ "    listen              80;\n"
 			+ "    server_name         test.example.com;\n"
 			+ "}";
-	// @formatter:on 
+	// @formatter:on
 
 	@LocalServerPort
 	private int port;
@@ -72,21 +74,18 @@ public class OAuth2ConfigResourceClientTest {
 		configClientProperties = new ConfigClientProperties(new MockEnvironment());
 		configClientProperties.setName("app");
 		configClientProperties.setProfile(null);
-		configClientProperties.setUri(new String[] {"http://localhost:" + port});
+		configClientProperties.setUri(new String[] { "http://localhost:" + port });
 		configClient = new OAuth2ConfigResourceClient(new RestTemplate(), configClientProperties);
 	}
 
 	@Test
 	public void shouldFindSimplePlainFile() {
-		Assert.assertEquals(NGINX_CONFIG,
-				read(configClient.getConfigFile(null, null, "nginx.conf")));
+		Assert.assertEquals(NGINX_CONFIG, read(configClient.getConfigFile(null, null, "nginx.conf")));
 
-		Assert.assertEquals(DEV_NGINX_CONFIG,
-				read(configClient.getConfigFile("dev", "master", "nginx.conf")));
+		Assert.assertEquals(DEV_NGINX_CONFIG, read(configClient.getConfigFile("dev", "master", "nginx.conf")));
 
 		configClientProperties.setProfile("test");
-		Assert.assertEquals(TEST_NGINX_CONFIG,
-				read(configClient.getConfigFile("nginx.conf")));
+		Assert.assertEquals(TEST_NGINX_CONFIG, read(configClient.getConfigFile("nginx.conf")));
 	}
 
 	@Test(expected = HttpClientErrorException.class)
@@ -102,13 +101,12 @@ public class OAuth2ConfigResourceClientTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void missingConfigServerUrlShouldCrash() {
-		configClientProperties.setUri(new String[]{""});
+		configClientProperties.setUri(new String[] { "" });
 		configClient.getConfigFile("nginx.conf");
 	}
 
 	public String read(Resource resource) {
-		try (BufferedReader buffer = new BufferedReader(
-				new InputStreamReader(resource.getInputStream()))) {
+		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
 			return buffer.lines().collect(Collectors.joining("\n"));
 		}
 		catch (IOException e) {

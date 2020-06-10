@@ -31,16 +31,11 @@ import static org.junit.Assert.assertFalse;
  * @author Will Tran
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {TestApplication.class},
-		properties = {
-				"port=54321",
-				"cf.instance.internal.ip=1.2.3.4",
-				"vcap.application.uris[0]=www.route.local",
-				"vcap.application.instance_id=instance-id",
-				"spring.application.name=app-name_",
+@SpringBootTest(classes = { TestApplication.class },
+		properties = { "port=54321", "cf.instance.internal.ip=1.2.3.4", "vcap.application.uris[0]=www.route.local",
+				"vcap.application.instance_id=instance-id", "spring.application.name=app-name_",
 				"spring.cloud.services.registrationMethod=direct",
-				"eureka.client.serviceUrl.defaultZone=https://eureka-server"
-		})
+				"eureka.client.serviceUrl.defaultZone=https://eureka-server" })
 public class EurekaAutoConfigDirectIntegrationTest {
 
 	@Autowired

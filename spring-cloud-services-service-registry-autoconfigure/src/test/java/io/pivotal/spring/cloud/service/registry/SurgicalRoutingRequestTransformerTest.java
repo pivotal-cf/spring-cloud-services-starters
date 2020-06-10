@@ -41,6 +41,7 @@ public class SurgicalRoutingRequestTransformerTest {
 
 	@Mock
 	private ServiceInstance instance;
+
 	@Mock
 	private HttpRequest request;
 

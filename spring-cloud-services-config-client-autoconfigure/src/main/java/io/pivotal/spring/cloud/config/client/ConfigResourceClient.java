@@ -17,11 +17,11 @@
 package io.pivotal.spring.cloud.config.client;
 
 /**
- * Provides access to configuration resource files served by a Spring Cloud Config
- * Server.
+ * Provides access to configuration resource files served by a Spring Cloud Config Server.
  *
  * @author Craig Walls
  * @author Anshul Mehra
  */
 public interface ConfigResourceClient extends PlainTextConfigClient, BinaryResourceConfigClient {
+
 }

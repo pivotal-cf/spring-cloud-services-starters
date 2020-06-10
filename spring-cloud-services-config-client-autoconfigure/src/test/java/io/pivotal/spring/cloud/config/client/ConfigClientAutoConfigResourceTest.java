@@ -32,42 +32,41 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigClientAutoConfigResourceTest {
 
-	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class,
-					ConfigClientAutoConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class,
-					ConfigServiceBootstrapConfiguration.class));
+	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner().withConfiguration(
+			AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class, ConfigClientAutoConfiguration.class,
+					ConfigClientOAuth2BootstrapConfiguration.class, ConfigServiceBootstrapConfiguration.class));
 
 	@Test
 	public void plainTextConfigClientIsNotCreated() throws Exception {
-		this.contextRunner
-				.run(context -> {
-					assertThat(context).hasSingleBean(ConfigClientProperties.class);
-					assertThat(context).doesNotHaveBean(PlainTextConfigClient.class);
-				});
+		this.contextRunner.run(context -> {
+			assertThat(context).hasSingleBean(ConfigClientProperties.class);
+			assertThat(context).doesNotHaveBean(PlainTextConfigClient.class);
+		});
 	}
 
 	@Test
 	public void plainTextConfigClientIsCreated() throws Exception {
-		this.contextRunner
-				.withPropertyValues(
-						"spring.cloud.config.client.oauth2.client-id=acme",
-						"spring.cloud.config.client.oauth2.client-secret=acmesecret",
-						"spring.cloud.config.client.oauth2.access-token-uri=acmetokenuri")
-				.run(context -> {
+		this.contextRunner.withPropertyValues("spring.cloud.config.client.oauth2.client-id=acme",
+				"spring.cloud.config.client.oauth2.client-secret=acmesecret",
+				"spring.cloud.config.client.oauth2.access-token-uri=acmetokenuri").run(context -> {
 					assertThat(context).hasSingleBean(ConfigClientProperties.class);
 					assertThat(context).hasSingleBean(OAuth2ConfigResourceClient.class);
-					OAuth2ConfigResourceClient plainTextConfigClient = context.getBean(OAuth2ConfigResourceClient.class);
-					RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(plainTextConfigClient, "restTemplate");
+					OAuth2ConfigResourceClient plainTextConfigClient = context
+							.getBean(OAuth2ConfigResourceClient.class);
+					RestTemplate restTemplate = (RestTemplate) ReflectionTestUtils.getField(plainTextConfigClient,
+							"restTemplate");
 					assertThat(restTemplate).isNotNull();
 					assertThat(restTemplate.getInterceptors()).hasSize(1);
-					assertThat(restTemplate.getInterceptors().get(0)).isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
-					OAuth2AuthorizedClientHttpRequestInterceptor interceptor =
-							(OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate.getInterceptors().get(0);
+					assertThat(restTemplate.getInterceptors().get(0))
+							.isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
+					OAuth2AuthorizedClientHttpRequestInterceptor interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate
+							.getInterceptors().get(0);
 					ClientRegistration clientRegistration = interceptor.clientRegistration;
 					assertThat(clientRegistration.getClientId()).isEqualTo("acme");
 					assertThat(clientRegistration.getClientSecret()).isEqualTo("acmesecret");
 					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo("acmetokenuri");
-					assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
+					assertThat(clientRegistration.getAuthorizationGrantType())
+							.isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
 				});
 	}
 
