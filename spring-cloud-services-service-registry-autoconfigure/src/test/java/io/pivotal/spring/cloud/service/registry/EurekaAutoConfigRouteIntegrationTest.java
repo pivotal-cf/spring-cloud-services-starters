@@ -31,18 +31,11 @@ import static org.junit.Assert.assertTrue;
  * @author Will Tran
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = TestApplication.class,
-		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = {
-				"vcap.application.uris[0]=www.route.local",
-				"cf.instance.ip=1.2.3.4",
-				"cf.instance.port=54321",
+@SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+		properties = { "vcap.application.uris[0]=www.route.local", "cf.instance.ip=1.2.3.4", "cf.instance.port=54321",
 				"eureka.client.serviceUrl.defaultZone=https://eureka-123.west.my-cf.com/eureka/",
-				"vcap.application.instance_id=instance-id",
-				"spring.application.name=app-name_",
-				"spring.cloud.services.registrationMethod=route",
-				"eureka.client.enabled=true"
-		})
+				"vcap.application.instance_id=instance-id", "spring.application.name=app-name_",
+				"spring.cloud.services.registrationMethod=route", "eureka.client.enabled=true" })
 public class EurekaAutoConfigRouteIntegrationTest {
 
 	@Autowired

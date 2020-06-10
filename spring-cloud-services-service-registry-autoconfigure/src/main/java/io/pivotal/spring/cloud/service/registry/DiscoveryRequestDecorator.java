@@ -18,11 +18,11 @@ package io.pivotal.spring.cloud.service.registry;
 import org.springframework.http.HttpHeaders;
 
 /**
- * 
  * @author Will Tran
  *
  */
 public interface DiscoveryRequestDecorator {
 
 	HttpHeaders getHeaders();
+
 }

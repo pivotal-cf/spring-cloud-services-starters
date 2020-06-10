@@ -46,19 +46,20 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SurgicalRoutingRequestTransformerIntegrationTest.TestConfig.class, properties = {
-		"vcap.application.uris[0]=www.route.local",
-		"eureka.client.serviceUrl.defaultZone=https://eureka-server"
-})
+		"vcap.application.uris[0]=www.route.local", "eureka.client.serviceUrl.defaultZone=https://eureka-server" })
 public class SurgicalRoutingRequestTransformerIntegrationTest {
+
 	@Mock
 	private HttpRequest originalRequest;
+
 	@Mock
 	private ClientHttpRequestExecution execution;
+
 	@Mock
 	private ServiceInstance instance;
 
 	private final byte[] body = new byte[] {};
-	
+
 	@Autowired
 	private LoadBalancerRequestFactory lbReqFactory;
 
@@ -91,6 +92,7 @@ public class SurgicalRoutingRequestTransformerIntegrationTest {
 		public RestTemplate restTemplate() {
 			return new RestTemplate();
 		}
+
 	}
 
 }

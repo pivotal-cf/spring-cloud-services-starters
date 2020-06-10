@@ -34,40 +34,40 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
  * @author Dylan Roberts
  */
 public class EurekaClientOAuth2AutoConfigurationTest {
-    private static final String CLIENT_ID = "clientId";
-    private static final String CLIENT_SECRET = "clientSecret";
-    private static final String TOKEN_URI = "tokenUri";
 
-    private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(EurekaClientOAuth2AutoConfiguration.class));
-    @Test
-    public void discoveryClientOptionalArgs() {
-        contextRunner
-                .withPropertyValues(
-                        "eureka.client.oauth2.client-id=" + CLIENT_ID,
-                        "eureka.client.oauth2.client-secret=" + CLIENT_SECRET,
-                        "eureka.client.oauth2.access-token-uri=" + TOKEN_URI
-                )
-                .run(context -> {
-                    assertThat(context).hasSingleBean(DiscoveryClientOptionalArgs.class);
-                    DiscoveryClientOptionalArgs discoveryClientOptionalArgs =
-                            context.getBean(DiscoveryClientOptionalArgs.class);
-                    @SuppressWarnings("unchecked")
-                    Collection<ClientFilter> filters = (Collection<ClientFilter>) ReflectionTestUtils
-                            .getField(discoveryClientOptionalArgs, "additionalFilters");
-                    Optional<ClientFilter> clientFilterOptional =
-                            filters == null ? Optional.empty() : filters.stream().findFirst();
-                    assertThat(clientFilterOptional).isNotEmpty();
-                    EurekaOAuth2ClientFilterAdapter eurekaOAuth2ClientFilterAdapter =
-                            (EurekaOAuth2ClientFilterAdapter) clientFilterOptional.get();
-                    ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils.getField(
-                            eurekaOAuth2ClientFilterAdapter, "clientRegistration");
-                    assertThat(clientRegistration).isNotNull();
-                    assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
-                    assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
-                    assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
-                    assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(CLIENT_CREDENTIALS);
-                });
-    }
+	private static final String CLIENT_ID = "clientId";
+
+	private static final String CLIENT_SECRET = "clientSecret";
+
+	private static final String TOKEN_URI = "tokenUri";
+
+	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
+			.withConfiguration(AutoConfigurations.of(EurekaClientOAuth2AutoConfiguration.class));
+
+	@Test
+	public void discoveryClientOptionalArgs() {
+		contextRunner.withPropertyValues("eureka.client.oauth2.client-id=" + CLIENT_ID,
+				"eureka.client.oauth2.client-secret=" + CLIENT_SECRET,
+				"eureka.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
+					assertThat(context).hasSingleBean(DiscoveryClientOptionalArgs.class);
+					DiscoveryClientOptionalArgs discoveryClientOptionalArgs = context
+							.getBean(DiscoveryClientOptionalArgs.class);
+					@SuppressWarnings("unchecked")
+					Collection<ClientFilter> filters = (Collection<ClientFilter>) ReflectionTestUtils
+							.getField(discoveryClientOptionalArgs, "additionalFilters");
+					Optional<ClientFilter> clientFilterOptional = filters == null ? Optional.empty()
+							: filters.stream().findFirst();
+					assertThat(clientFilterOptional).isNotEmpty();
+					EurekaOAuth2ClientFilterAdapter eurekaOAuth2ClientFilterAdapter = (EurekaOAuth2ClientFilterAdapter) clientFilterOptional
+							.get();
+					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils
+							.getField(eurekaOAuth2ClientFilterAdapter, "clientRegistration");
+					assertThat(clientRegistration).isNotNull();
+					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
+					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
+					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
+					assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(CLIENT_CREDENTIALS);
+				});
+	}
 
 }

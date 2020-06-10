@@ -25,6 +25,7 @@ import org.springframework.web.client.HttpClientErrorException;
  * @author Daniel Lavoie
  */
 public interface PlainTextConfigClient {
+
 	/**
 	 * Retrieves a config file using the defaults profiles and labels.
 	 * @param path config file name
@@ -36,7 +37,6 @@ public interface PlainTextConfigClient {
 
 	/**
 	 * Retrieves a config file.
-	 *
 	 * @throws IllegalArgumentException when application name or Config Server url is
 	 * undefined.
 	 * @throws HttpClientErrorException when a config file is not found.
@@ -56,7 +56,6 @@ public interface PlainTextConfigClient {
 
 	/**
 	 * Retrieves a config file.
-	 *
 	 * @throws IllegalArgumentException when application name or Config Server url is
 	 * undefined.
 	 * @throws HttpClientErrorException when a config file is not found.

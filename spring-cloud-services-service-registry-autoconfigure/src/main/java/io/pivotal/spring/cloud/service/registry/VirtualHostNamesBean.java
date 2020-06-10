@@ -21,6 +21,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 final class VirtualHostNamesBean {
 
 	private String virtualHostName;
+
 	private String secureVirtualHostName;
 
 	public String getVirtualHostName() {
@@ -38,4 +39,5 @@ final class VirtualHostNamesBean {
 	public void setSecureVirtualHostName(String secureVirtualHostName) {
 		this.secureVirtualHostName = secureVirtualHostName;
 	}
+
 }

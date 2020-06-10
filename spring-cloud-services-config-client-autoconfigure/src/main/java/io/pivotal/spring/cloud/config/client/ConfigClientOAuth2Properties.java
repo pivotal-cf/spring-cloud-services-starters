@@ -23,31 +23,34 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.cloud.config.client.oauth2")
 public class ConfigClientOAuth2Properties {
 
-    private String clientId;
-    private String clientSecret;
-    private String accessTokenUri;
+	private String clientId;
 
-    public String getClientId() {
-        return clientId;
-    }
+	private String clientSecret;
 
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
+	private String accessTokenUri;
 
-    public String getClientSecret() {
-        return clientSecret;
-    }
+	public String getClientId() {
+		return clientId;
+	}
 
-    public void setClientSecret(String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
+	public void setClientId(String clientId) {
+		this.clientId = clientId;
+	}
 
-    public String getAccessTokenUri() {
-        return accessTokenUri;
-    }
+	public String getClientSecret() {
+		return clientSecret;
+	}
 
-    public void setAccessTokenUri(String accessTokenUri) {
-        this.accessTokenUri = accessTokenUri;
-    }
+	public void setClientSecret(String clientSecret) {
+		this.clientSecret = clientSecret;
+	}
+
+	public String getAccessTokenUri() {
+		return accessTokenUri;
+	}
+
+	public void setAccessTokenUri(String accessTokenUri) {
+		this.accessTokenUri = accessTokenUri;
+	}
+
 }

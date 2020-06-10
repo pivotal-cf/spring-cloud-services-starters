@@ -47,4 +47,5 @@ public class DisabledConfigResourceClientTests {
 		Assert.assertNotNull("Spring container is not initialized.", environment);
 		Assert.assertNull(plainTextConfigClient);
 	}
+
 }

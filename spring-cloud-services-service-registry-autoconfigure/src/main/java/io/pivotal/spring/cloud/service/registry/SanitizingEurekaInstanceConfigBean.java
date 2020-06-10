@@ -43,7 +43,8 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 			// default to eureka.instance.appname if defined
 			setVirtualHostName(eurekaInstanceAppname);
 			setSecureVirtualHostName(eurekaInstanceAppname);
-		} else if (StringUtils.hasText(springAppName)) {
+		}
+		else if (StringUtils.hasText(springAppName)) {
 			// default to a hostname-sanitized spring application name
 			String sanitizedAppName = sanitizeHostname(springAppName);
 			if (!springAppName.equals(sanitizedAppName)) {
@@ -82,7 +83,8 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 			throw new IllegalArgumentException(
 					"eureka.instance.virtualHostName '" + getVirtualHostName() + messageSuffix);
 		}
-		if (StringUtils.hasText(getSecureVirtualHostName()) && !getSecureVirtualHostName().equalsIgnoreCase(getAppname())) {
+		if (StringUtils.hasText(getSecureVirtualHostName())
+				&& !getSecureVirtualHostName().equalsIgnoreCase(getAppname())) {
 			throw new IllegalArgumentException(
 					"eureka.instance.secureVirtualHostName '" + getSecureVirtualHostName() + messageSuffix);
 		}

@@ -30,7 +30,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 /**
- *
  * @author Will Tran
  * @author Dylan Roberts
  *
@@ -38,6 +37,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 public class EurekaOAuth2ClientFilterAdapter extends ClientFilter {
 
 	private final ClientRegistration clientRegistration;
+
 	private OAuth2AccessToken accessToken;
 
 	public EurekaOAuth2ClientFilterAdapter(ClientRegistration clientRegistration) {
@@ -49,7 +49,8 @@ public class EurekaOAuth2ClientFilterAdapter extends ClientFilter {
 		Instant now = Clock.systemUTC().instant();
 		if (accessToken == null || now.isAfter(accessToken.getExpiresAt())) {
 			DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
-			OAuth2ClientCredentialsGrantRequest clientCredentialsGrantRequest = new OAuth2ClientCredentialsGrantRequest(clientRegistration);
+			OAuth2ClientCredentialsGrantRequest clientCredentialsGrantRequest = new OAuth2ClientCredentialsGrantRequest(
+					clientRegistration);
 			accessToken = tokenResponseClient.getTokenResponse(clientCredentialsGrantRequest).getAccessToken();
 		}
 

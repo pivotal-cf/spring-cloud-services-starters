@@ -31,9 +31,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * Configuration class to configure a Eureka instance's settings based on the
- * value of <code>spring.cloud.services.registrationMethod</code>. "route" will
- * register vcap.application.uris[0] while "direct" will register using the container IP address
+ * Configuration class to configure a Eureka instance's settings based on the value of
+ * <code>spring.cloud.services.registrationMethod</code>. "route" will register
+ * vcap.application.uris[0] while "direct" will register using the container IP address
  * and PORT environment variable. The default behaviour is "route".<br>
  * <br>
  * Any defined eureka.instance.* property will override those set by this
@@ -50,11 +50,17 @@ public class EurekaInstanceAutoConfiguration {
 	private static final Logger LOGGER = Logger.getLogger(EurekaInstanceAutoConfiguration.class.getName());
 
 	private static final String UNKNOWN_ZONE = "unknown";
+
 	private static final String INDETERMINATE_EUREKA_ZONE_MESSAGE = "Eureka zone could not be determined from %s=\"%s\". Using \"%s\".";
+
 	private static final String DEFAULT_ZONE_PROPERTY = "eureka.client.serviceUrl.defaultZone";
+
 	private static final String ROUTE_REGISTRATION_METHOD = "route";
+
 	private static final String DIRECT_REGISTRATION_METHOD = "direct";
+
 	private static final String INSTANCE_ID = "instanceId";
+
 	private static final String ZONE = "zone";
 
 	@Value("${vcap.application.uris[0]:}")
@@ -102,7 +108,7 @@ public class EurekaInstanceAutoConfiguration {
 
 		return getDefaultRegistration();
 	}
-	
+
 	@Bean
 	public SurgicalRoutingRequestTransformer surgicalRoutingLoadBalancerRequestTransformer() {
 		return new SurgicalRoutingRequestTransformer();
@@ -128,7 +134,8 @@ public class EurekaInstanceAutoConfiguration {
 		inetUtilsProperties.setDefaultHostname(hostname);
 		inetUtilsProperties.setDefaultIpAddress(ip);
 
-		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = new SanitizingEurekaInstanceConfigBean(new InetUtils(inetUtilsProperties));
+		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = new SanitizingEurekaInstanceConfigBean(
+				new InetUtils(inetUtilsProperties));
 		eurekaInstanceConfigBean.setHostname(hostname);
 		eurekaInstanceConfigBean.setIpAddress(ip);
 		Map<String, String> metadataMap = eurekaInstanceConfigBean.getMetadataMap();
@@ -144,12 +151,15 @@ public class EurekaInstanceAutoConfiguration {
 		String hostname = null;
 		try {
 			hostname = new URI(defaultZoneUri).getHost();
-		} catch (URISyntaxException e) {
-			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE + " %s", DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE, e));
+		}
+		catch (URISyntaxException e) {
+			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE + " %s", DEFAULT_ZONE_PROPERTY,
+					defaultZoneUri, UNKNOWN_ZONE, e));
 			return UNKNOWN_ZONE;
 		}
 		if (hostname == null || !hostname.contains(".")) {
-			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE, DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE));
+			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE, DEFAULT_ZONE_PROPERTY, defaultZoneUri,
+					UNKNOWN_ZONE));
 			return UNKNOWN_ZONE;
 		}
 		return hostname.substring(hostname.indexOf('.') + 1);
@@ -159,4 +169,5 @@ public class EurekaInstanceAutoConfiguration {
 		LOGGER.info("Eureka registration method not provided, defaulting to route");
 		return getRouteRegistration();
 	}
+
 }

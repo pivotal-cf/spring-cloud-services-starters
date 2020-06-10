@@ -35,11 +35,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT, properties = {
-		"spring.profiles.active=plaintext,native,integration-test",
-		"spring.cloud.config.enabled=true",
-		"eureka.client.enabled=false"
-})
+@SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT,
+		properties = { "spring.profiles.active=plaintext,native,integration-test", "spring.cloud.config.enabled=true",
+				"eureka.client.enabled=false" })
 public class ConfigResourceClientDefaultLabelTest {
 
 	// @formatter:off
@@ -58,23 +56,22 @@ public class ConfigResourceClientDefaultLabelTest {
 	public void setUp() {
 		ConfigClientProperties configClientProperties = new ConfigClientProperties(new MockEnvironment());
 		configClientProperties.setName("spring-application-name");
-		configClientProperties.setUri(new String[] {"http://localhost:" + port});
+		configClientProperties.setUri(new String[] { "http://localhost:" + port });
 		configClient = new OAuth2ConfigResourceClient(new RestTemplate(), configClientProperties);
 	}
 
 	@Test
 	public void shouldFindFileWithDefaultLabel() {
-		Assert.assertEquals(NGINX_CONFIG,
-				read(configClient.getConfigFile("default-label-nginx.conf")));
+		Assert.assertEquals(NGINX_CONFIG, read(configClient.getConfigFile("default-label-nginx.conf")));
 	}
 
 	private String read(Resource resource) {
-		try (BufferedReader buffer = new BufferedReader(
-				new InputStreamReader(resource.getInputStream()))) {
+		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
 			return buffer.lines().collect(Collectors.joining("\n"));
 		}
 		catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
+
 }
