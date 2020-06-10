@@ -1,3 +1,5 @@
+image:https://circleci.com/gh/pivotal-cf/spring-cloud-services-starters.svg?style=svg["CircleCI", link="https://circleci.com/gh/pivotal-cf/spring-cloud-services-starters"]
+
 = Spring Cloud Services Starters
 
 Spring Cloud Services Starters are a curated set of dependencies for use with link:https://docs.pivotal.io/spring-cloud-services/index.html[Spring Cloud Services] in a link:https://pivotal.io/platform[Pivotal Cloud Foundry] environment.
