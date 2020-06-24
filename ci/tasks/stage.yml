@@ -13,7 +13,7 @@ outputs:
   - name: stage-git-repo
   - name: distribution-repository
 params:
-  RELEASE_TYPE: ((release-type))
+  RELEASE_TYPE:
 caches:
   - path: maven
   - path: gradle

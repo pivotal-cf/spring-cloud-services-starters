@@ -13,9 +13,9 @@ inputs:
 outputs:
   - name: version
 params:
-  RELEASE_TYPE: ((release-type))
-  ARTIFACTORY_SERVER: ((artifactory-server))
-  ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-  ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+  RELEASE_TYPE:
+  ARTIFACTORY_SERVER:
+  ARTIFACTORY_USERNAME:
+  ARTIFACTORY_PASSWORD:
 run:
   path: git-repo/ci/scripts/promote.sh

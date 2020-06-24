@@ -15,11 +15,11 @@ jobs:
     plan:
     - get: git-repo
       trigger: true
+    - get: task-image
     - do:
       - task: build-project
         file: git-repo/ci/tasks/build-project.yml
-        vars:
-          branch: ((branch))
+        image: task-image
     - put: artifactory-repo
       params: &artifactory-params
         repo: libs-snapshot-local
@@ -34,11 +34,12 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        vars:
-          branch: ((branch))
-          release-type: M
+        image: task-image
+        params:
+          RELEASE_TYPE: M
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -50,11 +51,12 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        vars:
-          branch: ((branch))
-          release-type: RC
+        image: task-image
+        params:
+          RELEASE_TYPE: RC
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -66,11 +68,12 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        vars:
-          branch: ((branch))
-          release-type: RELEASE
+        image: task-image
+        params:
+          RELEASE_TYPE: RELEASE
       - put: artifactory-repo
         params:
           <<: *artifactory-params
@@ -86,12 +89,15 @@ jobs:
         passed: [stage-milestone]
         params:
           save_build_info: true
+      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        vars:
-          branch: ((branch))
-          release-type: M
-          artifactory-server: ((artifactory-server))
+        image: task-image
+        params:
+          RELEASE_TYPE: M
+          ARTIFACTORY_SERVER: ((artifactory-server))
+          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
   - name: promote-rc
     serial: true
     plan:
@@ -100,12 +106,15 @@ jobs:
         passed: [stage-rc]
         params:
           save_build_info: true
+      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        vars:
-          branch: ((branch))
-          release-type: RC
-          artifactory-server: ((artifactory-server))
+        image: task-image
+        params:
+          RELEASE_TYPE: RC
+          ARTIFACTORY_SERVER: ((artifactory-server))
+          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
   - name: promote-release
     serial: true
     plan:
@@ -114,12 +123,15 @@ jobs:
         passed: [stage-release]
         params:
           save_build_info: true
+      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        vars:
-          branch: ((branch))
-          release-type: RELEASE
-          artifactory-server: ((artifactory-server))
+        image: task-image
+        params:
+          RELEASE_TYPE: RC
+          ARTIFACTORY_SERVER: ((artifactory-server))
+          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
   - name: distribute-release
     serial: true
     plan:
@@ -128,15 +140,20 @@ jobs:
         passed: [promote-release]
         params:
           save_build_info: true
+      - get: task-image
       - task: distribute
         file: git-repo/ci/tasks/distribute.yml
-        vars:
-          branch: ((branch))
-          artifactory-server: ((artifactory-server))
-          bintray-subject: ((bintray-subject))
-          bintray-repo: ((bintray-repo))
-          bintray-package: ((bintray-package))
-          bintray-distribution-repo: ((bintray-distribution-repo))
+        image: task-image
+        params:
+          ARTIFACTORY_SERVER: ((artifactory-server))
+          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+          BINTRAY_SUBJECT: ((bintray-subject))
+          BINTRAY_REPO: ((bintray-repo))
+          BINTRAY_USERNAME: ((bintray-username))
+          BINTRAY_API_KEY: ((bintray-api-key))
+          BINTRAY_PACKAGE: ((bintray-package))
+          BINTRAY_DISTRIBUTION_REPO: ((bintray-distribution-repo))
   - name: sync-to-maven-central
     serial: true
     plan:
@@ -145,13 +162,17 @@ jobs:
         passed: [distribute-release]
         params:
           save_build_info: true
+      - get: task-image
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
-        vars:
-          branch: ((branch))
-          bintray-subject: ((bintray-subject))
-          bintray-repo: ((bintray-repo))
-          bintray-package: ((bintray-package))
+        params:
+          BINTRAY_REPO: ((bintray-repo))
+          BINTRAY_SUBJECT: ((bintray-subject))
+          BINTRAY_USERNAME: ((bintray-username))
+          BINTRAY_API_KEY: ((bintray-api-key))
+          BINTRAY_PACKAGE: ((bintray-package))
+          SONATYPE_USER_TOKEN: ((sonatype-user-token))
+          SONATYPE_PASSWORD_TOKEN: ((sonatype-user-token-password))
 
 resource_types:
   - name: artifactory-resource
@@ -185,6 +206,13 @@ resources:
     type: slack-notification
     source:
       url: ((scs-slack-webhook))
+  - name: task-image
+    type: registry-image
+    source:
+      repository: ((docker-hub-organization))/release-ci-image
+      username: ((docker-hub-username))
+      password: ((docker-hub-password))
+      tag: ((branch))
 groups:
   - name: "Build"
     jobs: ["build"]

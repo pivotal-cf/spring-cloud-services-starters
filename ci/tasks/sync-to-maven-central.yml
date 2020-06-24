@@ -11,12 +11,12 @@ inputs:
   - name: git-repo
   - name: artifactory-repo
 params:
-  BINTRAY_REPO: ((bintray-repo))
-  BINTRAY_SUBJECT: ((bintray-subject))
-  BINTRAY_USERNAME: ((bintray-username))
-  BINTRAY_API_KEY: ((bintray-api-key))
-  BINTRAY_PACKAGE: ((bintray-package))
-  SONATYPE_USER_TOKEN: ((sonatype-user-token))
-  SONATYPE_PASSWORD_TOKEN: ((sonatype-user-token-password))
+  BINTRAY_REPO:
+  BINTRAY_SUBJECT:
+  BINTRAY_USERNAME:
+  BINTRAY_API_KEY:
+  BINTRAY_PACKAGE:
+  SONATYPE_USER_TOKEN:
+  SONATYPE_PASSWORD_TOKEN:
 run:
   path: git-repo/ci/scripts/sync-to-maven-central.sh
