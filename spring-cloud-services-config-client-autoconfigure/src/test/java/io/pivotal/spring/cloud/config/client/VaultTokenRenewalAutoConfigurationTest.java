@@ -61,9 +61,9 @@ public class VaultTokenRenewalAutoConfigurationTest {
 	@Test
 	public void scheduledVaultTokenRefresh() {
 		contextRunner.withPropertyValues("spring.cloud.config.token=footoken", "vault.token.renew.rate=1000",
-				"spring.cloud.config.client.oauth2.client-id=" + CLIENT_ID,
-				"spring.cloud.config.client.oauth2.client-secret=" + CLIENT_SECRET,
-				"spring.cloud.config.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
+				"spring.cloud.config.client.oauth2.clientId=" + CLIENT_ID,
+				"spring.cloud.config.client.oauth2.clientSecret=" + CLIENT_SECRET,
+				"spring.cloud.config.client.oauth2.accessTokenUri=" + TOKEN_URI).run(context -> {
 					RestTemplate restTemplate = context.getBean("mockRestTemplate", RestTemplate.class);
 					await().atMost(Duration.FIVE_SECONDS).untilAsserted(() -> {
 						verify(restTemplate, atLeast(4)).postForObject(anyString(), any(HttpEntity.class), any());
