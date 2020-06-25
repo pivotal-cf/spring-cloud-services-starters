@@ -56,7 +56,8 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @ConditionalOnBean(ConfigClientProperties.class)
-@ConditionalOnProperty(name = "spring.cloud.config.token")
+@ConditionalOnProperty(prefix = "spring.cloud.config",
+		name = { "token", "client.oauth2.clientId", "client.oauth2.clientSecret", "client.oauth2.accessTokenUri" })
 @AutoConfigureAfter(ConfigClientAutoConfiguration.class)
 @EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
 @EnableScheduling
@@ -96,7 +97,7 @@ public class VaultTokenRenewalAutoConfiguration {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("X-Vault-Token", vaultToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		return new HttpEntity<Map<String, Long>>(requestBody, headers);
+		return new HttpEntity<>(requestBody, headers);
 	}
 
 	static class VaultTokenRefresher {
