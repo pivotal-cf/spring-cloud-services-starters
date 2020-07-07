@@ -22,6 +22,8 @@ dependencies {
     api "org.springframework.cloud:spring-cloud-config-client"
     api project(":spring-cloud-services-config-client-autoconfigure")
     api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
+    // Pin the java-cfenv core library until spring-cloud bom (Hoxton) bug is fixed. https://github.com/spring-cloud/spring-cloud-release/issues/186
+    api "io.pivotal.cfenv:java-cfenv"
 }
 
 install {
