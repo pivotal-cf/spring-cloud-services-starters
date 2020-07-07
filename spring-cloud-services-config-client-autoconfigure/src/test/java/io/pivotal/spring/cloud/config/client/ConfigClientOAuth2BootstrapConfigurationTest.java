@@ -44,6 +44,7 @@ public class ConfigClientOAuth2BootstrapConfigurationTest {
 	private static final String TOKEN_URI = "tokenUri";
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
+			.withAllowBeanDefinitionOverriding(true)
 			.withConfiguration(AutoConfigurations.of(ConfigClientAutoConfiguration.class,
 					ConfigServiceBootstrapConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class));
 

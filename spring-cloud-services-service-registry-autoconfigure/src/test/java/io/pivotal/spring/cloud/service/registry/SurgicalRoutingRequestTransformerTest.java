@@ -15,23 +15,24 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)

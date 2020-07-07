@@ -36,6 +36,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -104,7 +105,7 @@ public class SanitizingEurekaInstanceConfigBeanTest {
 					"eureka.instance.virtualHostName:vhn", "eureka.instance.secureVirtualHostName:ean");
 		}
 		catch (BeanCreationException e) {
-			Assert.assertThat(e.getMessage(), Matchers.containsString("eureka.instance.virtualHostName"));
+			assertThat(e.getMessage(), Matchers.containsString("eureka.instance.virtualHostName"));
 			return;
 		}
 		Assert.fail();
@@ -117,7 +118,7 @@ public class SanitizingEurekaInstanceConfigBeanTest {
 					"eureka.instance.virtualHostName:ean", "eureka.instance.secureVirtualHostName:svhn");
 		}
 		catch (BeanCreationException e) {
-			Assert.assertThat(e.getMessage(), Matchers.containsString("eureka.instance.secureVirtualHostName"));
+			assertThat(e.getMessage(), Matchers.containsString("eureka.instance.secureVirtualHostName"));
 			return;
 		}
 		Assert.fail();

@@ -32,9 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigClientAutoConfigResourceTest {
 
-	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner().withConfiguration(
-			AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class, ConfigClientAutoConfiguration.class,
-					ConfigClientOAuth2BootstrapConfiguration.class, ConfigServiceBootstrapConfiguration.class));
+	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
+			.withAllowBeanDefinitionOverriding(true)
+			.withConfiguration(AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class,
+					ConfigClientAutoConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class,
+					ConfigServiceBootstrapConfiguration.class));
 
 	@Test
 	public void plainTextConfigClientIsNotCreated() throws Exception {
