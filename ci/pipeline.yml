@@ -128,7 +128,7 @@ jobs:
         file: git-repo/ci/tasks/promote.yml
         image: task-image
         params:
-          RELEASE_TYPE: RC
+          RELEASE_TYPE: RELEASE
           ARTIFACTORY_SERVER: ((artifactory-server))
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
