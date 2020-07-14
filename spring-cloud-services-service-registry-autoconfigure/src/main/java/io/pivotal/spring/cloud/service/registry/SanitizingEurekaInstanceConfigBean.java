@@ -15,14 +15,14 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
-
-import java.util.logging.Logger;
 
 final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean implements InitializingBean {
 

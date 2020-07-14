@@ -15,11 +15,8 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.netflix.discovery.DiscoveryClient.DiscoveryClientOptionalArgs;
-import com.sun.jersey.api.client.filter.ClientFilter;
+import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -49,19 +46,15 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 		contextRunner.withPropertyValues("eureka.client.oauth2.client-id=" + CLIENT_ID,
 				"eureka.client.oauth2.client-secret=" + CLIENT_SECRET,
 				"eureka.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
-					assertThat(context).hasSingleBean(DiscoveryClientOptionalArgs.class);
-					DiscoveryClientOptionalArgs discoveryClientOptionalArgs = context
-							.getBean(DiscoveryClientOptionalArgs.class);
+					assertThat(context).hasSingleBean(OAuth2DiscoveryClientOptionalArgs.class);
+					OAuth2DiscoveryClientOptionalArgs discoveryClientOptionalArgs = context
+							.getBean(OAuth2DiscoveryClientOptionalArgs.class);
 					@SuppressWarnings("unchecked")
-					Collection<ClientFilter> filters = (Collection<ClientFilter>) ReflectionTestUtils
-							.getField(discoveryClientOptionalArgs, "additionalFilters");
-					Optional<ClientFilter> clientFilterOptional = filters == null ? Optional.empty()
-							: filters.stream().findFirst();
-					assertThat(clientFilterOptional).isNotEmpty();
-					EurekaOAuth2ClientFilterAdapter eurekaOAuth2ClientFilterAdapter = (EurekaOAuth2ClientFilterAdapter) clientFilterOptional
-							.get();
-					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils
-							.getField(eurekaOAuth2ClientFilterAdapter, "clientRegistration");
+					TransportClientFactories<Void> factories = (TransportClientFactories) ReflectionTestUtils
+							.getField(discoveryClientOptionalArgs, "transportClientFactories");
+					assertThat(factories).isNotNull();
+					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils.getField(factories,
+							"clientRegistration");
 					assertThat(clientRegistration).isNotNull();
 					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
 					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);

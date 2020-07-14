@@ -15,12 +15,8 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.netflix.discovery.DiscoveryClient.DiscoveryClientOptionalArgs;
 import com.netflix.discovery.EurekaClientConfig;
-import com.sun.jersey.api.client.filter.ClientFilter;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -47,20 +43,14 @@ public class EurekaClientOAuth2AutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(DiscoveryClientOptionalArgs.class)
-	public DiscoveryClientOptionalArgs discoveryClientOptionalArgs(
+	public OAuth2DiscoveryClientOptionalArgs discoveryClientOptionalArgs(
 			EurekaClientOAuth2Properties eurekaClientOAuth2Properties) {
-		List<ClientFilter> filters = new ArrayList<>();
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
 				.clientId(eurekaClientOAuth2Properties.getClientId())
 				.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
 				.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
-		filters.add(new EurekaOAuth2ClientFilterAdapter(clientRegistration));
-
-		DiscoveryClientOptionalArgs args = new DiscoveryClientOptionalArgs();
-		args.setAdditionalFilters(filters);
-
-		return args;
+		return new OAuth2DiscoveryClientOptionalArgs(clientRegistration);
 	}
 
 }

@@ -15,37 +15,40 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.io.IOException;
 import java.time.Clock;
 import java.time.Instant;
 
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientRequest;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.filter.ClientFilter;
-
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 
 /**
- * @author Will Tran
- * @author Dylan Roberts
+ * {@link ClientHttpRequestInterceptor} implementation to add authorization header to
+ * request based on an {@link OAuth2AuthorizedClient}.
  *
+ * @author Dylan Roberts
  */
-public class EurekaOAuth2ClientFilterAdapter extends ClientFilter {
+public class OAuth2AuthorizedClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-	private final ClientRegistration clientRegistration;
+	final ClientRegistration clientRegistration;
 
 	private OAuth2AccessToken accessToken;
 
-	public EurekaOAuth2ClientFilterAdapter(ClientRegistration clientRegistration) {
+	public OAuth2AuthorizedClientHttpRequestInterceptor(ClientRegistration clientRegistration) {
 		this.clientRegistration = clientRegistration;
 	}
 
 	@Override
-	public ClientResponse handle(ClientRequest cr) throws ClientHandlerException {
+	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
+			throws IOException {
 		Instant now = Clock.systemUTC().instant();
 		if (accessToken == null || now.isAfter(accessToken.getExpiresAt())) {
 			DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
@@ -54,9 +57,8 @@ public class EurekaOAuth2ClientFilterAdapter extends ClientFilter {
 			accessToken = tokenResponseClient.getTokenResponse(clientCredentialsGrantRequest).getAccessToken();
 		}
 
-		cr.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue());
-
-		return getNext().handle(cr);
+		request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue());
+		return execution.execute(request, body);
 	}
 
 }

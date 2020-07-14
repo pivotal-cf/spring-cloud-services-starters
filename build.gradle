@@ -57,7 +57,6 @@ configure(allprojects) {
 		springBootVersion = project.findProperty("springBootVersion") ?: "2.3.1.RELEASE"
 		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.2.7.RELEASE"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
-		jerseyClientVersion = "1.19.4"
 		javaCfenvVersion = "2.2.1.RELEASE"
 	}
 
@@ -267,7 +266,6 @@ configure(subprojects) {
 			dependency "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
 			dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfenvVersion}"
 			dependency "io.pivotal.cfenv:java-cfenv:${javaCfenvVersion}"
-			dependency "com.sun.jersey:jersey-client:${jerseyClientVersion}"
 		}
 	}
 }
