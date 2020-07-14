@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import org.springframework.http.HttpHeaders;
+import com.netflix.discovery.AbstractDiscoveryClientOptionalArgs;
+
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 
 /**
- * @author Will Tran
- *
+ * @author Dylan Roberts
  */
-public interface DiscoveryRequestDecorator {
+public class OAuth2DiscoveryClientOptionalArgs extends AbstractDiscoveryClientOptionalArgs<Void> {
 
-	HttpHeaders getHeaders();
+	public OAuth2DiscoveryClientOptionalArgs(ClientRegistration clientRegistration) {
+		setTransportClientFactories(new OAuth2TransportClientFactories(clientRegistration));
+	}
 
 }
