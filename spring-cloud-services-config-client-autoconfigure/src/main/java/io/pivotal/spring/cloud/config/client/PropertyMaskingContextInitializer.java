@@ -101,7 +101,7 @@ public class PropertyMaskingContextInitializer
 		PropertiesPropertySource envKeysToSanitize = new PropertiesPropertySource(SANITIZE_ENV_KEY,
 				mergeClientProperties(propertySources, propertiesToSanitize));
 
-		environment.getPropertySources().addFirst(envKeysToSanitize);
+		environment.getPropertySources().addLast(envKeysToSanitize);
 		applicationContext.setEnvironment(environment);
 
 	}
