@@ -17,8 +17,8 @@
 package io.pivotal.spring.cloud.config.client;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
-import org.awaitility.Duration;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -65,7 +65,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 				"spring.cloud.config.client.oauth2.clientSecret=" + CLIENT_SECRET,
 				"spring.cloud.config.client.oauth2.accessTokenUri=" + TOKEN_URI).run(context -> {
 					RestTemplate restTemplate = context.getBean("mockRestTemplate", RestTemplate.class);
-					await().atMost(Duration.FIVE_SECONDS).untilAsserted(() -> {
+					await().atMost(5l, TimeUnit.SECONDS).untilAsserted(() -> {
 						verify(restTemplate, atLeast(4)).postForObject(anyString(), any(HttpEntity.class), any());
 						assertThat(restTemplate.getInterceptors()).hasSize(1);
 						assertThat(restTemplate.getInterceptors().get(0))
