@@ -24,7 +24,7 @@ buildscript {
 		classpath("io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE")
 		classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.6.1")
 		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.9.9")
-		classpath("io.spring.nohttp:nohttp-gradle:0.0.3.RELEASE")
+		classpath("io.spring.nohttp:nohttp-gradle:0.0.5.RELEASE")
 		classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.22")
 	}
 }
