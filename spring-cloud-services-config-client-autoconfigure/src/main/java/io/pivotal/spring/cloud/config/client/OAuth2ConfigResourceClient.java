@@ -16,6 +16,8 @@
 
 package io.pivotal.spring.cloud.config.client;
 
+import java.util.Optional;
+
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -58,14 +60,6 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Resource getPlainTextResource(String path) {
-		return getPlainTextResource(null, null, path);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public Resource getPlainTextResource(String profile, String label, String path) {
 		return getResource(profile, label, path, ResourceType.PLAINTEXT);
 	}
@@ -92,6 +86,7 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 
 		Assert.notEmpty(configClientProperties.getUri(), "Config server URI is undefined");
 		Assert.hasText(configClientProperties.getUri()[0], "Config server URI is undefined.");
+		Assert.hasText(Optional.ofNullable(label).orElse(configClientProperties.getLabel()), "label is undefined");
 
 		if (profile == null) {
 			profile = configClientProperties.getProfile();
@@ -107,9 +102,6 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(configClientProperties.getUri()[0])
 				.pathSegment(configClientProperties.getName()).pathSegment(profile).pathSegment(label)
 				.pathSegment(path);
-		if (label == null) {
-			urlBuilder.queryParam("useDefaultLabel");
-		}
 		RequestEntity.HeadersBuilder<?> requestBuilder = RequestEntity.get(urlBuilder.build().toUri());
 		if (StringUtils.hasText(configClientProperties.getToken())) {
 			requestBuilder.header(TOKEN_HEADER, configClientProperties.getToken());

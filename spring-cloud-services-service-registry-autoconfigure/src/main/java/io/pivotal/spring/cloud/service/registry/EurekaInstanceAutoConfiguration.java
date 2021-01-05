@@ -28,6 +28,7 @@ import org.springframework.cloud.commons.util.InetUtilsProperties;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -94,7 +95,7 @@ public class EurekaInstanceAutoConfiguration {
 
 	@Bean
 	public EurekaInstanceConfigBean eurekaInstanceConfigBean() {
-		if (!StringUtils.isEmpty(registrationMethod)) {
+		if (!ObjectUtils.isEmpty(registrationMethod)) {
 			LOGGER.info("Eureka registration method: " + registrationMethod);
 
 			if (ROUTE_REGISTRATION_METHOD.equals(registrationMethod)) {

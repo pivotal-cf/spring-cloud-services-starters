@@ -84,9 +84,10 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 	}
 
 	@RunWith(SpringRunner.class)
-	@SpringBootTest(classes = { TestVaultApplication.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+	@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 	@ActiveProfiles({ "integration-test", "native" })
-	@ContextConfiguration(classes = TestVaultApplication.class, loader = VaultPropertySourceContextLoader.class)
+	@ContextConfiguration(classes = TestVaultApplication.class, loader = VaultPropertySourceContextLoader.class,
+			initializers = PropertyMaskingContextInitializer.class)
 	public static class TestVaultConfigClientProperties {
 
 		@Autowired

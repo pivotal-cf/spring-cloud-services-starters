@@ -28,7 +28,7 @@ dependencies {
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.junit.jupiter:junit-jupiter-api')
-    testRuntimeOnly('org.junit.vintage:junit-vintage-engine')
+	testImplementation('org.junit.vintage:junit-vintage-engine')
     testImplementation("org.springframework.cloud:spring-cloud-config-server")
     testImplementation("org.awaitility:awaitility:${awaitilityVersion}")
 }

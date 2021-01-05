@@ -80,29 +80,29 @@ public class OAuth2ConfigResourceClientTest {
 
 	@Test
 	public void shouldFindSimplePlainFile() {
-		Assert.assertEquals(NGINX_CONFIG, read(configClient.getConfigFile(null, null, "nginx.conf")));
+		Assert.assertEquals(NGINX_CONFIG, read(configClient.getPlainTextResource(null, "master", "nginx.conf")));
 
-		Assert.assertEquals(DEV_NGINX_CONFIG, read(configClient.getConfigFile("dev", "master", "nginx.conf")));
+		Assert.assertEquals(DEV_NGINX_CONFIG, read(configClient.getPlainTextResource("dev", "master", "nginx.conf")));
 
 		configClientProperties.setProfile("test");
-		Assert.assertEquals(TEST_NGINX_CONFIG, read(configClient.getConfigFile("nginx.conf")));
+		Assert.assertEquals(TEST_NGINX_CONFIG, read(configClient.getPlainTextResource(null, "master", "nginx.conf")));
 	}
 
 	@Test(expected = HttpClientErrorException.class)
 	public void missingConfigFileShouldReturnHttpError() {
-		configClient.getConfigFile("missing-config.xml");
+		configClient.getPlainTextResource(null, "master", "missing-config.xml");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void missingApplicationNameShouldCrash() {
 		configClientProperties.setName("");
-		configClient.getConfigFile("nginx.conf");
+		configClient.getPlainTextResource(null, "master", "nginx.conf");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void missingConfigServerUrlShouldCrash() {
 		configClientProperties.setUri(new String[] { "" });
-		configClient.getConfigFile("nginx.conf");
+		configClient.getPlainTextResource(null, "master", "nginx.conf");
 	}
 
 	public String read(Resource resource) {
