@@ -20,6 +20,9 @@ jobs:
       - task: build-project
         file: git-repo/ci/tasks/build-project.yml
         image: task-image
+        params:
+          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
     - put: artifactory-repo
       params: &artifactory-params
         repo: libs-snapshot-local
