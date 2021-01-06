@@ -9,3 +9,6 @@ caches:
   - path: gradle
 run:
   path: git-repo/ci/scripts/build-project.sh
+params:
+  ARTIFACTORY_USERNAME:
+  ARTIFACTORY_PASSWORD:
