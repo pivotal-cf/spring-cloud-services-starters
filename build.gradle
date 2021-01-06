@@ -17,7 +17,13 @@
 buildscript {
 	repositories {
 		mavenCentral()
-		maven { url "https://repo.spring.io/plugins-release" }
+		maven {
+			url "https://repo.spring.io/plugins-release"
+			credentials {
+				username = "${buildmasterName}"
+				password = "${buildmasterPass}"
+			}
+		}
 	}
 	dependencies {
 		classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
@@ -67,12 +73,6 @@ configure(allprojects) {
 
 	dependencies {
 		testRuntimeOnly("io.spring.nohttp:nohttp:0.0.5.RELEASE")
-	}
-
-	if (project.hasProperty("springFrameworkVersion") || project.hasProperty("springBootVersion") ) {
-		repositories {
-			maven { url "https://repo.spring.io/libs-snapshot" }
-		}
 	}
 
 	ext.javadocLinks = [
