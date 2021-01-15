@@ -256,6 +256,8 @@ configure(subprojects - project(":spring-cloud-services-dependencies")) {
 		imports {
 			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+			// FIXME: remove the following bom once upgraded to springCloudVersion>=2020.0.1
+			mavenBom "org.springframework.cloud:spring-cloud-config-dependencies:3.0.1"
 		}
 	}
 }
