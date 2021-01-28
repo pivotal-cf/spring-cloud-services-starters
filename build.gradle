@@ -56,7 +56,7 @@ configure(allprojects) {
 		springBootVersion = "2.4.2"
 		springFrameworkVersion = "5.3.3"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
-		javaCfenvVersion = "2.2.5.RELEASE"
+		javaCfenvVersion = "2.2.6.BUILD-SNAPSHOT"
 	}
 
 	repositories {
