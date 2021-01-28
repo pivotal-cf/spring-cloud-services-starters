@@ -258,7 +258,6 @@ configure(subprojects) {
 		dependencies {
 			dependency "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
 			dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfenvVersion}"
-			dependency "io.pivotal.cfenv:java-cfenv:${javaCfenvVersion}"
 		}
 	}
 }
