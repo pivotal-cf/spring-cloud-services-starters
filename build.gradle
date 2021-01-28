@@ -52,7 +52,7 @@ configure(allprojects) {
 	apply plugin: "io.spring.javaformat"
 
 	ext {
-		springCloudVersion = "2020.0.0"
+		springCloudVersion = "2020.0.1"
 		springBootVersion = "2.4.2"
 		springFrameworkVersion = "5.3.3"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
@@ -249,8 +249,6 @@ configure(subprojects - project(":spring-cloud-services-dependencies")) {
 		imports {
 			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
-			// FIXME: remove the following bom once upgraded to springCloudVersion>=2020.0.1
-			mavenBom "org.springframework.cloud:spring-cloud-config-dependencies:3.0.1"
 		}
 	}
 }
