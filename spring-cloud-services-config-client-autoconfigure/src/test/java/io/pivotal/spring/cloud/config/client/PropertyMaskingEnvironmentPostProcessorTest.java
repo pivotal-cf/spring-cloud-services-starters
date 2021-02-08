@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 the original author or authors.
+ * Copyright 2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PropertyMaskingContextInitializerIntegrationTests {
+public class PropertyMaskingEnvironmentPostProcessorTest {
 
 	private static final String VAULT_TEST_SANITIZE_PROPERTY = "MyHiddenVaultData";
 
@@ -54,30 +54,28 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 
 		@Override
 		protected ConfigurableEnvironment getEnvironment() {
-			// Bootstrap properties contain all the Config Server properties
-			CompositePropertySource bootstrapPropSource = new CompositePropertySource("bootstrapProperties");
-
-			String vaultPropertySourceName = "configService";
-			CompositePropertySource compositeProps = new CompositePropertySource(vaultPropertySourceName);
 			// Add vault properties that will be masked
 			Map<String, Object> fakeVaultProperties = new HashMap<>();
 			fakeVaultProperties.put(VAULT_TEST_SANITIZE_PROPERTY, "SecretVaultValue");
-			compositeProps.addPropertySource(new MapPropertySource("vault:test-data", fakeVaultProperties));
+			MapPropertySource vaultProperties = new MapPropertySource("configserver:vault:test-data",
+					fakeVaultProperties);
 			// Add credhub properties that will be masked
 			Map<String, Object> fakeCredhubProperties = new HashMap<>();
 			fakeCredhubProperties.put(CREDHUB_TEST_SANITIZE_PROPERTY, "SecretCredhubValue");
-			compositeProps.addPropertySource(new MapPropertySource("credhub-test-data", fakeCredhubProperties));
+			MapPropertySource credhubProperties = new MapPropertySource("configserver:credhub-test-data",
+					fakeCredhubProperties);
 
 			// Add Git properties that will not be masked (except the my-password which is
 			// part of the default sainitze keys)
 			Map<String, Object> fakeGitProperties = new HashMap<>();
 			fakeGitProperties.put(GIT_TEST_NON_SANITIZE_PROPERTY, "ReadableValue");
 			fakeGitProperties.put("my-password", "supersecret");
-			compositeProps.addPropertySource(new MapPropertySource("git:test-data", fakeGitProperties));
+			MapPropertySource gitProperties = new MapPropertySource("configserver:git:test-data", fakeGitProperties);
 
-			bootstrapPropSource.addPropertySource(compositeProps);
 			StandardEnvironment environment = new StandardEnvironment();
-			environment.getPropertySources().addFirst(bootstrapPropSource);
+			environment.getPropertySources().addFirst(vaultProperties);
+			environment.getPropertySources().addFirst(credhubProperties);
+			environment.getPropertySources().addFirst(gitProperties);
 			return environment;
 		}
 
@@ -86,8 +84,7 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 	@RunWith(SpringRunner.class)
 	@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 	@ActiveProfiles({ "integration-test", "native" })
-	@ContextConfiguration(classes = TestVaultApplication.class, loader = VaultPropertySourceContextLoader.class,
-			initializers = PropertyMaskingContextInitializer.class)
+	@ContextConfiguration(classes = TestVaultApplication.class, loader = VaultPropertySourceContextLoader.class)
 	public static class TestVaultConfigClientProperties {
 
 		@Autowired
@@ -95,7 +92,8 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 
 		@Test
 		public void vaultPropertyIsIncludedInSantizeEndpoints() {
-			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
+			String sanitizeEndpointsProp = environment
+					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).contains(VAULT_TEST_SANITIZE_PROPERTY);
@@ -103,7 +101,8 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 
 		@Test
 		public void credhubPropertyIsIncludedInSantizeEndpoints() {
-			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
+			String sanitizeEndpointsProp = environment
+					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).contains(CREDHUB_TEST_SANITIZE_PROPERTY);
@@ -111,7 +110,8 @@ public class PropertyMaskingContextInitializerIntegrationTests {
 
 		@Test
 		public void gitPropertyIsNotIncludedInSantizeEndpoints() {
-			String sanitizeEndpointsProp = environment.getProperty(PropertyMaskingContextInitializer.SANITIZE_ENV_KEY);
+			String sanitizeEndpointsProp = environment
+					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);

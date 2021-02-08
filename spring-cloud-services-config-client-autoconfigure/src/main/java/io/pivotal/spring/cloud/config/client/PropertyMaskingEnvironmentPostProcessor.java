@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.cloud.config.client.ConfigServicePropertySourceLocator;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.CompositePropertySource;
+import org.apache.commons.logging.Log;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -41,56 +39,45 @@ import org.springframework.util.StringUtils;
  * sensitive properties. If client has manually set this property, merge it with any SCS
  * specific keys that need to be sanitized
  * <p>
- * Need to search the `bootstrapProperties` property source, for the composite source
- * `configService:vault:...` or `configService:credhub-` and add them to
- * `keys-to-sanitize` because Boot doesn't support recursively sanitizing all properties
- * in a single source
+ * Need to search for the composite source `configService:vault:...` or
+ * `configService:credhub-` and add them to `keys-to-sanitize` because Boot doesn't
+ * support recursively sanitizing all properties in a single source
  *
  * @author Ollie Hughes
  * @author Craig Walls
+ * @author Dylan Roberts
  * @see <a href="https://github.com/spring-projects/spring-boot/issues/6587"/>
  * @see <a href=
  * "https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html">
  * Spring Boot Common application properties</a>
  */
-@Component
-@ConditionalOnClass(ConfigServicePropertySourceLocator.class)
-public class PropertyMaskingContextInitializer
-		implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class PropertyMaskingEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
 	static final String SANITIZE_ENV_KEY = "management.endpoint.env.keys-to-sanitize";
 
-	private static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrapProperties";
+	private static final String VAULT_PROPERTY_PATTERN = "configserver:vault:";
 
-	private static final String CONFIG_SERVICE_PROPERTY_SOURCE_NAME = "configService";
+	private static final String CREDHUB_PROPERTY_PATTERN = "configserver:credhub-";
 
-	private static final String VAULT_PROPERTY_PATTERN = "vault:";
+	private final Log log;
 
-	private static final String CREDHUB_PROPERTY_PATTERN = "credhub-";
+	public PropertyMaskingEnvironmentPostProcessor(Log log) {
+		this.log = log;
+	}
 
 	@Override
-	public void initialize(ConfigurableApplicationContext applicationContext) {
-		ConfigurableEnvironment environment = applicationContext.getEnvironment();
-		MutablePropertySources propertySources = environment.getPropertySources();
-
+	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		String[] defaultKeys = { "password", "secret", "key", "token", ".*credentials.*", "vcap_services" };
 		Set<String> propertiesToSanitize = Stream.of(defaultKeys).collect(Collectors.toSet());
 
-		PropertySource<?> bootstrapProperties = propertySources.get(BOOTSTRAP_PROPERTY_SOURCE_NAME);
-		Set<PropertySource<?>> bootstrapNestedPropertySources = new HashSet<>();
-		Set<PropertySource<?>> configServiceNestedPropertySources = new HashSet<>();
-
-		if (bootstrapProperties != null && bootstrapProperties instanceof CompositePropertySource) {
-			bootstrapNestedPropertySources.addAll(((CompositePropertySource) bootstrapProperties).getPropertySources());
-		}
-		for (PropertySource<?> nestedProperty : bootstrapNestedPropertySources) {
-			if (nestedProperty.getName().equals(CONFIG_SERVICE_PROPERTY_SOURCE_NAME)) {
-				configServiceNestedPropertySources
-						.addAll(((CompositePropertySource) nestedProperty).getPropertySources());
-			}
+		MutablePropertySources propertySources = environment.getPropertySources();
+		Set<PropertySource<?>> configserverPropertySources = new HashSet<>();
+		for (PropertySource<?> propertySource : propertySources) {
+			if (propertySource.getName().startsWith("configserver:"))
+				configserverPropertySources.add(propertySource);
 		}
 
-		Stream<String> vaultKeyNameStream = configServiceNestedPropertySources.stream()
+		Stream<String> vaultKeyNameStream = configserverPropertySources.stream()
 				.filter(ps -> ps instanceof EnumerablePropertySource)
 				.filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN)
 						|| ps.getName().startsWith(CREDHUB_PROPERTY_PATTERN))
@@ -102,7 +89,6 @@ public class PropertyMaskingContextInitializer
 				mergeClientProperties(propertySources, propertiesToSanitize));
 
 		environment.getPropertySources().addLast(envKeysToSanitize);
-		applicationContext.setEnvironment(environment);
 
 	}
 

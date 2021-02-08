@@ -2,10 +2,8 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration,\
 io.pivotal.spring.cloud.config.client.ConfigResourceClientAutoConfiguration
 
-org.springframework.cloud.bootstrap.BootstrapConfiguration=\
-io.pivotal.spring.cloud.config.client.PropertyMaskingContextInitializer,\
-io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapConfiguration,\
-io.pivotal.spring.cloud.config.client.BootStrapConfiguration
-
 org.springframework.boot.Bootstrapper=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2Bootstrapper
+
+org.springframework.boot.env.EnvironmentPostProcessor=\
+io.pivotal.spring.cloud.config.client.PropertyMaskingEnvironmentPostProcessor
