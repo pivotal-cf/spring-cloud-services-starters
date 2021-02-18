@@ -20,8 +20,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 /**
  * @author Dylan Roberts
  */
-@ConfigurationProperties(prefix = "spring.cloud.config.client.oauth2")
+@ConfigurationProperties(prefix = ConfigClientOAuth2Properties.PREFIX)
 public class ConfigClientOAuth2Properties {
+
+	protected static final String PREFIX = "spring.cloud.config.client.oauth2";
 
 	private String clientId;
 

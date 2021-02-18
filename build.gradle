@@ -62,6 +62,7 @@ configure(allprojects) {
 	repositories {
 		mavenCentral()
 		maven { url "https://repo.spring.io/libs-release" }
+		maven { url "https://repo.spring.io/libs-snapshot" }
 	}
 
 	dependencies {
@@ -258,6 +259,7 @@ configure(subprojects) {
 		dependencies {
 			dependency "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
 			dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfenvVersion}"
+			dependency "io.pivotal.cfenv:java-cfenv:${javaCfenvVersion}"
 		}
 	}
 }
