@@ -6,4 +6,6 @@ org.springframework.boot.Bootstrapper=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2Bootstrapper
 
 org.springframework.boot.env.EnvironmentPostProcessor=\
-io.pivotal.spring.cloud.config.client.PropertyMaskingEnvironmentPostProcessor
+io.pivotal.spring.cloud.config.client.PropertyMaskingEnvironmentPostProcessor,\
+io.pivotal.spring.cloud.config.client.ApplicationNameEnvironmentPostProcessor,\
+io.pivotal.spring.cloud.config.client.ConfigClientEnvironmentPostProcessor

@@ -36,7 +36,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 @ConditionalOnClass({ ConfigClientProperties.class })
-@AutoConfigureAfter({ ConfigClientAutoConfiguration.class, ConfigClientOAuth2BootstrapConfiguration.class })
+@AutoConfigureAfter({ ConfigClientAutoConfiguration.class })
 @EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
 public class ConfigResourceClientAutoConfiguration {
 

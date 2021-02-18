@@ -20,9 +20,10 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter")
     optional("org.springframework.security:spring-security-oauth2-client")
     optional("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    optional("io.pivotal.cfenv:java-cfenv")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation('org.junit.jupiter:junit-jupiter-api')
-	testImplementation('org.junit.vintage:junit-vintage-engine')
+    testImplementation('org.junit.vintage:junit-vintage-engine')
     testImplementation("org.springframework.boot:spring-boot-starter-web")
 }
