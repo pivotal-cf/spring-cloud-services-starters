@@ -35,7 +35,7 @@ public class ApplicationNameEnvironmentPostProcessor implements EnvironmentPostP
 		if (applicationName != null) {
 			MapPropertySource propertySource = new MapPropertySource("springCloudServicesApplicationName",
 					Collections.singletonMap("spring.application.name", applicationName));
-			environment.getPropertySources().addFirst(propertySource);
+			environment.getPropertySources().addLast(propertySource);
 		}
 	}
 
