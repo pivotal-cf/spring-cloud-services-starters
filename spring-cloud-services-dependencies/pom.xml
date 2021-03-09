@@ -38,7 +38,8 @@
 		<main.basedir>${basedir}/../..</main.basedir>
 		<spring-cloud-services-connectors.version>2.4.0</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
-		<spring-cloud-starter-netflix.version>2.2.7.RELEASE</spring-cloud-starter-netflix.version>
+		<spring-cloud-starter-netflix-eureka.version>3.0.1</spring-cloud-starter-netflix-eureka.version>
+		<spring-cloud-starter-netflix-hystrix.version>2.2.7.RELEASE</spring-cloud-starter-netflix-hystrix.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -61,17 +62,17 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-				<version>${spring-cloud-starter-netflix.version}</version>
+				<version>${spring-cloud-starter-netflix-hystrix.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-netflix-hystrix-stream</artifactId>
-				<version>${spring-cloud-starter-netflix.version}</version>
+				<version>${spring-cloud-starter-netflix-hystrix.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-				<version>${spring-cloud-starter-netflix.version}</version>
+				<version>${spring-cloud-starter-netflix-eureka.version}</version>
 			</dependency>
 			<!-- dependencies -->
 			<dependency>
