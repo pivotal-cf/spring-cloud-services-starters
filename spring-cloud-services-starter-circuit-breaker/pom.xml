@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.pivotal.spring.cloud</groupId>
 		<artifactId>spring-cloud-services-dependencies-parent</artifactId>
-		<version>2.4.1-SNAPSHOT</version>
+		<version>2.4.1</version>
 		<relativePath>../spring-cloud-services-dependencies-parent</relativePath>
 	</parent>
 	<artifactId>spring-cloud-services-starter-circuit-breaker</artifactId>
