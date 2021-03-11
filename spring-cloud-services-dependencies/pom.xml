@@ -36,7 +36,7 @@
 	</developers>
 	<properties>
 		<main.basedir>${basedir}/../..</main.basedir>
-		<spring-cloud-services-connectors.version>2.4.1-SNAPSHOT</spring-cloud-services-connectors.version>
+		<spring-cloud-services-connectors.version>2.4.1</spring-cloud-services-connectors.version>
 		<cloudfoundry-certificate-truster.version>1.0.1.RELEASE</cloudfoundry-certificate-truster.version>
 		<spring-cloud-starter-netflix-eureka.version>3.0.1</spring-cloud-starter-netflix-eureka.version>
 		<spring-cloud-starter-netflix-hystrix.version>2.2.7.RELEASE</spring-cloud-starter-netflix-hystrix.version>
