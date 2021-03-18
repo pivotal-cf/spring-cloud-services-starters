@@ -52,7 +52,7 @@ configure(allprojects) {
 	apply plugin: "io.spring.javaformat"
 
 	ext {
-		springCloudVersion = "2020.0.1"
+		springCloudVersion = "2020.0.2"
 		springBootVersion = "2.4.2"
 		springFrameworkVersion = "5.3.3"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
