@@ -42,7 +42,7 @@ import org.springframework.web.client.RestTemplate;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true",
-				"eureka.client.enabled=false" })
+				"eureka.client.enabled=false", "spring.config.import=optional:configserver:" })
 public class OAuth2ConfigResourceClientTest {
 
 	// @formatter:off
