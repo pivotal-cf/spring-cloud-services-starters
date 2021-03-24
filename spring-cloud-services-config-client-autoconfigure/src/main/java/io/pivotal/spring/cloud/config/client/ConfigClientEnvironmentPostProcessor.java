@@ -16,7 +16,9 @@
 package io.pivotal.spring.cloud.config.client;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor;
@@ -40,6 +42,8 @@ import io.pivotal.cfenv.core.CfService;
  */
 public class ConfigClientEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
+	private static final String SPRING_CLOUD_SERVICES_CONFIG_IMPORT = "springCloudServicesConfigImport";
+
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		CfEnv cfEnv = new CfEnv();
@@ -47,10 +51,10 @@ public class ConfigClientEnvironmentPostProcessor implements EnvironmentPostProc
 		if (configServices.size() != 1)
 			return;
 		CfCredentials credentials = configServices.stream().findFirst().get().getCredentials();
-
-		MapPropertySource propertySource = new MapPropertySource("springCloudServicesConfigImport",
-				Collections.singletonMap("spring.config.import", "optional:configserver:" + credentials.getUri()));
-		environment.getPropertySources().addFirst(propertySource);
+		Map<String, Object> map = new HashMap<>();
+		map.put("spring.config.import", "optional:configserver:" + credentials.getUri());
+		map.put("spring.cloud.refresh.additional-property-sources-to-retain", SPRING_CLOUD_SERVICES_CONFIG_IMPORT);
+		environment.getPropertySources().addFirst(new MapPropertySource(SPRING_CLOUD_SERVICES_CONFIG_IMPORT, map));
 	}
 
 	@Override
