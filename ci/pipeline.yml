@@ -6,7 +6,7 @@ aliases:
       icon_emoji: ":animal:"
       username: concourse
       channel: {{scs-slack-failure-channel}}
-      text: <!here> Build <https://scs.ci.springapps.io/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
+      text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
 
 jobs:
   - name: build
@@ -27,7 +27,7 @@ jobs:
       params: &artifactory-params
         repo: libs-snapshot-local
         folder: distribution-repository
-        build_uri: "https://scs.ci.springapps.io/teams/main/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+        build_uri: "${ATC_EXTERNAL_URL}/teams/spring-cloud-services/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
         build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
         disable_checksum_uploads: true
     on_failure:
@@ -181,12 +181,12 @@ resource_types:
   - name: artifactory-resource
     type: docker-image
     source:
-      repository: springio/artifactory-resource
+      repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
       tag: 0.0.7
   - name: slack-notification
     type: docker-image
     source:
-      repository: cfcommunity/slack-notification-resource
+      repository: ((dockerhub-mirror-registry))/cfcommunity/slack-notification-resource
       tag: latest
 
 resources:
@@ -212,12 +212,10 @@ resources:
   - name: task-image
     type: registry-image
     source:
-      repository: ((docker-hub-organization))/release-ci-image
-      username: ((docker-hub-username))
-      password: ((docker-hub-password))
+      repository: ((dockerhub-mirror-registry))/((docker-hub-organization))/release-ci-image
       tag: ((branch))
 groups:
-  - name: "Build"
+  - name: "build"
     jobs: ["build"]
-  - name: "Release"
+  - name: "release"
     jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "distribute-release", "sync-to-maven-central"]
