@@ -169,13 +169,9 @@ jobs:
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
         params:
-          BINTRAY_REPO: ((bintray-repo))
-          BINTRAY_SUBJECT: ((bintray-subject))
-          BINTRAY_USERNAME: ((bintray-username))
-          BINTRAY_API_KEY: ((bintray-api-key))
-          BINTRAY_PACKAGE: ((bintray-package))
           SONATYPE_USER_TOKEN: ((sonatype-user-token))
           SONATYPE_PASSWORD_TOKEN: ((sonatype-user-token-password))
+          SONATYPE_STAGING_PROFILE_ID: ((sonatype-staging-profile-id))
 
 resource_types:
   - name: artifactory-resource
