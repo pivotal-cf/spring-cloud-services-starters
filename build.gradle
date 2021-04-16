@@ -53,7 +53,7 @@ configure(allprojects) {
 
 	ext {
 		springCloudVersion = "2020.0.2"
-		springBootVersion = "2.4.4"
+		springBootVersion = "2.4.5"
 		springFrameworkVersion = "5.3.5"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
 		javaCfenvVersion = "2.3.1-SNAPSHOT"
