@@ -1,19 +1,5 @@
 #Spring Cloud Services Starters CI Pipeline
 
-## Running CI pipeline locally
-CircleCI allows pipelines to be run locally, this is very useful for development purposes
-
-- Install circle command line tool to run local builds:
-```$bash
-curl -o /usr/local/bin/circleci https://circle-downloads.s3.amazonaws.com/releases/build_agent_wrapper/circleci && \
-chmod +x /usr/local/bin/circleci
-```
-
-- Run script to execute pipeline
-```$bash
-ci/scripts/run-local-ci-job.sh
-```
-
 ## Releasing
 
 ./pipeline.yml is a release pipeline inspired by the one created by the Spring boot team https://github.com/spring-projects/spring-boot/blob/master/ci/
