@@ -5,6 +5,6 @@ bintray-package: spring-cloud-services-starters
 bintray-repo: jars
 bintray-subject: spring
 build-name: spring-cloud-services-starters
-branch: master
+branch: 3.1.x
 artifactory-server: https://repo.spring.io
 github-repo: https://github.com/pivotal-cf/spring-cloud-services-starters
