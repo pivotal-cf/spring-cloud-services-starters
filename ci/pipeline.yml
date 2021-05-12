@@ -189,9 +189,9 @@ resources:
       repository: ((corporate-harbor-registry))/((docker-hub-organization))/release-ci-image
       username: ((corporate-harbor-robot-account.username))
       password: ((corporate-harbor-robot-account.password))
-      tag: master
+      tag: main
 groups:
   - name: "build"
     jobs: ["build"]
   - name: "release"
-    jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "distribute-release", "sync-to-maven-central"]
+    jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "sync-to-maven-central"]
