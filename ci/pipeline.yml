@@ -186,7 +186,9 @@ resources:
   - name: task-image
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/((docker-hub-organization))/release-ci-image
+      repository: ((corporate-harbor-registry))/((docker-hub-organization))/release-ci-image
+      username: ((corporate-harbor-robot-account.username))
+      password: ((corporate-harbor-robot-account.password))
       tag: master
 groups:
   - name: "build"
