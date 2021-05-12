@@ -4,6 +4,7 @@ inputs:
   - name: git-repo
   - name: artifactory-repo
 params:
+  SONATYPE_URL:
   SONATYPE_USERNAME:
   SONATYPE_PASSWORD:
   SONATYPE_STAGING_PROFILE_ID:
