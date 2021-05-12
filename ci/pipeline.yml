@@ -209,7 +209,7 @@ resources:
     type: registry-image
     source:
       repository: ((dockerhub-mirror-registry))/((docker-hub-organization))/release-ci-image
-      tag: main
+      tag: master
 groups:
   - name: "build"
     jobs: ["build"]
