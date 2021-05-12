@@ -146,6 +146,7 @@ jobs:
       - get: task-image
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
+        image: task-image
         params:
           SONATYPE_USERNAME: ((sonatype-user-token))
           SONATYPE_PASSWORD: ((sonatype-user-token-password))
