@@ -4,8 +4,8 @@ inputs:
   - name: git-repo
   - name: artifactory-repo
 params:
-  SONATYPE_USER_TOKEN:
-  SONATYPE_PASSWORD_TOKEN:
+  SONATYPE_USERNAME:
+  SONATYPE_PASSWORD:
   SONATYPE_STAGING_PROFILE_ID:
 run:
   path: git-repo/ci/scripts/sync-to-maven-central.sh
