@@ -18,7 +18,7 @@ package io.pivotal.spring.cloud.config.client;
 import java.util.List;
 
 import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.Bootstrapper;
+import org.springframework.boot.BootstrapRegistryInitializer;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.util.ClassUtils;
@@ -29,13 +29,13 @@ import io.pivotal.cfenv.core.CfEnv;
 import io.pivotal.cfenv.core.CfService;
 
 /**
- * Using {@link CfEnv} directly as a {@link Bootstrapper} is required to setup the
- * RestTemplate that calls config-server. There's presently no earlier extension point
- * that java-cfenv library can use to setup the properties before this is called.
+ * Using {@link CfEnv} directly as a {@link BootstrapRegistryInitializer} is required to
+ * setup the RestTemplate that calls config-server. There's presently no earlier extension
+ * point that java-cfenv library can use to setup the properties before this is called.
  *
  * @author Dylan Roberts
  */
-public class ConfigClientOAuth2Bootstrapper implements Bootstrapper {
+public class ConfigClientOAuth2BootstrapRegistryInitializer implements BootstrapRegistryInitializer {
 
 	private static final boolean CONFIG_CLIENT_IS_PRESENT = ClassUtils
 			.isPresent("org.springframework.cloud.config.client.ConfigServerConfigDataLoader", null);
@@ -46,7 +46,7 @@ public class ConfigClientOAuth2Bootstrapper implements Bootstrapper {
 	private static final boolean JAVA_CFENV_IS_PRESENT = ClassUtils.isPresent("io.pivotal.cfenv.core.CfEnv", null);
 
 	@Override
-	public void intitialize(BootstrapRegistry registry) {
+	public void initialize(BootstrapRegistry registry) {
 		if (!CONFIG_CLIENT_IS_PRESENT || !OAUTH2_CLIENT_IS_PRESENT || !JAVA_CFENV_IS_PRESENT)
 			return;
 
