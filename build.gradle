@@ -54,11 +54,11 @@ configure(allprojects) {
 	apply plugin: "io.spring.javaformat"
 
 	ext {
-		springCloudVersion = "Hoxton.SR10"
-		springBootVersion = project.findProperty("springBootVersion") ?: "2.3.10.RELEASE"
-		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.2.14.RELEASE"
+		springCloudVersion = "Hoxton.SR11"
+		springBootVersion = project.findProperty("springBootVersion") ?: "2.3.12.RELEASE"
+		springFrameworkVersion = project.findProperty("springFrameworkVersion") ?: "5.2.15.RELEASE"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
-		javaCfenvVersion = "2.2.4.RELEASE"
+		javaCfenvVersion = "2.2.6.BUILD-SNAPSHOT"
 	}
 
 	repositories {
