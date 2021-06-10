@@ -25,6 +25,8 @@ jobs:
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
     - put: artifactory-repo
       params: &artifactory-params
+        signing_key: ((signing-key))
+        signing_passphrase: ((signing-passphrase))
         repo: libs-snapshot-local
         folder: distribution-repository
         build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
@@ -135,7 +137,7 @@ jobs:
           ARTIFACTORY_SERVER: ((artifactory-server))
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
-  - name: distribute-release
+  - name: sync-to-maven-central
     serial: true
     plan:
       - get: git-repo
@@ -144,33 +146,13 @@ jobs:
         params:
           save_build_info: true
       - get: task-image
-      - task: distribute
-        file: git-repo/ci/tasks/distribute.yml
-        image: task-image
-        params:
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
-          BINTRAY_SUBJECT: ((bintray-subject))
-          BINTRAY_REPO: ((bintray-repo))
-          BINTRAY_USERNAME: ((bintray-username))
-          BINTRAY_API_KEY: ((bintray-api-key))
-          BINTRAY_PACKAGE: ((bintray-package))
-          BINTRAY_DISTRIBUTION_REPO: ((bintray-distribution-repo))
-  - name: sync-to-maven-central
-    serial: true
-    plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [distribute-release]
-        params:
-          save_build_info: true
-      - get: task-image
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
+        image: task-image
         params:
-          SONATYPE_USER_TOKEN: ((sonatype-user-token))
-          SONATYPE_PASSWORD_TOKEN: ((sonatype-user-token-password))
+          SONATYPE_URL: ((sonatype-url))
+          SONATYPE_USERNAME: ((sonatype-user-token))
+          SONATYPE_PASSWORD: ((sonatype-user-token-password))
           SONATYPE_STAGING_PROFILE_ID: ((sonatype-staging-profile-id))
 
 resource_types:
@@ -178,7 +160,7 @@ resource_types:
     type: docker-image
     source:
       repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
-      tag: 0.0.7
+      tag: 0.0.14
   - name: slack-notification
     type: docker-image
     source:
@@ -208,10 +190,12 @@ resources:
   - name: task-image
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/((docker-hub-organization))/release-ci-image
-      tag: ((branch))
+      repository: ((corporate-harbor-registry))/((docker-hub-organization))/release-ci-image
+      username: ((corporate-harbor-robot-account.username))
+      password: ((corporate-harbor-robot-account.password))
+      tag: main
 groups:
   - name: "build"
     jobs: ["build"]
   - name: "release"
-    jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "distribute-release", "sync-to-maven-central"]
+    jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "sync-to-maven-central"]

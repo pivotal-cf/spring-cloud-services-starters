@@ -2,7 +2,10 @@
 set -euo pipefail
 
 export BUILD_INFO_LOCATION=$(pwd)/artifactory-repo/build-info.json
+export CONFIG_DIR=$(pwd)/git-repo/ci/config
 
-java -jar /spring-boot-release-scripts.jar publishToCentral 'RELEASE' $BUILD_INFO_LOCATION artifactory-repo
+java -jar /opt/concourse-release-scripts*.jar \
+  --spring.config.location=${CONFIG_DIR}/release-scripts.yml \
+  publishToCentral 'RELEASE' $BUILD_INFO_LOCATION artifactory-repo
 
 echo "Sync complete"
