@@ -9,18 +9,27 @@ aliases:
       text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
 
 jobs:
+  - name: build-ci-images
+    plan:
+      - get: ci-images-git-repo
+        trigger: true
+      - put: scs-starters-ci-image
+        params:
+          build: ci-images-git-repo/ci/images/scs-starters-ci
+        get_params:
+          skip_download: "true"
+
   - name: build
     serial: true
     public: true
     plan:
     - get: git-repo
       trigger: true
-    - do:
-      - task: build-project
-        file: git-repo/ci/tasks/build-project.yml
-        params:
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+    - task: build-project
+      file: git-repo/ci/tasks/build-project.yml
+      params:
+        ARTIFACTORY_USERNAME: ((scs-artifactory-username))
+        ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
     - put: artifactory-repo
       params: &artifactory-params
         signing_key: ((signing-key))
@@ -48,6 +57,7 @@ jobs:
       - put: git-repo
         params:
           repository: stage-git-repo
+
   - name: stage-rc
     serial: true
     plan:
@@ -63,6 +73,7 @@ jobs:
       - put: git-repo
         params:
           repository: stage-git-repo
+
   - name: stage-release
     serial: true
     plan:
@@ -78,6 +89,7 @@ jobs:
       - put: git-repo
         params:
           repository: stage-git-repo
+
   - name: promote-milestone
     serial: true
     plan:
@@ -93,6 +105,7 @@ jobs:
           ARTIFACTORY_SERVER: ((artifactory-server))
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+
   - name: promote-rc
     serial: true
     plan:
@@ -108,6 +121,7 @@ jobs:
           ARTIFACTORY_SERVER: ((artifactory-server))
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+
   - name: promote-release
     serial: true
     plan:
@@ -123,6 +137,7 @@ jobs:
           ARTIFACTORY_SERVER: ((artifactory-server))
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+
   - name: sync-to-maven-central
     serial: true
     plan:
@@ -145,6 +160,7 @@ resource_types:
     source:
       repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
       tag: 0.0.14
+
   - name: slack-notification
     type: docker-image
     source:
@@ -160,6 +176,21 @@ resources:
       password: ((github-password))
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
+
+  - name: ci-images-git-repo
+    type: git
+    source:
+      uri: ((github-repo))
+      branch: ((branch))
+      paths: ["ci/images/*"]
+
+  - name: scs-starters-ci-image
+    type: docker-image
+    source:
+      repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
+      username: ((corporate-harbor-robot-account.username))
+      password: ((corporate-harbor-robot-account.password))
+
   - name: artifactory-repo
     type: artifactory-resource
     source:
@@ -167,6 +198,7 @@ resources:
       username: ((scs-artifactory-username))
       password: ((scs-artifactory-password))
       build_name: ((build-name))
+
   - name: alert
     type: slack-notification
     source:
@@ -189,3 +221,6 @@ groups:
       - "stage-release"
       - "promote-release"
       - "sync-to-maven-central"
+  - name: "ci-images"
+    jobs:
+      - "build-ci-images"
