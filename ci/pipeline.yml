@@ -15,11 +15,9 @@ jobs:
     plan:
     - get: git-repo
       trigger: true
-    - get: task-image
     - do:
       - task: build-project
         file: git-repo/ci/tasks/build-project.yml
-        image: task-image
         params:
           ARTIFACTORY_USERNAME: ((scs-artifactory-username))
           ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
@@ -39,10 +37,8 @@ jobs:
     serial: true
     plan:
       - get: git-repo
-      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        image: task-image
         params:
           RELEASE_TYPE: M
       - put: artifactory-repo
@@ -56,10 +52,8 @@ jobs:
     serial: true
     plan:
       - get: git-repo
-      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        image: task-image
         params:
           RELEASE_TYPE: RC
       - put: artifactory-repo
@@ -73,10 +67,8 @@ jobs:
     serial: true
     plan:
       - get: git-repo
-      - get: task-image
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        image: task-image
         params:
           RELEASE_TYPE: RELEASE
       - put: artifactory-repo
@@ -94,10 +86,8 @@ jobs:
         passed: [stage-milestone]
         params:
           save_build_info: true
-      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        image: task-image
         params:
           RELEASE_TYPE: M
           ARTIFACTORY_SERVER: ((artifactory-server))
@@ -111,10 +101,8 @@ jobs:
         passed: [stage-rc]
         params:
           save_build_info: true
-      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        image: task-image
         params:
           RELEASE_TYPE: RC
           ARTIFACTORY_SERVER: ((artifactory-server))
@@ -128,10 +116,8 @@ jobs:
         passed: [stage-release]
         params:
           save_build_info: true
-      - get: task-image
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        image: task-image
         params:
           RELEASE_TYPE: RELEASE
           ARTIFACTORY_SERVER: ((artifactory-server))
@@ -145,10 +131,8 @@ jobs:
         passed: [promote-release]
         params:
           save_build_info: true
-      - get: task-image
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
-        image: task-image
         params:
           SONATYPE_URL: ((sonatype-url))
           SONATYPE_USERNAME: ((sonatype-user-token))
@@ -187,15 +171,21 @@ resources:
     type: slack-notification
     source:
       url: ((scs-slack-webhook))
-  - name: task-image
-    type: registry-image
-    source:
-      repository: ((corporate-harbor-registry))/((docker-hub-organization))/release-ci-image
-      username: ((corporate-harbor-robot-account.username))
-      password: ((corporate-harbor-robot-account.password))
-      tag: main
+
 groups:
   - name: "build"
-    jobs: ["build"]
+    jobs:
+      - "build"
+  - name: "milestone"
+    jobs:
+      - "stage-milestone"
+      - "promote-milestone"
+  - name: "rc"
+    jobs:
+      - "stage-rc"
+      - "promote-rc"
   - name: "release"
-    jobs: ["stage-milestone", "stage-rc", "stage-release", "promote-milestone", "promote-rc", "promote-release", "sync-to-maven-central"]
+    jobs:
+      - "stage-release"
+      - "promote-release"
+      - "sync-to-maven-central"
