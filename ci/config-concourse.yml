@@ -1,9 +1,4 @@
 scs-slack-failure-channel: "#spring-cloud-services"
-
-bintray-distribution-repo: spring-cloud-services-starters
-bintray-package: spring-cloud-services-starters
-bintray-repo: jars
-bintray-subject: spring
 build-name: spring-cloud-services-starters
 branch: main
 artifactory-server: https://repo.spring.io
