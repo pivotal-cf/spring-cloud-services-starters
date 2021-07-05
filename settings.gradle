@@ -1,0 +1,6 @@
+rootProject.name = "spring-cloud-services-starters"
+
+include "spring-cloud-services-dependencies"
+include "spring-cloud-services-starter-circuit-breaker"
+include "spring-cloud-services-starter-config-client"
+include "spring-cloud-services-starter-service-registry"
