@@ -14,18 +14,50 @@
  * limitations under the License.
  */
 
-description = "Spring Cloud Services Service Registry Starter"
-
-dependencies {
-//    api "org.springframework.boot:spring-boot-starter"
-//    api "org.springframework.security:spring-security-oauth2-client"
-//    api "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
+plugins {
+    id "java-platform"
+    id "maven-publish"
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
+description = "Spring Cloud Services Service Registry Starter"
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+
+    api "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudStarterNetflixEurekaVersion}"
+    api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
+
+    runtime "org.springframework.security:spring-security-oauth2-client"
+}
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
+            pom {
+                withXml {
+                    def pomNode = asNode()
+                    def dependencyManagementNode = pomNode.get('dependencyManagement')
+                    if (dependencyManagementNode) pomNode.remove(dependencyManagementNode)
+                }
+            }
+
+            println configurations
+            // Published pom will use fully-qualified dependency versions and no BOMs
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('classpath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
         }
     }
 }

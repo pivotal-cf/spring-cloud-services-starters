@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-description = "Spring Cloud Services Starter Circuit Breaker"
-
-dependencies {
-    api "org.springframework.cloud:spring-cloud-starter-netflix-hystrix"
-//
-//
-//
-//    api "org.springframework.cloud:spring-cloud-config-client"
-//    api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector"
-//    api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector"
-//    api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster"
-//    runtimeOnly "org.springframework.security:spring-security-oauth2-client"
-//
-//    api "org.springframework.boot:spring-boot-starter"
+plugins {
+    id "java-platform"
+    id "maven-publish"
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
+description = "Spring Cloud Services Starter Circuit Breaker"
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${springCloudStarterNetflixHystrixVersion}") {
+        exclude group: "com.google.code.findbugs", module: "annotations"
+    }
+    api "org.springframework.cloud:spring-cloud-netflix-hystrix-stream:${springCloudStarterNetflixHystrixVersion}"
+    api "org.springframework.cloud:spring-cloud-starter-stream-rabbit:3.1.1"
+    api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
+}
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
         }
     }
 }

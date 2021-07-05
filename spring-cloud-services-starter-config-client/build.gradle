@@ -14,23 +14,32 @@
  * limitations under the License.
  */
 
-description = "Spring Cloud Services Config Client Starter"
-
-dependencies {
-//    api "org.springframework.cloud:spring-cloud-config-client"
-//    api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector"
-//    api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector"
-//    api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster"
-//    runtimeOnly "org.springframework.security:spring-security-oauth2-client"
-//
-//    api "org.springframework.boot:spring-boot-starter"
-//    api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
+plugins {
+    id "java-platform"
+    id "maven-publish"
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
+description = "Spring Cloud Services Config Client Starter"
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+
+    api "org.springframework.cloud:spring-cloud-config-client"
+    api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector:${springCloudServicesConnectorsVersion}"
+    api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
+
+    runtime "org.springframework.security:spring-security-oauth2-client"
+}
+
+publishing {
+    publications {
+        myPlatform(MavenPublication) {
+            from components.javaPlatform
         }
     }
 }
