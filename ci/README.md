@@ -2,14 +2,6 @@
 
 ## Releasing
 
-./pipeline.yml is a release pipeline inspired by the one created by the Spring boot team https://github.com/spring-projects/spring-boot/blob/master/ci/
-
-It is composed of three different groups:
-
-- The first group is a basic build so that we can always be sure which build we will be getting when releasing, followed by the acceptance tests.
-- The second group is the releases.
-- The last group is the CI image used by the different tasks and the source can be found here: `ci/images/release-ci-image/Dockerfile`.
-
 ### Releases
 
 The original pipeline was decomposed into different jobs so that we could recover from each of them manually

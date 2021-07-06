@@ -86,14 +86,12 @@ configure(startersProjects) {
 							organizationUrl = "https://www.spring.io"
 						}
 					}
-
 					withXml {
 						def pomNode = asNode()
 						def dependencyManagementNode = pomNode.get('dependencyManagement')
 						if (dependencyManagementNode) pomNode.remove(dependencyManagementNode)
 					}
 				}
-
 				// Published pom will use fully-qualified dependency versions and no BOMs
 				versionMapping {
 					usage('java-api') {
