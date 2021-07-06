@@ -16,7 +16,6 @@
 
 description = "Spring Cloud Services Starter Circuit Breaker"
 
-
 dependencies {
     api("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${springCloudStarterNetflixHystrixVersion}") {
         exclude group: "com.google.code.findbugs", module: "annotations"

@@ -18,11 +18,12 @@ description = "Spring Cloud Services Service Registry Starter"
 
 dependencies {
     api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
 
     api "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudStarterNetflixEurekaVersion}"
     api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector:${springCloudServicesConnectorsVersion}"
     api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector:${springCloudServicesConnectorsVersion}"
     api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
 
-    runtime "org.springframework.security:spring-security-oauth2-client"
+    runtimeOnly "org.springframework.security:spring-security-oauth2-client"
 }

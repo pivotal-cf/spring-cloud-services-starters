@@ -34,7 +34,11 @@ allprojects {
 	group = "io.pivotal.spring.cloud"
 }
 
-subprojects {
+def getStartersProjects() {
+	subprojects - project(":spring-cloud-services-dependencies")
+}
+
+configure(startersProjects) {
 	apply plugin: 'java-library'
 	apply plugin: 'maven-publish'
 
@@ -48,6 +52,36 @@ subprojects {
 				from components.findByName('java')
 
 				pom {
+					afterEvaluate {
+						name = project.name
+						description = project.description
+					}
+					url = "https://projects.spring.io/spring-cloud"
+					organization {
+						name = "Pivotal Software, Inc."
+						url = "https://www.pivotal.io"
+					}
+					licenses {
+						license {
+							name = "Apache License, Version 2.0"
+							url = "https://www.apache.org/licenses/LICENSE-2.0"
+						}
+					}
+					scm {
+						url = "https://github.com/pivotal-cf/spring-cloud-services-starters"
+						connection = "scm:git:https://github.com/pivotal-cf/spring-cloud-services-starters.git"
+						developerConnection = "scm:git:https://github.com/pivotal-cf/spring-cloud-services-starters.git"
+					}
+					developers {
+						developer {
+							id = "royclarkson"
+							name = "Roy Clarkson"
+							email = "rclarkson@pivotal.io"
+							organization = "Pivotal Software, Inc."
+							organizationUrl = "https://www.spring.io"
+						}
+					}
+
 					withXml {
 						def pomNode = asNode()
 						def dependencyManagementNode = pomNode.get('dependencyManagement')
@@ -68,22 +102,3 @@ subprojects {
 		}
 	}
 }
-
-//configure(subprojects - project(":spring-cloud-services-dependencies")) {
-//	dependencyManagement {
-//		imports {
-//			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-//			mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
-//		}
-//	}
-//}
-//
-//configure(subprojects) {
-//	dependencyManagement {
-//		dependencies {
-//			dependency "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
-//			dependency "org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${springCloudStarterNetflixHystrixVersion}"
-//			dependency "org.springframework.cloud:spring-cloud-starter-netflix-eureka:${springCloudStarterNetflixEurekaVersion}"
-//		}
-//	}
-//}
