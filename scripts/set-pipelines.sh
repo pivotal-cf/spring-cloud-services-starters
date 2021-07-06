@@ -13,7 +13,7 @@ main() {
       --pipeline starters-2.4.x \
       --config pipeline.yml \
       --load-vars-from config-concourse.yml \
-      --var branch="asalgado+gareth/concourse-migration-for-2_4_0-209"
+      --var branch="2.4.x"
   popd > /dev/null
 }
 
