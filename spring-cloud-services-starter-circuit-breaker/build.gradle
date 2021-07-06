@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-plugins {
-    id "java-platform"
-    id "maven-publish"
-}
-
 description = "Spring Cloud Services Starter Circuit Breaker"
 
-javaPlatform {
-    allowDependencies()
-}
 
 dependencies {
     api("org.springframework.cloud:spring-cloud-starter-netflix-hystrix:${springCloudStarterNetflixHystrixVersion}") {
@@ -34,12 +26,4 @@ dependencies {
     api "io.pivotal.spring.cloud:spring-cloud-services-cloudfoundry-connector:${springCloudServicesConnectorsVersion}"
     api "io.pivotal.spring.cloud:spring-cloud-services-spring-connector:${springCloudServicesConnectorsVersion}"
     api "io.pivotal.spring.cloud:cloudfoundry-certificate-truster:${cloudfoundryCertificateTrusterVersion}"
-}
-
-publishing {
-    publications {
-        myPlatform(MavenPublication) {
-            from components.javaPlatform
-        }
-    }
 }
