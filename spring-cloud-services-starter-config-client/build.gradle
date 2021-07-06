@@ -40,6 +40,24 @@ publishing {
     publications {
         myPlatform(MavenPublication) {
             from components.javaPlatform
+
+//            pom {
+//                withXml {
+//                    def pomNode = asNode()
+//                    def dependencyManagementNode = pomNode.get('dependencyManagement')
+//                    if (dependencyManagementNode) pomNode.remove(dependencyManagementNode)
+//                }
+//            }
+//
+//            // Published pom will use fully-qualified dependency versions and no BOMs
+//            versionMapping {
+//                usage('java-api') {
+//                    fromResolutionOf('classpath')
+//                }
+//                usage('java-runtime') {
+//                    fromResolutionResult()
+//                }
+//            }
         }
     }
 }
