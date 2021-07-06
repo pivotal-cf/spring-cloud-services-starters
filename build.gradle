@@ -1,0 +1,107 @@
+/*
+ * Copyright 2002-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// NoHttp has to be applied at the root level
+// so that it reads all the root files, including the gradle ones.
+plugins {
+	id "io.spring.nohttp"
+}
+
+description = "Spring Cloud Services Starter Build"
+
+checkstyle {
+	toolVersion = 8.16
+}
+
+wrapper {
+	gradleVersion = "7.1"
+}
+
+allprojects {
+	group = "io.pivotal.spring.cloud"
+}
+
+def getStartersProjects() {
+	subprojects - project(":spring-cloud-services-dependencies")
+}
+
+configure(startersProjects) {
+	apply plugin: 'java-library'
+	apply plugin: 'maven-publish'
+
+	repositories {
+		mavenCentral()
+	}
+
+	publishing {
+		repositories {
+			maven {
+				url = project.properties.getOrDefault('publicationRepository', "${System.getenv('HOME')}/.m2/repository")
+			}
+		}
+		publications {
+			mavenJava(MavenPublication) {
+				from components.findByName('java')
+
+				pom {
+					afterEvaluate {
+						name = project.name
+						description = project.description
+					}
+					url = "https://projects.spring.io/spring-cloud"
+					organization {
+						name = "Pivotal Software, Inc."
+						url = "https://www.pivotal.io"
+					}
+					licenses {
+						license {
+							name = "Apache License, Version 2.0"
+							url = "https://www.apache.org/licenses/LICENSE-2.0"
+						}
+					}
+					scm {
+						url = "https://github.com/pivotal-cf/spring-cloud-services-starters"
+						connection = "scm:git:https://github.com/pivotal-cf/spring-cloud-services-starters.git"
+						developerConnection = "scm:git:https://github.com/pivotal-cf/spring-cloud-services-starters.git"
+					}
+					developers {
+						developer {
+							id = "royclarkson"
+							name = "Roy Clarkson"
+							email = "rclarkson@pivotal.io"
+							organization = "Pivotal Software, Inc."
+							organizationUrl = "https://www.spring.io"
+						}
+					}
+					withXml {
+						def pomNode = asNode()
+						def dependencyManagementNode = pomNode.get('dependencyManagement')
+						if (dependencyManagementNode) pomNode.remove(dependencyManagementNode)
+					}
+				}
+				// Published pom will use fully-qualified dependency versions and no BOMs
+				versionMapping {
+					usage('java-api') {
+						fromResolutionOf('runtimeClasspath')
+					}
+					usage('java-runtime') {
+						fromResolutionResult()
+					}
+				}
+			}
+		}
+	}
+}

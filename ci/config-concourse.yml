@@ -1,0 +1,4 @@
+artifactory-server: https://repo.spring.io
+build-name: spring-cloud-services-starters
+github-repo: https://github.com/pivotal-cf/spring-cloud-services-starters
+scs-slack-failure-channel: "#spring-cloud-services"
