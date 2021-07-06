@@ -3,9 +3,9 @@ aliases:
   - &slack-failure-notification
     put: alert
     params:
-      icon_emoji: ":animal:"
+      icon_emoji: ":animal-1252:"
       username: concourse
-      channel: {{scs-slack-failure-channel}}
+      channel: ((scs-slack-failure-channel))
       text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
 
 jobs:
@@ -23,22 +23,19 @@ jobs:
     serial: true
     public: true
     plan:
-    - get: git-repo
-      trigger: true
-    - task: build-project
-      file: git-repo/ci/tasks/build-project.yml
-      params:
-        ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-        ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
-    - put: artifactory-repo
-      params: &artifactory-params
-        signing_key: ((signing-key))
-        signing_passphrase: ((signing-passphrase))
-        repo: libs-snapshot-local
-        folder: distribution-repository
-        build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
-        build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
-        disable_checksum_uploads: true
+      - get: git-repo
+        trigger: true
+      - task: build-project
+        file: git-repo/ci/tasks/build-project.yml
+      - put: artifactory-repo
+        params: &artifactory-params
+          signing_key: ((signing-key))
+          signing_passphrase: ((signing-passphrase))
+          repo: libs-snapshot-local
+          folder: distribution-repository
+          build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+          build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
+          disable_checksum_uploads: true
     on_failure:
       *slack-failure-notification
 
@@ -46,15 +43,16 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: M
+        vars:
+          release-type: M
       - put: artifactory-repo
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -62,15 +60,16 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: RC
+        vars:
+          release-type: RC
       - put: artifactory-repo
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -78,15 +77,16 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
-        params:
-          RELEASE_TYPE: RELEASE
+        vars:
+          release-type: RELEASE
       - put: artifactory-repo
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -100,69 +100,58 @@ jobs:
           save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: M
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+        vars:
+          release-type: M
 
   - name: promote-rc
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-rc]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [stage-rc]
+          params:
+            save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: RC
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+        vars:
+          release-type: RC
 
   - name: promote-release
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-release]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [stage-release]
+          params:
+            save_build_info: true
       - task: promote
         file: git-repo/ci/tasks/promote.yml
-        params:
-          RELEASE_TYPE: RELEASE
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+        vars:
+          release-type: RELEASE
 
   - name: sync-to-maven-central
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [promote-release]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [promote-release]
+          params:
+            save_build_info: true
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
-        params:
-          SONATYPE_URL: ((sonatype-url))
-          SONATYPE_USERNAME: ((sonatype-user-token))
-          SONATYPE_PASSWORD: ((sonatype-user-token-password))
-          SONATYPE_STAGING_PROFILE_ID: ((sonatype-staging-profile-id))
 
 resource_types:
   - name: artifactory-resource
-    type: docker-image
+    type: registry-image
     source:
       repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
       tag: 0.0.14
 
   - name: slack-notification
-    type: docker-image
+    type: registry-image
     source:
       repository: ((dockerhub-mirror-registry))/cfcommunity/slack-notification-resource
       tag: latest
@@ -176,6 +165,15 @@ resources:
       password: ((github-password))
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
+      fetch_tags: true
+
+  - name: git-repo-staging
+    type: git
+    source:
+      uri: ((github-repo))
+      username: ((github-username))
+      password: ((github-password))
+      branch: ((github-username))/staging
 
   - name: ci-images-git-repo
     type: git
@@ -207,20 +205,20 @@ resources:
 groups:
   - name: "build"
     jobs:
-      - "build"
+      - build
   - name: "milestone"
     jobs:
-      - "stage-milestone"
-      - "promote-milestone"
+      - stage-milestone
+      - promote-milestone
   - name: "rc"
     jobs:
-      - "stage-rc"
-      - "promote-rc"
+      - stage-rc
+      - promote-rc
   - name: "release"
     jobs:
-      - "stage-release"
-      - "promote-release"
-      - "sync-to-maven-central"
+      - stage-release
+      - promote-release
+      - sync-to-maven-central
   - name: "ci-images"
     jobs:
-      - "build-ci-images"
+      - build-ci-images
