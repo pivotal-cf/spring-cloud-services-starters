@@ -52,7 +52,7 @@ publishing {
             // Published pom will use fully-qualified dependency versions and no BOMs
             versionMapping {
                 usage('java-api') {
-                    fromResolutionOf('classpath')
+                    fromResolutionOf('runtimeElements')
                 }
                 usage('java-runtime') {
                     fromResolutionResult()

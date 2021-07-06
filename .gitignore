@@ -14,4 +14,4 @@ target/
 *.iml
 .factorypath
 .flattened-pom.xml
-gradle*
+
