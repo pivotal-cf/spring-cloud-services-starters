@@ -1,0 +1,127 @@
+plugins {
+    id "java-library"
+    id "maven-publish"
+    id "jacoco"
+    id "checkstyle"
+//    id "io.spring.javaformat"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [ "-Xlint:all" ]
+}
+
+test {
+    // enable JUnit 5
+    useJUnitPlatform()
+
+    testLogging {
+        // display all the events
+        events 'PASSED', 'FAILED', 'SKIPPED'
+        // display stdout and stderr
+        showStandardStreams = true
+    }
+
+    // create a summary after the execution
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            println "\nTest result: ${result.resultType}"
+            println "Test summary: ${result.testCount} tests, " +
+                    "${result.successfulTestCount} succeeded, " +
+                    "${result.failedTestCount} failed, " +
+                    "${result.skippedTestCount} skipped"
+        }
+    }
+
+    // print failed tests after the execution
+    def failedTests = []
+
+    afterTest { test, result ->
+        if (result.resultType == TestResult.ResultType.FAILURE) {
+            failedTests << test
+        }
+    }
+
+    afterSuite {
+        failedTests.each { test -> println "FAILED test: ${test.className} > ${test.name}" }
+    }
+
+}
+
+tasks.withType(Test) {
+    testLogging {
+        exceptionFormat = "full"
+        events = ["passed", "skipped", "failed"]
+        showStandardStreams = false
+    }
+
+    StringBuilder testOutput = new StringBuilder()
+
+    beforeTest {
+        testOutput.setLength(0)
+    }
+
+    onOutput { descriptor, TestOutputEvent event ->
+        testOutput.append(event.message)
+    }
+
+    afterTest { TestDescriptor descriptor, TestResult result ->
+        if (result.resultType == TestResult.ResultType.FAILURE && testOutput.size() > 0) {
+            logger.lifecycle("\n\n${testOutput}")
+        }
+    }
+}
+
+checkstyle {
+    configDirectory = rootProject.file("ci/config/")
+    toolVersion = 8.16
+}
+
+jar {
+    manifest.attributes["Created-By"] =
+            "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+    manifest.attributes["Implementation-Title"] = project.name
+    manifest.attributes["Implementation-Version"] = project.version
+
+    from("${rootProject.projectDir}/src/dist") {
+        include "license.txt"
+        include "notice.txt"
+        into "META-INF"
+        expand(copyright: new Date().format("yyyy"), version: project.version)
+    }
+}
+
+javadoc {
+    description = "Generates project-level javadoc for use in -javadoc jar"
+
+    options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+    options.author = true
+    options.header = project.name
+    options.links(rootProject.ext.javadocLinks)
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.register("sourcesJar", Jar) {
+    dependsOn classes
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    classifier = "sources"
+    from sourceSets.main.allJava
+}
+
+tasks.register("javadocJar", Jar) {
+    classifier = "javadoc"
+    from javadoc
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+tasks.register("allDependencyInsight", DependencyInsightReportTask) {}
+tasks.register("allDependencies", DependencyReportTask) {}

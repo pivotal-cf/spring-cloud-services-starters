@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'io.pivotal.spring.cloud.java-conventions'
+}
+
 description = "Spring Cloud Services Config Client Starter"
 
 dependencies {
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+    api project(":spring-cloud-services-config-client-autoconfigure")
     api "org.springframework.boot:spring-boot-starter"
     api "org.springframework.security:spring-security-oauth2-client"
     api "org.springframework.cloud:spring-cloud-config-client"
-    api project(":spring-cloud-services-config-client-autoconfigure")
-    api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
-}
-
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
-        }
-    }
+    api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfenvVersion}"
 }

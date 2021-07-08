@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'java-platform'
+}
+
 description = "Spring Cloud Services Dependencies"
 
-dependencyManagement {
-    dependencies {
-        dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-config-client:${project.version}"
-        dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:${project.version}"
-        dependency "io.pivotal.spring.cloud:spring-cloud-services-config-client-autoconfigure:${project.version}"
-        dependency "io.pivotal.spring.cloud:spring-cloud-services-service-registry-autoconfigure:${project.version}"
+dependencies {
+    constraints {
+        api project(":spring-cloud-services-starter-config-client")
+        api project(":spring-cloud-services-starter-service-registry")
+        api project(":spring-cloud-services-config-client-autoconfigure")
+        api project(":spring-cloud-services-service-registry-autoconfigure")
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
-        }
-    }
-}
+

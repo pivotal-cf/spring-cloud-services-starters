@@ -1,3 +1,22 @@
+pluginManagement {
+    plugins {
+        id "io.spring.nohttp" version "0.0.8"
+        id "io.spring.javaformat" version "0.0.28"
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        if (version =~ /((-M|-RC)[0-9]+|-SNAPSHOT)$/) {
+            maven { url "https://repo.spring.io/milestone" }
+        }
+        if (version.endsWith('-SNAPSHOT')) {
+            maven { url "https://repo.spring.io/snapshot" }
+        }
+    }
+}
+
 rootProject.name = "spring-cloud-services-starters"
 
 include "spring-cloud-services-config-client-autoconfigure"

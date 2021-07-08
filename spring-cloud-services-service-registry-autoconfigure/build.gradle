@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
+plugins {
+    id 'io.pivotal.spring.cloud.java-conventions'
+}
+
 description = "Spring Cloud Services Service Registry Autoconfigure"
 
 dependencies {
+    api platform("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    api platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
     api("org.springframework.boot:spring-boot-starter")
-    optional("org.springframework.security:spring-security-oauth2-client")
-    optional("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    optional("io.pivotal.cfenv:java-cfenv")
+
+    implementation("org.springframework.security:spring-security-oauth2-client")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("io.pivotal.cfenv:java-cfenv:${javaCfenvVersion}")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation('org.junit.jupiter:junit-jupiter-api')
-    testImplementation('org.junit.vintage:junit-vintage-engine')
+    testImplementation('junit:junit')
     testImplementation("org.springframework.boot:spring-boot-starter-web")
+
+    testRuntimeOnly('org.junit.vintage:junit-vintage-engine')
 }
