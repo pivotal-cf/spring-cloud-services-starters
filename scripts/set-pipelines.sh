@@ -11,7 +11,8 @@ main() {
     echo "Setting starters pipeline..."
     fly --target "$FLY_TARGET" set-pipeline --pipeline starters-3.3.x \
       --config pipeline.yml \
-      --load-vars-from config-concourse.yml
+      --load-vars-from config-concourse.yml \
+      --var branch="main"
   popd > /dev/null
 }
 

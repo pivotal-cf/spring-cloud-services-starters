@@ -57,13 +57,18 @@ configure(allprojects) {
 		springBootVersion = "2.5.2"
 		springFrameworkVersion = "5.3.8"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
-		javaCfenvVersion = "2.4.0-SNAPSHOT"
+		javaCfenvVersion = "2.4.0"
 	}
 
 	repositories {
 		mavenCentral()
 		maven { url "https://repo.spring.io/release" }
-		maven { url "https://repo.spring.io/snapshot" }
+		if (version =~ /((-M|-RC)[0-9]+|-SNAPSHOT)$/) {
+			maven { url "https://repo.spring.io/milestone" }
+		}
+		if (version.endsWith('-SNAPSHOT')) {
+			maven { url "https://repo.spring.io/snapshot" }
+		}
 	}
 
 	dependencies {
