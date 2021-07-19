@@ -33,10 +33,6 @@ buildscript {
 // so that it reads all the root files, including the gradle ones.
 apply plugin: "io.spring.nohttp"
 
-checkstyle {
-	toolVersion = 8.16
-}
-
 configure(allprojects) {
 	group = "io.pivotal.spring.cloud"
 
@@ -58,6 +54,14 @@ configure(allprojects) {
 		springFrameworkVersion = "5.3.8"
 		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
 		javaCfenvVersion = "2.4.0"
+		javaApi = "https://docs.oracle.com/javase/8/docs/api/"
+		if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+			javaApi = "https://docs.oracle.com/en/java/javase/11/docs/api"
+		}
+		javadocLinks = [
+				javaApi,
+				"https://docs.spring.io/spring-framework/docs/${springFrameworkVersion}/javadoc-api/"
+		] as String[]
 	}
 
 	repositories {
@@ -74,28 +78,29 @@ configure(allprojects) {
 	dependencies {
 		testRuntimeOnly("io.spring.nohttp:nohttp:0.0.8")
 	}
-
-	ext.javadocLinks = [
-		"https://docs.oracle.com/javase/8/docs/api/",
-		"https://docs.spring.io/spring/docs/${springFrameworkVersion}/javadoc-api/",
-	] as String[]
 }
 
 subprojects {
 	apply from: "${rootProject.projectDir}/publish-maven.gradle"
+
+	checkstyle {
+		configDirectory = file("${project.rootDir}/ci/config/")
+		toolVersion = 8.16
+	}
 }
 
 configure(subprojects - [project(":spring-cloud-services-starter-config-client"),
 						 project(":spring-cloud-services-starter-service-registry"),
 						 project(":spring-cloud-services-dependencies")]) {
 	compileJava {
-		sourceCompatibility=1.8
-		targetCompatibility=1.8
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
 		options.encoding = "UTF-8"
 	}
+
 	compileTestJava {
-		sourceCompatibility=1.8
-		targetCompatibility=1.8
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
 		options.encoding = "UTF-8"
 	}
 
@@ -139,11 +144,6 @@ configure(subprojects - [project(":spring-cloud-services-starter-config-client")
 			failedTests.each { test -> println "FAILED test: ${test.className} > ${test.name}" }
 		}
 
-	}
-
-	checkstyle {
-		configDir = file("${project.rootDir}/ci/config/")
-		toolVersion = 8.16
 	}
 
 	jar {
