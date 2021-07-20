@@ -21,7 +21,7 @@
 
 <module name="Checker">
 	<module name="Header">
-		<property name="headerFile" value="ci/config/license.header"/>
+		<property name="headerFile" value="${config_loc}/license.header"/>
 		<property name="ignoreLines" value="2"/>
 	</module>
 </module>
