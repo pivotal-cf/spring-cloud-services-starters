@@ -17,7 +17,7 @@
 description = "Spring Cloud Services Config Client Autoconfigure"
 
 ext {
-    awaitilityVersion = "4.1.0"
+    awaitilityVersion = "4.1.1"
 }
 
 dependencies {
