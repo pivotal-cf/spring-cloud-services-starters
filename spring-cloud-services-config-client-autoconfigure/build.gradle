@@ -16,10 +16,6 @@
 
 description = "Spring Cloud Services Config Client Autoconfigure"
 
-ext {
-    awaitilityVersion = "4.1.1"
-}
-
 dependencies {
     api("org.springframework.boot:spring-boot-starter")
     optional('org.springframework.cloud:spring-cloud-starter-config')

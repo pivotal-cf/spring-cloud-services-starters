@@ -24,8 +24,8 @@ buildscript {
 		classpath("io.spring.gradle:propdeps-plugin:0.0.10.RELEASE")
 		classpath("io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE")
 		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.27.0")
-		classpath("io.spring.nohttp:nohttp-gradle:0.0.10")
-		classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.28")
+		classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.31")
+		classpath("io.spring.nohttp:nohttp-gradle:${nohttpVersion}")
 	}
 }
 
@@ -49,15 +49,11 @@ configure(allprojects) {
 	apply plugin: "io.spring.javaformat"
 
 	ext {
-		springCloudVersion = "2021.0.0"
-		springBootVersion = "2.6.3"
-		springFrameworkVersion = "5.3.15"
-		cloudfoundryCertificateTrusterVersion = "1.0.1.RELEASE"
-		javaCfenvVersion = "2.4.0"
-		javaApi = "https://docs.oracle.com/javase/8/docs/api/"
-		if (JavaVersion.current() >= JavaVersion.VERSION_11) {
-			javaApi = "https://docs.oracle.com/en/java/javase/11/docs/api"
-		}
+
+		javaApi = (JavaVersion.current() >= JavaVersion.VERSION_11)
+			? "https://docs.oracle.com/en/java/javase/11/docs/api"
+			: "https://docs.oracle.com/javase/8/docs/api/"
+
 		javadocLinks = [
 				javaApi,
 				"https://docs.spring.io/spring-framework/docs/${springFrameworkVersion}/javadoc-api/"
@@ -76,7 +72,7 @@ configure(allprojects) {
 	}
 
 	dependencies {
-		testRuntimeOnly("io.spring.nohttp:nohttp:0.0.9")
+		testRuntimeOnly("io.spring.nohttp:nohttp:${nohttpVersion}")
 	}
 }
 
