@@ -43,6 +43,10 @@ public class SurgicalRoutingRequestTransformer implements LoadBalancerRequestTra
 
 	@Override
 	public HttpRequest transformRequest(HttpRequest request, ServiceInstance instance) {
+		if (instance == null) {
+			return request;
+		}
+
 		Map<String, String> metadata = instance.getMetadata();
 		if (metadata.containsKey(CF_APP_GUID) && metadata.containsKey(CF_INSTANCE_INDEX)) {
 			final String headerValue = String.format("%s:%s", metadata.get(CF_APP_GUID),

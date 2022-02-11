@@ -79,4 +79,14 @@ public class SurgicalRoutingRequestTransformerTest {
 
 	}
 
+	@Test
+	public void headerIsNotSetWhenServiceInstanceIsNull() {
+
+		HttpRequest transformedRequest = transformer.transformRequest(request, null);
+
+		assertThat(transformedRequest.getHeaders().get("foo"), contains("bar", "baz"));
+		Assert.assertNull(transformedRequest.getHeaders().getFirst("X-CF-APP-INSTANCE"));
+
+	}
+
 }
