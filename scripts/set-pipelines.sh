@@ -9,7 +9,7 @@ main() {
 
   pushd "$(dirname $0)/../ci" > /dev/null
     echo "Setting starters pipeline..."
-    fly --target "$FLY_TARGET" set-pipeline --pipeline starters-3.3.x \
+    fly --target "$FLY_TARGET" set-pipeline --pipeline starters-3.4.x \
       --config pipeline.yml \
       --load-vars-from config-concourse.yml \
       --var branch="main"
