@@ -45,6 +45,5 @@ To release a GA:
 ```$bash
 $ fly -t scs trigger-job -j release-test/stage-release
 $ fly -t scs trigger-job -j release-test/promote-release
-$ fly -t scs trigger-job -j release-test/distribute-release
 $ fly -t scs trigger-job -j release-test/sync-to-maven-central
 ```
