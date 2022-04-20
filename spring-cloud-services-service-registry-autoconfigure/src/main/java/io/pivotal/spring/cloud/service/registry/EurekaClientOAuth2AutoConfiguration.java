@@ -23,7 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
+import org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -38,7 +38,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 @EnableConfigurationProperties(EurekaClientOAuth2Properties.class)
 @ConditionalOnClass({ EurekaClientConfig.class })
 @ConditionalOnProperty(prefix = "eureka.client.oauth2", name = { "client-id", "client-secret", "access-token-uri" })
-@AutoConfigureBefore(EurekaClientAutoConfiguration.class)
+@AutoConfigureBefore(DiscoveryClientOptionalArgsConfiguration.class)
 public class EurekaClientOAuth2AutoConfiguration {
 
 	@Bean
