@@ -15,7 +15,6 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import com.netflix.discovery.DiscoveryClient.DiscoveryClientOptionalArgs;
 import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
 import org.junit.Test;
 
