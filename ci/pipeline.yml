@@ -3,9 +3,9 @@ aliases:
   - &slack-failure-notification
     put: alert
     params:
-      icon_emoji: ":animal:"
+      icon_emoji: ":animal-1252:"
       username: concourse
-      channel: {{scs-slack-failure-channel}}
+      channel: ((scs-slack-failure-channel))
       text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
 
 jobs:
@@ -46,6 +46,7 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
         params:
@@ -54,7 +55,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -62,6 +63,7 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
         params:
@@ -70,7 +72,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -78,6 +80,7 @@ jobs:
     serial: true
     plan:
       - get: git-repo
+        passed: [build]
       - task: stage
         file: git-repo/ci/tasks/stage.yml
         params:
@@ -86,7 +89,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: libs-staging-local
-      - put: git-repo
+      - put: git-repo-staging
         params:
           repository: stage-git-repo
 
@@ -141,11 +144,12 @@ jobs:
   - name: sync-to-maven-central
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [promote-release]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [promote-release]
+          params:
+            save_build_info: true
       - task: sync-to-maven-central
         file: git-repo/ci/tasks/sync-to-maven-central.yml
         params:
@@ -156,13 +160,13 @@ jobs:
 
 resource_types:
   - name: artifactory-resource
-    type: docker-image
+    type: registry-image
     source:
       repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
       tag: 0.0.14
 
   - name: slack-notification
-    type: docker-image
+    type: registry-image
     source:
       repository: ((dockerhub-mirror-registry))/cfcommunity/slack-notification-resource
       tag: latest
@@ -171,16 +175,21 @@ resources:
   - name: git-repo
     type: git
     source:
-      uri: ((github-repo))
-      username: ((github-username))
-      password: ((github-password))
+      uri: ((scs-starters-github-url))
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
+      fetch_tags: true
+
+  - name: git-repo-staging
+    type: git
+    source:
+      uri: ((scs-starters-github-url))
+      branch: ((github-username))/staging
 
   - name: ci-images-git-repo
     type: git
     source:
-      uri: ((github-repo))
+      uri: ((scs-starters-github-url))
       branch: ((branch))
       paths: ["ci/images/*"]
 
@@ -207,20 +216,20 @@ resources:
 groups:
   - name: "build"
     jobs:
-      - "build"
+      - build
   - name: "milestone"
     jobs:
-      - "stage-milestone"
-      - "promote-milestone"
+      - stage-milestone
+      - promote-milestone
   - name: "rc"
     jobs:
-      - "stage-rc"
-      - "promote-rc"
+      - stage-rc
+      - promote-rc
   - name: "release"
     jobs:
-      - "stage-release"
-      - "promote-release"
-      - "sync-to-maven-central"
+      - stage-release
+      - promote-release
+      - sync-to-maven-central
   - name: "ci-images"
     jobs:
-      - "build-ci-images"
+      - build-ci-images
