@@ -1,5 +1,5 @@
 scs-slack-failure-channel: "#spring-cloud-services"
 build-name: spring-cloud-services-starters
-branch: main
+branch: 3.3.x
 artifactory-server: https://repo.spring.io
 github-repo: https://github.com/pivotal-cf/spring-cloud-services-starters
