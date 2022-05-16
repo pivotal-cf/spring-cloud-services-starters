@@ -30,6 +30,7 @@ import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * Configuration class to configure a Eureka instance's settings based on the value of
@@ -66,6 +67,9 @@ public class EurekaInstanceAutoConfiguration {
 
 	@Value("${vcap.application.uris[0]:}")
 	private String hostname;
+
+	@Value("${eureka.instance.hostname:}")
+	private String instanceHostname;
 
 	@Value("${vcap.application.application_id:}")
 	private String cfAppGuid;
@@ -119,7 +123,7 @@ public class EurekaInstanceAutoConfiguration {
 	private SanitizingEurekaInstanceConfigBean getRouteRegistration() {
 		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = getDefaults();
 		eurekaInstanceConfigBean.setSecurePortEnabled(true);
-		eurekaInstanceConfigBean.setInstanceId(hostname + ":" + instanceId);
+		eurekaInstanceConfigBean.setInstanceId(determineHostname() + ":" + instanceId);
 		return eurekaInstanceConfigBean;
 	}
 
@@ -133,12 +137,12 @@ public class EurekaInstanceAutoConfiguration {
 
 	private SanitizingEurekaInstanceConfigBean getDefaults() {
 		InetUtilsProperties inetUtilsProperties = new InetUtilsProperties();
-		inetUtilsProperties.setDefaultHostname(hostname);
+		inetUtilsProperties.setDefaultHostname(determineHostname());
 		inetUtilsProperties.setDefaultIpAddress(ip);
 
 		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = new SanitizingEurekaInstanceConfigBean(
 				new InetUtils(inetUtilsProperties));
-		eurekaInstanceConfigBean.setHostname(hostname);
+		eurekaInstanceConfigBean.setHostname(determineHostname());
 		eurekaInstanceConfigBean.setIpAddress(ip);
 		Map<String, String> metadataMap = eurekaInstanceConfigBean.getMetadataMap();
 		metadataMap.put(SurgicalRoutingRequestTransformer.CF_APP_GUID, cfAppGuid);
@@ -172,4 +176,7 @@ public class EurekaInstanceAutoConfiguration {
 		return getRouteRegistration();
 	}
 
+	private String determineHostname() {
+		return StringUtils.hasText(instanceHostname) ? instanceHostname : hostname;
+	}
 }
