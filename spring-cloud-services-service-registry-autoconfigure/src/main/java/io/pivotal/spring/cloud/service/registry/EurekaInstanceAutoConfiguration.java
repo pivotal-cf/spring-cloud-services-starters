@@ -177,4 +177,5 @@ public class EurekaInstanceAutoConfiguration {
 	private String determineHostname() {
 		return StringUtils.hasText(instanceHostname) ? instanceHostname : hostname;
 	}
+
 }
