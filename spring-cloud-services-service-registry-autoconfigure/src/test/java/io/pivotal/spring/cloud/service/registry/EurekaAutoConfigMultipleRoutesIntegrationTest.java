@@ -16,7 +16,8 @@ import static org.junit.Assert.assertTrue;
 		properties = { "vcap.application.uris[0]=www.route.local", "cf.instance.ip=1.2.3.4", "cf.instance.port=54321",
 				"eureka.client.serviceUrl.defaultZone=https://eureka-123.west.my-cf.com/eureka/",
 				"vcap.application.instance_id=instance-id", "spring.application.name=app-name_",
-				"spring.cloud.services.registrationMethod=route", "eureka.client.enabled=true", "eureka.instance.hostname=www.route.other" })
+				"spring.cloud.services.registrationMethod=route", "eureka.client.enabled=true",
+				"eureka.instance.hostname=www.route.other" })
 public class EurekaAutoConfigMultipleRoutesIntegrationTest {
 
 	@Autowired
@@ -34,4 +35,5 @@ public class EurekaAutoConfigMultipleRoutesIntegrationTest {
 		assertTrue(config.getSecurePortEnabled());
 		assertEquals("west.my-cf.com", config.getMetadataMap().get("zone"));
 	}
+
 }
