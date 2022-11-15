@@ -199,6 +199,7 @@ resources:
       repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
       username: ((corporate-harbor-robot-account.username))
       password: ((corporate-harbor-robot-account.password))
+      tag: jdk-17
 
   - name: artifactory-repo
     type: artifactory-resource
