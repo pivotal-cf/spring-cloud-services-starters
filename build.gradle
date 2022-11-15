@@ -49,13 +49,8 @@ configure(allprojects) {
 	apply plugin: "io.spring.javaformat"
 
 	ext {
-
-		javaApi = (JavaVersion.current() >= JavaVersion.VERSION_11)
-			? "https://docs.oracle.com/en/java/javase/11/docs/api"
-			: "https://docs.oracle.com/javase/8/docs/api/"
-
 		javadocLinks = [
-				javaApi,
+				"https://docs.oracle.com/en/java/javase/17/docs/api",
 				"https://docs.spring.io/spring-framework/docs/${springFrameworkVersion}/javadoc-api/"
 		] as String[]
 	}
@@ -89,14 +84,14 @@ configure(subprojects - [project(":spring-cloud-services-starter-config-client")
 						 project(":spring-cloud-services-starter-service-registry"),
 						 project(":spring-cloud-services-dependencies")]) {
 	compileJava {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 		options.encoding = "UTF-8"
 	}
 
 	compileTestJava {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
+		sourceCompatibility = JavaVersion.VERSION_17
+		targetCompatibility = JavaVersion.VERSION_17
 		options.encoding = "UTF-8"
 	}
 
