@@ -12,7 +12,7 @@ main() {
     fly --target "$FLY_TARGET" set-pipeline --pipeline starters-3.5.x \
       --config pipeline.yml \
       --load-vars-from config-concourse.yml \
-      --var branch="main"
+      --var branch="3.5.x"
   popd > /dev/null
 }
 
