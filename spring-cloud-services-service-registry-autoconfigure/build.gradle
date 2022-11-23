@@ -18,9 +18,9 @@ description = "Spring Cloud Services Service Registry Autoconfigure"
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter")
-    optional("org.springframework.security:spring-security-oauth2-client")
-    optional("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    optional("io.pivotal.cfenv:java-cfenv")
+    api("org.springframework.security:spring-security-oauth2-client", optional)
+    api("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client", optional)
+    api("io.pivotal.cfenv:java-cfenv", optional)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation('org.junit.jupiter:junit-jupiter-api')

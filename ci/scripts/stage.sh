@@ -40,7 +40,7 @@ git commit -m "Release v$stageVersion"
 git tag -a "v$stageVersion" -m "Release v$stageVersion"
 echo
 
-./gradlew --no-daemon clean build install -Dmaven.repo.local="${repository}"
+./gradlew --no-daemon clean build publishToMavenLocal -Dmaven.repo.local="${repository}"
 
 git reset --hard HEAD^
 if [[ $nextVersion != $snapshotVersion ]]; then
