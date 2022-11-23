@@ -25,10 +25,12 @@ dependencyManagement {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                packaging = "pom"
+            }
         }
     }
 }

@@ -24,10 +24,12 @@ dependencies {
     api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
 }
 
-install {
-    repositories.mavenInstaller {
-        pom.whenConfigured { generatedPom ->
-            generatedPom.packaging = "pom"
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                packaging = "pom"
+            }
         }
     }
 }

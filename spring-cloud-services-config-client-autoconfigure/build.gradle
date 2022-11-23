@@ -18,10 +18,10 @@ description = "Spring Cloud Services Config Client Autoconfigure"
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter")
-    optional('org.springframework.cloud:spring-cloud-starter-config')
-	optional('org.springframework.retry:spring-retry')
-	optional("org.springframework.security:spring-security-oauth2-client")
-	optional("io.pivotal.cfenv:java-cfenv")
+    api('org.springframework.cloud:spring-cloud-starter-config', optional)
+	api('org.springframework.retry:spring-retry', optional)
+	api("org.springframework.security:spring-security-oauth2-client", optional)
+	api("io.pivotal.cfenv:java-cfenv", optional)
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation('org.junit.jupiter:junit-jupiter-api')
