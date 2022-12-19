@@ -15,7 +15,6 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import com.netflix.discovery.shared.transport.jersey.TransportClientFactories;
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -45,16 +44,18 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 		contextRunner.withPropertyValues("eureka.client.oauth2.client-id=" + CLIENT_ID,
 				"eureka.client.oauth2.client-secret=" + CLIENT_SECRET,
 				"eureka.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
-					assertThat(context).hasSingleBean(OAuth2DiscoveryClientOptionalArgs.class);
-					OAuth2DiscoveryClientOptionalArgs discoveryClientOptionalArgs = context
-							.getBean(OAuth2DiscoveryClientOptionalArgs.class);
-					@SuppressWarnings("unchecked")
-					TransportClientFactories<Void> factories = (TransportClientFactories) ReflectionTestUtils
-							.getField(discoveryClientOptionalArgs, "transportClientFactories");
-					assertThat(factories).isNotNull();
-					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils.getField(factories,
-							"clientRegistration");
+
+					assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+					var factorySupplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+
+					var interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) ReflectionTestUtils
+							.getField(factorySupplier, "interceptor");
+					assertThat(interceptor).isNotNull();
+
+					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils
+							.getField(interceptor, "clientRegistration");
 					assertThat(clientRegistration).isNotNull();
+
 					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
 					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
 					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);

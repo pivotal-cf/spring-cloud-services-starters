@@ -15,7 +15,6 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import com.netflix.discovery.DiscoveryClient.DiscoveryClientOptionalArgs;
 import com.netflix.discovery.EurekaClientConfig;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -24,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration;
+import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -42,15 +42,18 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 public class EurekaClientOAuth2AutoConfiguration {
 
 	@Bean
-	@ConditionalOnMissingBean(DiscoveryClientOptionalArgs.class)
-	public OAuth2DiscoveryClientOptionalArgs discoveryClientOptionalArgs(
+	@ConditionalOnMissingBean
+	@ConditionalOnClass(name = "org.springframework.web.client.RestTemplate")
+	EurekaClientHttpRequestFactorySupplier eurekaClientOAuth2HttpRequestFactorySupplier(
 			EurekaClientOAuth2Properties eurekaClientOAuth2Properties) {
-		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
+		var clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
 				.clientId(eurekaClientOAuth2Properties.getClientId())
 				.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
 				.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
-		return new OAuth2DiscoveryClientOptionalArgs(clientRegistration);
+
+		return new EurekaClientOAuth2HttpRequestFactorySupplier(
+				new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 	}
 
 }
