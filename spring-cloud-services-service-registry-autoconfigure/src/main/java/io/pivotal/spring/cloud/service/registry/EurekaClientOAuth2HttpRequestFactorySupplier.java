@@ -15,6 +15,7 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import org.springframework.cloud.netflix.eureka.RestTemplateTimeoutProperties;
 import org.springframework.cloud.netflix.eureka.http.DefaultEurekaClientHttpRequestFactorySupplier;
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -26,6 +27,9 @@ import java.util.List;
 
 public class EurekaClientOAuth2HttpRequestFactorySupplier implements EurekaClientHttpRequestFactorySupplier {
 
+	private final EurekaClientHttpRequestFactorySupplier defaultEurekaClientHttpRequestFactorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(
+			new RestTemplateTimeoutProperties());
+
 	private final OAuth2AuthorizedClientHttpRequestInterceptor interceptor;
 
 	public EurekaClientOAuth2HttpRequestFactorySupplier(OAuth2AuthorizedClientHttpRequestInterceptor interceptor) {
@@ -34,10 +38,9 @@ public class EurekaClientOAuth2HttpRequestFactorySupplier implements EurekaClien
 
 	@Override
 	public ClientHttpRequestFactory get(SSLContext sslContext, HostnameVerifier hostnameVerifier) {
-		var defaultSupplier = new DefaultEurekaClientHttpRequestFactorySupplier();
-		var defaultFactory = defaultSupplier.get(sslContext, hostnameVerifier);
+		var clientHttpRequestFactory = defaultEurekaClientHttpRequestFactorySupplier.get(sslContext, hostnameVerifier);
 
-		return new InterceptingClientHttpRequestFactory(defaultFactory, List.of(interceptor));
+		return new InterceptingClientHttpRequestFactory(clientHttpRequestFactory, List.of(interceptor));
 	}
 
 }
