@@ -26,17 +26,6 @@ The release artifacts are available from Maven Central. You may also build and i
 
 Include the BOM and starter dependencies in your project using Maven or Gradle.
 
-== Compatibility Matrix
-
-[cols="1,1,1"]
-|===
-| SCS Starters | Spring Cloud | Spring Boot
-
-| 3.5.x | 2021.0.x | 2.7.x
-| 3.4.x | 2021.0.x | 2.6.x
-| 3.3.x | 2020.0.x | 2.5.x
-|===
-
 === Maven BOM
 
 `pom.xml`
@@ -169,6 +158,18 @@ repositories {
     maven { url "https://repo.spring.io/libs-release/" }
 }
 ```
+
+== Compatibility Matrix
+
+[cols="1,1,1"]
+|===
+| SCS Starters | Spring Cloud | Spring Boot
+
+| 4.0.x | 2022.0.x | 3.0.x
+| 3.5.x | 2021.0.x | 2.7.x
+| 3.4.x | 2021.0.x | 2.6.x
+| 3.3.x | 2020.0.x | 2.5.x
+|===
 
 == License
 
