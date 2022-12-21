@@ -1,0 +1,2 @@
+io.pivotal.spring.cloud.service.registry.EurekaInstanceAutoConfiguration
+io.pivotal.spring.cloud.service.registry.EurekaClientOAuth2AutoConfiguration

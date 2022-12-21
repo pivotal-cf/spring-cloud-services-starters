@@ -49,7 +49,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 					var factorySupplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 
 					var interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) ReflectionTestUtils
-							.getField(factorySupplier, "interceptor");
+							.getField(factorySupplier, "oAuth2AuthorizedClientHttpRequestInterceptor");
 					assertThat(interceptor).isNotNull();
 
 					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils

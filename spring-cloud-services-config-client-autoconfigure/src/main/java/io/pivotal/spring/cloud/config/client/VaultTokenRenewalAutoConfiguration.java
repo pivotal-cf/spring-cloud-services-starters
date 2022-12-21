@@ -23,14 +23,13 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,11 +53,10 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author cwalls
  */
-@Configuration
+@AutoConfiguration(after = ConfigClientAutoConfiguration.class)
 @ConditionalOnBean(ConfigClientProperties.class)
 @ConditionalOnProperty(prefix = "spring.cloud.config",
 		name = { "token", "client.oauth2.clientId", "client.oauth2.clientSecret", "client.oauth2.accessTokenUri" })
-@AutoConfigureAfter(ConfigClientAutoConfiguration.class)
 @EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
 @EnableScheduling
 public class VaultTokenRenewalAutoConfiguration {
