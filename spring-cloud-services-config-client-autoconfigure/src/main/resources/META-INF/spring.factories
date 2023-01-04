@@ -5,6 +5,9 @@ io.pivotal.spring.cloud.config.client.ConfigResourceClientAutoConfiguration
 org.springframework.boot.BootstrapRegistryInitializer=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapRegistryInitializer
 
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapConfiguration
+
 org.springframework.boot.env.EnvironmentPostProcessor=\
 io.pivotal.spring.cloud.config.client.PropertyMaskingEnvironmentPostProcessor,\
 io.pivotal.spring.cloud.config.client.ConfigClientEnvironmentPostProcessor
