@@ -50,7 +50,7 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -92,24 +92,6 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>spring-repository</id>
-            <url>https://repo.spring.io/libs-release</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-plugins</id>
-            <url>https://repo.spring.io/plugins-release</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-repository</id>
-            <url>https://repo.spring.io/libs-release</url>
-        </pluginRepository>
-    </pluginRepositories>
-
 </project>
 ```
 
@@ -121,8 +103,6 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
 buildscript {
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/plugins-release/" }
-        maven { url "https://repo.spring.io/libs-release/" }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -155,7 +135,6 @@ dependencies {
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/libs-release/" }
 }
 ```
 

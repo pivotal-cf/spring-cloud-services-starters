@@ -1,7 +1,3 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration,\
-io.pivotal.spring.cloud.config.client.ConfigResourceClientAutoConfiguration
-
 org.springframework.boot.BootstrapRegistryInitializer=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapRegistryInitializer
 
