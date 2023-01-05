@@ -22,7 +22,6 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.cloud.config.client.ConfigClientProperties;
-import org.springframework.cloud.config.client.ConfigServiceBootstrapConfiguration;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -37,7 +36,7 @@ public class ConfigClientAutoConfigResourceTest {
 					.of(ConfigResourceClientAutoConfiguration.class, ConfigClientAutoConfiguration.class));
 
 	@Test
-	public void plainTextConfigClientIsNotCreated() throws Exception {
+	public void plainTextConfigClientIsNotCreated() {
 		this.contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(ConfigClientProperties.class);
 			assertThat(context).doesNotHaveBean(PlainTextConfigClient.class);
@@ -45,7 +44,7 @@ public class ConfigClientAutoConfigResourceTest {
 	}
 
 	@Test
-	public void plainTextConfigClientIsCreated() throws Exception {
+	public void plainTextConfigClientIsCreated() {
 		this.contextRunner.withPropertyValues("spring.cloud.config.client.oauth2.client-id=acme",
 				"spring.cloud.config.client.oauth2.client-secret=acmesecret",
 				"spring.cloud.config.client.oauth2.access-token-uri=acmetokenuri").run(context -> {

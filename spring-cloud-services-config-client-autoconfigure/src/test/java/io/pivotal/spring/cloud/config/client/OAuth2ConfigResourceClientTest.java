@@ -46,20 +46,23 @@ import org.springframework.web.client.RestTemplate;
 public class OAuth2ConfigResourceClientTest {
 
 	// @formatter:off
-	private static final String NGINX_CONFIG = "server {\n"
-			+ "    listen              80;\n"
-			+ "    server_name         example.com;\n"
-			+ "}";
+	private static final String NGINX_CONFIG = """
+			server {
+			    listen              80;
+			    server_name         example.com;
+			}""";
 
-	private static final String DEV_NGINX_CONFIG = "server {\n"
-			+ "    listen              80;\n"
-			+ "    server_name         dev.example.com;\n"
-			+ "}";
+	private static final String DEV_NGINX_CONFIG = """
+			server {
+			    listen              80;
+			    server_name         dev.example.com;
+			}""";
 
-	private static final String TEST_NGINX_CONFIG = "server {\n"
-			+ "    listen              80;\n"
-			+ "    server_name         test.example.com;\n"
-			+ "}";
+	private static final String TEST_NGINX_CONFIG = """
+			server {
+			    listen              80;
+			    server_name         test.example.com;
+			}""";
 	// @formatter:on
 
 	@LocalServerPort

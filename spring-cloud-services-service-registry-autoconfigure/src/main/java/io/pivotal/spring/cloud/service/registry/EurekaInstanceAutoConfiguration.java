@@ -150,7 +150,7 @@ public class EurekaInstanceAutoConfiguration {
 	}
 
 	private static String zoneFromUri(String defaultZoneUri) {
-		String hostname = null;
+		String hostname;
 		try {
 			hostname = new URI(defaultZoneUri).getHost();
 		}

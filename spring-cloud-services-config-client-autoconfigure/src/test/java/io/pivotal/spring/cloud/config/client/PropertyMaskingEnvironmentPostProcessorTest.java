@@ -26,7 +26,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
@@ -66,7 +65,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 					fakeCredhubProperties);
 
 			// Add Git properties that will not be masked (except the my-password which is
-			// part of the default sainitze keys)
+			// part of the default sanitize keys)
 			Map<String, Object> fakeGitProperties = new HashMap<>();
 			fakeGitProperties.put(GIT_TEST_NON_SANITIZE_PROPERTY, "ReadableValue");
 			fakeGitProperties.put("my-password", "supersecret");
@@ -91,7 +90,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		Environment environment;
 
 		@Test
-		public void vaultPropertyIsIncludedInSantizeEndpoints() {
+		public void vaultPropertyIsIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
 					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
@@ -100,7 +99,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		}
 
 		@Test
-		public void credhubPropertyIsIncludedInSantizeEndpoints() {
+		public void credhubPropertyIsIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
 					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
@@ -109,7 +108,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		}
 
 		@Test
-		public void gitPropertyIsNotIncludedInSantizeEndpoints() {
+		public void gitPropertyIsNotIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
 					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 

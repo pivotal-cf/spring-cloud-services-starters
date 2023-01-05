@@ -65,7 +65,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 				"spring.cloud.config.client.oauth2.clientSecret=" + CLIENT_SECRET,
 				"spring.cloud.config.client.oauth2.accessTokenUri=" + TOKEN_URI).run(context -> {
 					RestTemplate restTemplate = context.getBean("mockRestTemplate", RestTemplate.class);
-					await().atMost(5l, TimeUnit.SECONDS).untilAsserted(() -> {
+					await().atMost(5L, TimeUnit.SECONDS).untilAsserted(() -> {
 						verify(restTemplate, atLeast(4)).postForObject(anyString(), any(HttpEntity.class), any());
 						assertThat(restTemplate.getInterceptors()).hasSize(1);
 						assertThat(restTemplate.getInterceptors().get(0))

@@ -23,8 +23,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.logging.Log;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -59,12 +57,6 @@ public class PropertyMaskingEnvironmentPostProcessor implements EnvironmentPostP
 
 	private static final String CREDHUB_PROPERTY_PATTERN = "configserver:credhub-";
 
-	private final Log log;
-
-	public PropertyMaskingEnvironmentPostProcessor(Log log) {
-		this.log = log;
-	}
-
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		String[] defaultKeys = { "password", "secret", "key", "token", ".*credentials.*", "vcap_services" };
@@ -81,7 +73,7 @@ public class PropertyMaskingEnvironmentPostProcessor implements EnvironmentPostP
 				.filter(ps -> ps instanceof EnumerablePropertySource)
 				.filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN)
 						|| ps.getName().startsWith(CREDHUB_PROPERTY_PATTERN))
-				.map(ps -> ((EnumerablePropertySource) ps).getPropertyNames()).flatMap(Arrays::<String>stream);
+				.map(ps -> ((EnumerablePropertySource) ps).getPropertyNames()).flatMap(Arrays::stream);
 
 		propertiesToSanitize.addAll(vaultKeyNameStream.collect(Collectors.toSet()));
 
