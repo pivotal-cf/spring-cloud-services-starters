@@ -175,7 +175,7 @@ resources:
   - name: git-repo
     type: git
     source:
-      uri: ((scs-starters-github-url))
+      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
       fetch_tags: true
@@ -183,13 +183,13 @@ resources:
   - name: git-repo-staging
     type: git
     source:
-      uri: ((scs-starters-github-url))
+      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((github-username))/staging
 
   - name: ci-images-git-repo
     type: git
     source:
-      uri: ((scs-starters-github-url))
+      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       paths: ["ci/images/*"]
 
