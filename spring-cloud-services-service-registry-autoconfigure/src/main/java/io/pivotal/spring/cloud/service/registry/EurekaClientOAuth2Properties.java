@@ -15,6 +15,8 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.util.Set;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "eureka.client.oauth2")
@@ -25,6 +27,8 @@ public class EurekaClientOAuth2Properties {
 	private String clientSecret;
 
 	private String accessTokenUri;
+
+	private Set<String> scope;
 
 	public String getClientId() {
 		return clientId;
@@ -48,6 +52,14 @@ public class EurekaClientOAuth2Properties {
 
 	public void setAccessTokenUri(String accessTokenUri) {
 		this.accessTokenUri = accessTokenUri;
+	}
+
+	public Set<String> getScope() {
+		return scope;
+	}
+
+	public void setScope(Set<String> scope) {
+		this.scope = scope;
 	}
 
 }
