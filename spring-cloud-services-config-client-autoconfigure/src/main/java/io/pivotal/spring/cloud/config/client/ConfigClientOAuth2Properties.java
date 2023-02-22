@@ -15,6 +15,8 @@
  */
 package io.pivotal.spring.cloud.config.client;
 
+import java.util.Set;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -30,6 +32,8 @@ public class ConfigClientOAuth2Properties {
 	private String clientSecret;
 
 	private String accessTokenUri;
+
+	private Set<String> scope;
 
 	public String getClientId() {
 		return clientId;
@@ -53,6 +57,14 @@ public class ConfigClientOAuth2Properties {
 
 	public void setAccessTokenUri(String accessTokenUri) {
 		this.accessTokenUri = accessTokenUri;
+	}
+
+	public Set<String> getScope() {
+		return scope;
+	}
+
+	public void setScope(Set<String> scope) {
+		this.scope = scope;
 	}
 
 }
