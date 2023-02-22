@@ -48,6 +48,7 @@ public class EurekaClientOAuth2AutoConfiguration {
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
 				.clientId(eurekaClientOAuth2Properties.getClientId())
 				.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
+				.scope(eurekaClientOAuth2Properties.getScope())
 				.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
 		return new OAuth2DiscoveryClientOptionalArgs(clientRegistration);
