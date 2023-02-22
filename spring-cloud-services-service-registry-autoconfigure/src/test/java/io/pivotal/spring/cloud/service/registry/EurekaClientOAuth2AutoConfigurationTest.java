@@ -30,37 +30,72 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
  */
 public class EurekaClientOAuth2AutoConfigurationTest {
 
-	private static final String CLIENT_ID = "clientId";
-
-	private static final String CLIENT_SECRET = "clientSecret";
-
-	private static final String TOKEN_URI = "tokenUri";
-
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(EurekaClientOAuth2AutoConfiguration.class));
 
 	@Test
-	public void discoveryClientOptionalArgs() {
-		contextRunner.withPropertyValues("eureka.client.oauth2.client-id=" + CLIENT_ID,
-				"eureka.client.oauth2.client-secret=" + CLIENT_SECRET,
-				"eureka.client.oauth2.access-token-uri=" + TOKEN_URI).run(context -> {
+	public void oauth2RequestFactorySupplierIsNotCreated() {
+		contextRunner.run(
+				context -> assertThat(context).doesNotHaveBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
+	}
 
-					assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
-					var factorySupplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+	@Test
+	public void oauth2RequestFactorySupplierIsCreated() {
+		var pairs = oauth2Properties("::id::", "::secret::", "::uri::");
 
-					var interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) ReflectionTestUtils
-							.getField(factorySupplier, "oAuth2AuthorizedClientHttpRequestInterceptor");
-					assertThat(interceptor).isNotNull();
+		contextRunner.withPropertyValues(pairs)
+				.run(context -> assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
+	}
 
-					ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils
-							.getField(interceptor, "clientRegistration");
-					assertThat(clientRegistration).isNotNull();
+	@Test
+	public void authorizationInterceptorIsConfigured() {
+		var pairs = oauth2Properties("::id::", "::secret::", "::uri::");
 
-					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
-					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
-					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
-					assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(CLIENT_CREDENTIALS);
-				});
+		contextRunner.withPropertyValues(pairs).run(context -> {
+			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+
+			var clientRegistration = getAuthInterceptorConfiguration(supplier);
+			assertThat(clientRegistration.getClientId()).isEqualTo("::id::");
+			assertThat(clientRegistration.getClientSecret()).isEqualTo("::secret::");
+			assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo("::uri::");
+			assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(CLIENT_CREDENTIALS);
+			assertThat(clientRegistration.getScopes()).isNull();
+		});
+	}
+
+	@Test
+	public void optionalScopePropertyIsSupported() {
+		var pairs = oauth2Properties("::client id::", "::client secret::", "::token uri::");
+		var scope = "eureka.client.oauth2.scope=profile,email";
+		contextRunner.withPropertyValues(pairs).withPropertyValues(scope).run(context -> {
+			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
+
+			var clientRegistration = getAuthInterceptorConfiguration(supplier);
+			assertThat(clientRegistration.getClientId()).isEqualTo("::client id::");
+			assertThat(clientRegistration.getClientSecret()).isEqualTo("::client secret::");
+			assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo("::token uri::");
+			assertThat(clientRegistration.getAuthorizationGrantType()).isEqualTo(CLIENT_CREDENTIALS);
+			assertThat(clientRegistration.getScopes()).containsExactlyInAnyOrder("email", "profile");
+		});
+	}
+
+	private ClientRegistration getAuthInterceptorConfiguration(EurekaClientOAuth2HttpRequestFactorySupplier supplier) {
+		var interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) ReflectionTestUtils.getField(supplier,
+				"oAuth2AuthorizedClientHttpRequestInterceptor");
+		assertThat(interceptor).isNotNull();
+
+		ClientRegistration clientRegistration = (ClientRegistration) ReflectionTestUtils.getField(interceptor,
+				"clientRegistration");
+		assertThat(clientRegistration).isNotNull();
+		return clientRegistration;
+	}
+
+	private String[] oauth2Properties(String clientId, String clientSecret, String tokenUri) {
+		return new String[] { String.format("eureka.client.oauth2.client-id=%s", clientId),
+				String.format("eureka.client.oauth2.client-secret=%s", clientSecret),
+				String.format("eureka.client.oauth2.access-token-uri=%s", tokenUri) };
 	}
 
 }
