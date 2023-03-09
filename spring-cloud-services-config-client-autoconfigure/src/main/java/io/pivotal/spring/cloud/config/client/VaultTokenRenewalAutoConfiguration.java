@@ -74,6 +74,7 @@ public class VaultTokenRenewalAutoConfiguration {
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 				.clientId(configClientOAuth2Properties.getClientId())
 				.clientSecret(configClientOAuth2Properties.getClientSecret())
+				.scope(configClientOAuth2Properties.getScope())
 				.tokenUri(configClientOAuth2Properties.getAccessTokenUri()).build();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 		String obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);

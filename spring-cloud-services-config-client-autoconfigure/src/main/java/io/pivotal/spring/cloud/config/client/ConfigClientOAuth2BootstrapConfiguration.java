@@ -42,6 +42,7 @@ public class ConfigClientOAuth2BootstrapConfiguration {
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
 				.clientId(configClientOAuth2Properties.getClientId())
 				.clientSecret(configClientOAuth2Properties.getClientSecret())
+				.scope(configClientOAuth2Properties.getScope())
 				.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
 		RestTemplate restTemplate = new RestTemplate();
