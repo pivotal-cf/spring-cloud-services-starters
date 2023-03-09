@@ -92,7 +92,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		@Test
 		public void vaultPropertyIsIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
-					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).contains(VAULT_TEST_SANITIZE_PROPERTY);
@@ -101,7 +101,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		@Test
 		public void credhubPropertyIsIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
-					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).contains(CREDHUB_TEST_SANITIZE_PROPERTY);
@@ -110,7 +110,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 		@Test
 		public void gitPropertyIsNotIncludedInSanitizeEndpoints() {
 			String sanitizeEndpointsProp = environment
-					.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 			assertThat(sanitizeEndpointsProp).isNotNull();
 			assertThat(sanitizeEndpointsProp).doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);

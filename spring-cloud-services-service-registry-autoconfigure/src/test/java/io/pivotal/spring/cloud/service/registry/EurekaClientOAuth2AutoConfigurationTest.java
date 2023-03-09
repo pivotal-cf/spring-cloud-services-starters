@@ -31,12 +31,12 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
 public class EurekaClientOAuth2AutoConfigurationTest {
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(EurekaClientOAuth2AutoConfiguration.class));
+		.withConfiguration(AutoConfigurations.of(EurekaClientOAuth2AutoConfiguration.class));
 
 	@Test
 	public void oauth2RequestFactorySupplierIsNotCreated() {
-		contextRunner.run(
-				context -> assertThat(context).doesNotHaveBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
+		contextRunner
+			.run(context -> assertThat(context).doesNotHaveBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 		var pairs = oauth2Properties("::id::", "::secret::", "::uri::");
 
 		contextRunner.withPropertyValues(pairs)
-				.run(context -> assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
+			.run(context -> assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
 	}
 
 	@Test

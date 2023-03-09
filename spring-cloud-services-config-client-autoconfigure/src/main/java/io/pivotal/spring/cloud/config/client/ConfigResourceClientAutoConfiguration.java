@@ -45,11 +45,12 @@ public class ConfigResourceClientAutoConfiguration {
 	public ConfigResourceClient configResourceClient(ConfigClientProperties configClientProperties,
 			ConfigClientOAuth2Properties configClientOAuth2Properties) {
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
-				.clientId(configClientOAuth2Properties.getClientId())
-				.clientSecret(configClientOAuth2Properties.getClientSecret())
-				.scope(configClientOAuth2Properties.getScope())
-				.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
+			.clientId(configClientOAuth2Properties.getClientId())
+			.clientSecret(configClientOAuth2Properties.getClientSecret())
+			.scope(configClientOAuth2Properties.getScope())
+			.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
+			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+			.build();
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 		return new OAuth2ConfigResourceClient(restTemplate, configClientProperties);

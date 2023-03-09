@@ -55,31 +55,34 @@ public class VaultTokenRenewalAutoConfigurationTest {
 	private static final String TOKEN_URI = "tokenUri";
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-			.withConfiguration(AutoConfigurations.of(TestConfiguration.class, ConfigClientAutoConfiguration.class,
-					VaultTokenRenewalAutoConfiguration.class));
+		.withConfiguration(AutoConfigurations.of(TestConfiguration.class, ConfigClientAutoConfiguration.class,
+				VaultTokenRenewalAutoConfiguration.class));
 
 	@Test
 	public void scheduledVaultTokenRefresh() {
-		contextRunner.withPropertyValues("spring.cloud.config.token=footoken", "vault.token.renew.rate=1000",
-				"spring.cloud.config.client.oauth2.clientId=" + CLIENT_ID,
-				"spring.cloud.config.client.oauth2.clientSecret=" + CLIENT_SECRET,
-				"spring.cloud.config.client.oauth2.accessTokenUri=" + TOKEN_URI).run(context -> {
-					RestTemplate restTemplate = context.getBean("mockRestTemplate", RestTemplate.class);
-					await().atMost(5L, TimeUnit.SECONDS).untilAsserted(() -> {
-						verify(restTemplate, atLeast(4)).postForObject(anyString(), any(HttpEntity.class), any());
-						assertThat(restTemplate.getInterceptors()).hasSize(1);
-						assertThat(restTemplate.getInterceptors().get(0))
-								.isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
-						OAuth2AuthorizedClientHttpRequestInterceptor interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate
-								.getInterceptors().get(0);
-						ClientRegistration clientRegistration = interceptor.clientRegistration;
-						assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
-						assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
-						assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
-						assertThat(clientRegistration.getAuthorizationGrantType())
-								.isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
-					});
+		contextRunner
+			.withPropertyValues("spring.cloud.config.token=footoken", "vault.token.renew.rate=1000",
+					"spring.cloud.config.client.oauth2.clientId=" + CLIENT_ID,
+					"spring.cloud.config.client.oauth2.clientSecret=" + CLIENT_SECRET,
+					"spring.cloud.config.client.oauth2.accessTokenUri=" + TOKEN_URI)
+			.run(context -> {
+				RestTemplate restTemplate = context.getBean("mockRestTemplate", RestTemplate.class);
+				await().atMost(5L, TimeUnit.SECONDS).untilAsserted(() -> {
+					verify(restTemplate, atLeast(4)).postForObject(anyString(), any(HttpEntity.class), any());
+					assertThat(restTemplate.getInterceptors()).hasSize(1);
+					assertThat(restTemplate.getInterceptors().get(0))
+						.isInstanceOf(OAuth2AuthorizedClientHttpRequestInterceptor.class);
+					OAuth2AuthorizedClientHttpRequestInterceptor interceptor = (OAuth2AuthorizedClientHttpRequestInterceptor) restTemplate
+						.getInterceptors()
+						.get(0);
+					ClientRegistration clientRegistration = interceptor.clientRegistration;
+					assertThat(clientRegistration.getClientId()).isEqualTo(CLIENT_ID);
+					assertThat(clientRegistration.getClientSecret()).isEqualTo(CLIENT_SECRET);
+					assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo(TOKEN_URI);
+					assertThat(clientRegistration.getAuthorizationGrantType())
+						.isEqualTo(AuthorizationGrantType.CLIENT_CREDENTIALS);
 				});
+			});
 	}
 
 	@Configuration

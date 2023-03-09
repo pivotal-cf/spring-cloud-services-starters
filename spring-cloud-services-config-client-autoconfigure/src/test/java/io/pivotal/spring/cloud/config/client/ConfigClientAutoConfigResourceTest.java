@@ -32,8 +32,9 @@ import static org.springframework.security.oauth2.core.AuthorizationGrantType.CL
 public class ConfigClientAutoConfigResourceTest {
 
 	private final WebApplicationContextRunner contextRunner = new WebApplicationContextRunner()
-			.withAllowBeanDefinitionOverriding(true).withConfiguration(AutoConfigurations
-					.of(ConfigResourceClientAutoConfiguration.class, ConfigClientAutoConfiguration.class));
+		.withAllowBeanDefinitionOverriding(true)
+		.withConfiguration(AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class,
+				ConfigClientAutoConfiguration.class));
 
 	@Test
 	public void plainTextConfigClientIsNotCreated() {
