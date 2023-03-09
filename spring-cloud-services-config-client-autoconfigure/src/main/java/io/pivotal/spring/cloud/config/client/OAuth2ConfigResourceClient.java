@@ -100,8 +100,10 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 		}
 
 		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(configClientProperties.getUri()[0])
-				.pathSegment(configClientProperties.getName()).pathSegment(profile).pathSegment(label)
-				.pathSegment(path);
+			.pathSegment(configClientProperties.getName())
+			.pathSegment(profile)
+			.pathSegment(label)
+			.pathSegment(path);
 		RequestEntity.HeadersBuilder<?> requestBuilder = RequestEntity.get(urlBuilder.build().toUri());
 		if (StringUtils.hasText(configClientProperties.getToken())) {
 			requestBuilder.header(TOKEN_HEADER, configClientProperties.getToken());

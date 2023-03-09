@@ -38,10 +38,10 @@ import io.pivotal.cfenv.core.CfService;
 public class ConfigClientOAuth2BootstrapRegistryInitializer implements BootstrapRegistryInitializer {
 
 	private static final boolean CONFIG_CLIENT_IS_PRESENT = ClassUtils
-			.isPresent("org.springframework.cloud.config.client.ConfigServerConfigDataLoader", null);
+		.isPresent("org.springframework.cloud.config.client.ConfigServerConfigDataLoader", null);
 
 	private static final boolean OAUTH2_CLIENT_IS_PRESENT = ClassUtils
-			.isPresent("org.springframework.security.oauth2.client.registration.ClientRegistration", null);
+		.isPresent("org.springframework.security.oauth2.client.registration.ClientRegistration", null);
 
 	private static final boolean JAVA_CFENV_IS_PRESENT = ClassUtils.isPresent("io.pivotal.cfenv.core.CfEnv", null);
 
@@ -62,8 +62,11 @@ public class ConfigClientOAuth2BootstrapRegistryInitializer implements Bootstrap
 			String accessTokenUri = credentials.getString("access_token_uri");
 			RestTemplate restTemplate = new RestTemplate();
 			ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
-					.clientId(clientId).clientSecret(clientSecret).tokenUri(accessTokenUri)
-					.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
+				.clientId(clientId)
+				.clientSecret(clientSecret)
+				.tokenUri(accessTokenUri)
+				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+				.build();
 			restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 			return restTemplate;
 		});

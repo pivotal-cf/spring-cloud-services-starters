@@ -47,11 +47,12 @@ public class EurekaClientOAuth2AutoConfiguration {
 			EurekaClientOAuth2Properties eurekaClientOAuth2Properties,
 			RestTemplateTimeoutProperties restTemplateTimeoutProperties) {
 		var clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
-				.clientId(eurekaClientOAuth2Properties.getClientId())
-				.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
-				.scope(eurekaClientOAuth2Properties.getScope())
-				.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS).build();
+			.clientId(eurekaClientOAuth2Properties.getClientId())
+			.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
+			.scope(eurekaClientOAuth2Properties.getScope())
+			.tokenUri(eurekaClientOAuth2Properties.getAccessTokenUri())
+			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+			.build();
 
 		var oAuth2AuthorizedClientHttpRequestInterceptor = new OAuth2AuthorizedClientHttpRequestInterceptor(
 				clientRegistration);

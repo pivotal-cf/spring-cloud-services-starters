@@ -66,17 +66,17 @@ public class EurekaInstanceAutoConfigurationTest {
 	@Before
 	public void setUp() {
 		contextRunner = new WebApplicationContextRunner()
-				.withPropertyValues("eureka.client.serviceUrl.defaultZone=" + ZONE_URI,
-						"vcap.application.uris[0]=" + HOSTNAME, "vcap.application.instance_id=" + INSTANCE_ID,
-						"vcap.application.application_id=" + INSTANCE_GUID, "cf.instance.index=" + INSTANCE_INDEX,
-						"cf.instance.internal.ip=" + IP, "port=" + PORT)
-				.withConfiguration(AutoConfigurations.of(EurekaInstanceAutoConfiguration.class));
+			.withPropertyValues("eureka.client.serviceUrl.defaultZone=" + ZONE_URI,
+					"vcap.application.uris[0]=" + HOSTNAME, "vcap.application.instance_id=" + INSTANCE_ID,
+					"vcap.application.application_id=" + INSTANCE_GUID, "cf.instance.index=" + INSTANCE_INDEX,
+					"cf.instance.internal.ip=" + IP, "port=" + PORT)
+			.withConfiguration(AutoConfigurations.of(EurekaInstanceAutoConfiguration.class));
 	}
 
 	@Test
 	public void testRouteRegistration() {
 		contextRunner = contextRunner
-				.withPropertyValues("spring.cloud.services.registrationMethod=" + ROUTE_REGISTRATION_METHOD);
+			.withPropertyValues("spring.cloud.services.registrationMethod=" + ROUTE_REGISTRATION_METHOD);
 		testDefaultRegistration();
 	}
 
@@ -102,15 +102,15 @@ public class EurekaInstanceAutoConfigurationTest {
 	@Test
 	public void testDirectRegistration() {
 		contextRunner.withPropertyValues("spring.cloud.services.registrationMethod=" + DIRECT_REGISTRATION_METHOD)
-				.run(context -> {
-					assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-					EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-					assertTrue(eurekaInstanceConfigBean.isPreferIpAddress());
-					assertEquals(IP + ":" + INSTANCE_ID, eurekaInstanceConfigBean.getInstanceId());
-					assertEquals(IP, eurekaInstanceConfigBean.getHostname());
-					assertEquals(PORT, eurekaInstanceConfigBean.getNonSecurePort());
-					assertFalse(eurekaInstanceConfigBean.getSecurePortEnabled());
-				});
+			.run(context -> {
+				assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
+				EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+				assertTrue(eurekaInstanceConfigBean.isPreferIpAddress());
+				assertEquals(IP + ":" + INSTANCE_ID, eurekaInstanceConfigBean.getInstanceId());
+				assertEquals(IP, eurekaInstanceConfigBean.getHostname());
+				assertEquals(PORT, eurekaInstanceConfigBean.getNonSecurePort());
+				assertFalse(eurekaInstanceConfigBean.getSecurePortEnabled());
+			});
 	}
 
 	@Test
@@ -125,11 +125,11 @@ public class EurekaInstanceAutoConfigurationTest {
 	@Test
 	public void testShortDefaultZoneUri() {
 		contextRunner.withPropertyValues("eureka.client.serviceUrl.defaultZone=https://funkylocaldomainname/eureka/")
-				.run(context -> {
-					assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-					EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-					assertEquals(UNKNOWN_ZONE, eurekaInstanceConfigBean.getMetadataMap().get("zone"));
-				});
+			.run(context -> {
+				assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
+				EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+				assertEquals(UNKNOWN_ZONE, eurekaInstanceConfigBean.getMetadataMap().get("zone"));
+			});
 	}
 
 	@Test

@@ -70,10 +70,11 @@ public class PropertyMaskingEnvironmentPostProcessor implements EnvironmentPostP
 		}
 
 		Stream<String> vaultKeyNameStream = configserverPropertySources.stream()
-				.filter(ps -> ps instanceof EnumerablePropertySource)
-				.filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN)
-						|| ps.getName().startsWith(CREDHUB_PROPERTY_PATTERN))
-				.map(ps -> ((EnumerablePropertySource) ps).getPropertyNames()).flatMap(Arrays::stream);
+			.filter(ps -> ps instanceof EnumerablePropertySource)
+			.filter(ps -> ps.getName().startsWith(VAULT_PROPERTY_PATTERN)
+					|| ps.getName().startsWith(CREDHUB_PROPERTY_PATTERN))
+			.map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+			.flatMap(Arrays::stream);
 
 		propertiesToSanitize.addAll(vaultKeyNameStream.collect(Collectors.toSet()));
 

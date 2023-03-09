@@ -71,11 +71,12 @@ public class VaultTokenRenewalAutoConfiguration {
 			// Default to a 300 second (5 minute) TTL
 			@Value("${vault.token.ttl:300000}") long renewTTL) {
 		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.clientId(configClientOAuth2Properties.getClientId())
-				.clientSecret(configClientOAuth2Properties.getClientSecret())
-				.scope(configClientOAuth2Properties.getScope())
-				.tokenUri(configClientOAuth2Properties.getAccessTokenUri()).build();
+			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+			.clientId(configClientOAuth2Properties.getClientId())
+			.clientSecret(configClientOAuth2Properties.getClientSecret())
+			.scope(configClientOAuth2Properties.getScope())
+			.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
+			.build();
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 		String obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
 		String refreshUri = configClientProperties.getUri()[0] + "/vault/v1/auth/token/renew-self";
