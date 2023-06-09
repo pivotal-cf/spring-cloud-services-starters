@@ -22,8 +22,8 @@ buildscript {
 	}
 	dependencies {
 		classpath("io.spring.gradle:dependency-management-plugin:1.1.0")
-		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.31.5")
-		classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.38")
+		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.32.0")
+		classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.39")
 		classpath("io.spring.nohttp:nohttp-gradle:${nohttpVersion}")
 		classpath("com.netflix.nebula:gradle-extra-configurations-plugin:9.0.0")
 	}
@@ -49,7 +49,7 @@ configure(allprojects) {
 	ext {
 		javadocLinks = [
 				"https://docs.oracle.com/en/java/javase/17/docs/api",
-				"https://docs.spring.io/spring-framework/docs/${springFrameworkVersion}/javadoc-api/"
+				"https://docs.spring.io/spring-framework/docs/current/javadoc-api/"
 		] as String[]
 	}
 

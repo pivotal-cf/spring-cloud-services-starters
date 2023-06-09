@@ -32,7 +32,7 @@ import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -91,7 +91,7 @@ public class OAuth2ConfigResourceClientTest {
 		Assert.assertEquals(TEST_NGINX_CONFIG, read(configClient.getPlainTextResource(null, "master", "nginx.conf")));
 	}
 
-	@Test(expected = HttpClientErrorException.class)
+	@Test(expected = HttpServerErrorException.class)
 	public void missingConfigFileShouldReturnHttpError() {
 		configClient.getPlainTextResource(null, "master", "missing-config.xml");
 	}
