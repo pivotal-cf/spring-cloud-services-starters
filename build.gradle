@@ -161,8 +161,8 @@ configure(subprojects - [project(":spring-cloud-services-starter-config-client")
 		options.addStringOption('Xdoclint:none', '-quiet')
 	}
 
-	task allDependencyInsight(type: DependencyInsightReportTask) {}
-	task allDependencies(type: DependencyReportTask) {}
+	tasks.register("allDependencyInsight", DependencyInsightReportTask) {}
+	tasks.register("allDependencies", DependencyReportTask) {}
 }
 
 configure(rootProject) {
@@ -175,7 +175,7 @@ configure(rootProject) {
 		// for integration tests
 	}
 
-	task api(type: Javadoc) {
+	tasks.register("api", Javadoc) {
 		group = "Documentation"
 		description = "Generates aggregated Javadoc API documentation."
 		title = "${rootProject.description} ${version} API"
@@ -199,7 +199,7 @@ configure(rootProject) {
 
 }
 
-task codeCoverageReport(type: JacocoReport) {
+tasks.register("codeCoverageReport", JacocoReport) {
 	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
 
 	subprojects.each { subproject ->
@@ -215,10 +215,10 @@ task codeCoverageReport(type: JacocoReport) {
 	}
 
 	reports {
-		xml.required=true
-		xml.destination new File("${buildDir}/reports/jacoco/report.xml")
 		html.required=false
 		csv.required=false
+		xml.required=true
+		xml.outputLocation=layout.buildDirectory.file("${buildDir}/reports/jacoco/report.xml")
 	}
 }
 
