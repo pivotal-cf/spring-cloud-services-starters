@@ -27,6 +27,7 @@ dependencies {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            from components.java
             pom {
                 packaging = "pom"
             }
