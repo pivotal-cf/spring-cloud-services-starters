@@ -22,7 +22,7 @@ buildscript {
     }
     dependencies {
         classpath("io.spring.gradle:dependency-management-plugin:1.1.0")
-        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:5.0.2")
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:5.1.1")
         classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.39")
         classpath("io.spring.nohttp:nohttp-gradle:${nohttpVersion}")
     }
