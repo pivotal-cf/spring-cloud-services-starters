@@ -86,6 +86,11 @@ configure(javaProjects) {
         options.encoding = "UTF-8"
     }
 
+    java {
+        withJavadocJar()
+        withSourcesJar()
+    }
+
     [compileJava, compileTestJava]*.options*.compilerArgs = ["-Xlint:all"]
 
     test {
