@@ -4,12 +4,12 @@ set -euo pipefail
 
 readonly FLY_TARGET=scs
 
-main() {
+function main() {
   fly -t "$FLY_TARGET" sync
 
-  pushd "$(dirname $0)/../ci" > /dev/null
+  pushd "$(dirname "$0")/../ci" > /dev/null
     echo "Setting starters pipeline..."
-    fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.0.x \
+    fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.1.x \
       --config pipeline.yml \
       --load-vars-from config-concourse.yml \
       --var branch="main"
