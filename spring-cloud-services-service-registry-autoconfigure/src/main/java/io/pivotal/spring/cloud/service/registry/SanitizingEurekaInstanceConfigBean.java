@@ -37,8 +37,8 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 		super.setEnvironment(environment);
 		// set some defaults from the environment, but allow the defaults to use
 		// relaxed binding
-		String springAppName = getSpringApplicationName();
-		String eurekaInstanceAppname = getEurekaInstanceAppnameProperty();
+		var springAppName = getSpringApplicationName();
+		var eurekaInstanceAppname = getEurekaInstanceAppnameProperty();
 		if (StringUtils.hasText(eurekaInstanceAppname)) {
 			// default to eureka.instance.appname if defined
 			setVirtualHostName(eurekaInstanceAppname);
@@ -46,7 +46,7 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 		}
 		else if (StringUtils.hasText(springAppName)) {
 			// default to a hostname-sanitized spring application name
-			String sanitizedAppName = sanitizeHostname(springAppName);
+			var sanitizedAppName = sanitizeHostname(springAppName);
 			if (!springAppName.equals(sanitizedAppName)) {
 				LOGGER.warning("Spring application name '" + springAppName
 						+ "' was sanitized to produce eureka.instance.appname '" + sanitizedAppName + "'");
@@ -58,7 +58,6 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 	}
 
 	private String getSpringApplicationName() {
-
 		return Binder.get(getEnvironment()).bind("spring.application.name", String.class).orElse(null);
 	}
 
@@ -71,12 +70,12 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 		if (hostname == null) {
 			return null;
 		}
-		return hostname.replaceAll("[^0-9a-zA-Z\\-\\.]", "-");
+		return hostname.replaceAll("[^0-9a-zA-Z\\-.]", "-");
 	}
 
 	@Override
 	public void afterPropertiesSet() {
-		String messageSuffix = "' is set to a different value than eureka.instance.appname '" + getAppname()
+		var messageSuffix = "' is set to a different value than eureka.instance.appname '" + getAppname()
 				+ "', and is disallowed in Spring Cloud Services. Try only setting eureka.instance.appname."
 				+ " Please refer to our documentation and reach out to us if you think you require different values.";
 		if (StringUtils.hasText(getVirtualHostName()) && !getVirtualHostName().equalsIgnoreCase(getAppname())) {

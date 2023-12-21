@@ -15,11 +15,10 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,16 +34,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = SurgicalRoutingRequestTransformerIntegrationTest.TestConfig.class, properties = {
 		"vcap.application.uris[0]=www.route.local", "eureka.client.serviceUrl.defaultZone=https://eureka-server" })
 public class SurgicalRoutingRequestTransformerIntegrationTest {
@@ -61,26 +58,26 @@ public class SurgicalRoutingRequestTransformerIntegrationTest {
 	private final byte[] body = new byte[] {};
 
 	@Autowired
-	private LoadBalancerRequestFactory lbReqFactory;
+	private LoadBalancerRequestFactory requestFactory;
 
 	@Test
-	public void transformer() throws Exception {
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("cfAppGuid", "123");
-		metadata.put("cfInstanceIndex", "4");
-		HttpHeaders originalHeaders = new HttpHeaders();
-		originalHeaders.add("foo", "bar");
-		originalHeaders.add("foo", "baz");
-		Mockito.when(instance.getMetadata()).thenReturn(metadata);
+	public void headerIsSetWhenMetadataPresent() throws Exception {
+		var metadata = Map.of(CF_APP_GUID, "::app-guid::", CF_INSTANCE_INDEX, "::instance-index::");
+		when(instance.getMetadata()).thenReturn(metadata);
+
+		var originalHeaders = new HttpHeaders();
+		originalHeaders.addAll("Accept", List.of("text/plain", "application/json"));
 		Mockito.when(originalRequest.getHeaders()).thenReturn(originalHeaders);
 
-		lbReqFactory.createRequest(originalRequest, body, execution).apply(instance);
+		requestFactory.createRequest(originalRequest, body, execution).apply(instance);
 
-		ArgumentCaptor<HttpRequest> httpRequestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
+		var httpRequestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
 		verify(execution).execute(httpRequestCaptor.capture(), eq(body));
-		HttpRequest transformedRequest = httpRequestCaptor.getValue();
-		assertThat(transformedRequest.getHeaders().get("foo"), contains("bar", "baz"));
-		assertEquals("123:4", transformedRequest.getHeaders().getFirst("X-CF-APP-INSTANCE"));
+
+		var transformedRequest = httpRequestCaptor.getValue();
+		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "application/json");
+		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER))
+			.isEqualTo("::app-guid::" + ":" + "::instance-index::");
 	}
 
 	@SpringBootApplication

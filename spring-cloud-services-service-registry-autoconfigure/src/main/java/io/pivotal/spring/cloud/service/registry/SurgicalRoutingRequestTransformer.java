@@ -15,8 +15,6 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.Map;
-
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerRequestTransformer;
 import org.springframework.http.HttpHeaders;
@@ -47,22 +45,23 @@ public class SurgicalRoutingRequestTransformer implements LoadBalancerRequestTra
 			return request;
 		}
 
-		Map<String, String> metadata = instance.getMetadata();
-		if (metadata.containsKey(CF_APP_GUID) && metadata.containsKey(CF_INSTANCE_INDEX)) {
-			final String headerValue = String.format("%s:%s", metadata.get(CF_APP_GUID),
-					metadata.get(CF_INSTANCE_INDEX));
-			// request.getHeaders might be immutable, so return a wrapper
-			return new HttpRequestWrapper(request) {
-				@Override
-				public HttpHeaders getHeaders() {
-					HttpHeaders headers = new HttpHeaders();
-					headers.putAll(super.getHeaders());
-					headers.add(SURGICAL_ROUTING_HEADER, headerValue);
-					return headers;
-				}
-			};
+		var metadata = instance.getMetadata();
+		if (!metadata.containsKey(CF_APP_GUID) || !metadata.containsKey(CF_INSTANCE_INDEX)) {
+			return request;
 		}
-		return request;
+
+		final var headerValue = String.format("%s:%s", metadata.get(CF_APP_GUID), metadata.get(CF_INSTANCE_INDEX));
+
+		// request.getHeaders might be immutable, so return a wrapper
+		return new HttpRequestWrapper(request) {
+			@Override
+			public HttpHeaders getHeaders() {
+				var headers = new HttpHeaders();
+				headers.putAll(super.getHeaders());
+				headers.add(SURGICAL_ROUTING_HEADER, headerValue);
+				return headers;
+			}
+		};
 	}
 
 }

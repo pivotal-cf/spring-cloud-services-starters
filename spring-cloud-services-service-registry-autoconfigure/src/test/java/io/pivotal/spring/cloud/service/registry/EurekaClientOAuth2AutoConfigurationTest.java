@@ -15,8 +15,7 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -53,9 +52,10 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 
 		contextRunner.withPropertyValues(pairs).run(context -> {
 			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
-			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 
+			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 			var clientRegistration = getAuthInterceptorConfiguration(supplier);
+
 			assertThat(clientRegistration.getClientId()).isEqualTo("::id::");
 			assertThat(clientRegistration.getClientSecret()).isEqualTo("::secret::");
 			assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo("::uri::");
@@ -70,9 +70,10 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 		var scope = "eureka.client.oauth2.scope=profile,email";
 		contextRunner.withPropertyValues(pairs).withPropertyValues(scope).run(context -> {
 			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
-			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 
+			var supplier = context.getBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 			var clientRegistration = getAuthInterceptorConfiguration(supplier);
+
 			assertThat(clientRegistration.getClientId()).isEqualTo("::client id::");
 			assertThat(clientRegistration.getClientSecret()).isEqualTo("::client secret::");
 			assertThat(clientRegistration.getProviderDetails().getTokenUri()).isEqualTo("::token uri::");
