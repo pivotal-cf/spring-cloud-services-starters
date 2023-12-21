@@ -15,20 +15,15 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Before;
-import org.junit.Test;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link EurekaInstanceAutoConfiguration}
@@ -63,8 +58,8 @@ public class EurekaInstanceAutoConfigurationTest {
 
 	private WebApplicationContextRunner contextRunner;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	public void setup() {
 		contextRunner = new WebApplicationContextRunner()
 			.withPropertyValues("eureka.client.serviceUrl.defaultZone=" + ZONE_URI,
 					"vcap.application.uris[0]=" + HOSTNAME, "vcap.application.instance_id=" + INSTANCE_ID,
@@ -74,70 +69,81 @@ public class EurekaInstanceAutoConfigurationTest {
 	}
 
 	@Test
-	public void testRouteRegistration() {
-		contextRunner = contextRunner
-			.withPropertyValues("spring.cloud.services.registrationMethod=" + ROUTE_REGISTRATION_METHOD);
-		testDefaultRegistration();
+	public void routeRegistration() {
+		contextRunner.withPropertyValues("spring.cloud.services.registrationMethod=" + ROUTE_REGISTRATION_METHOD)
+			.run(context -> {
+				assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
+
+				assertRouteRegistration(context.getBean(EurekaInstanceConfigBean.class));
+			});
 	}
 
 	@Test
-	public void testDefaultRegistration() {
+	public void defaultRegistrationIsRouteRegistration() {
 		contextRunner.run(context -> {
 			assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-			EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-			assertEquals(HOSTNAME + ":" + INSTANCE_ID, eurekaInstanceConfigBean.getInstanceId());
-			assertEquals(HOSTNAME, eurekaInstanceConfigBean.getHostname());
-			assertEquals(80, eurekaInstanceConfigBean.getNonSecurePort());
-			assertEquals(443, eurekaInstanceConfigBean.getSecurePort());
-			assertTrue(eurekaInstanceConfigBean.getSecurePortEnabled());
 
-			Map<String, String> metadata = eurekaInstanceConfigBean.getMetadataMap();
-			assertEquals(INSTANCE_GUID, metadata.get("cfAppGuid"));
-			assertEquals(INSTANCE_INDEX, metadata.get("cfInstanceIndex"));
-			assertEquals(INSTANCE_ID, metadata.get("instanceId"));
-			assertEquals(ZONE, metadata.get("zone"));
+			assertRouteRegistration(context.getBean(EurekaInstanceConfigBean.class));
 		});
 	}
 
+	private static void assertRouteRegistration(EurekaInstanceConfigBean config) {
+		assertThat(config.getInstanceId()).isEqualTo(HOSTNAME + ":" + INSTANCE_ID);
+		assertThat(config.getHostname()).isEqualTo(HOSTNAME);
+		assertThat(config.getNonSecurePort()).isEqualTo(80);
+		assertThat(config.getSecurePort()).isEqualTo(443);
+		assertThat(config.getSecurePortEnabled()).isTrue();
+
+		var metadata = config.getMetadataMap();
+		assertThat(metadata.get("cfAppGuid")).isEqualTo(INSTANCE_GUID);
+		assertThat(metadata.get("cfInstanceIndex")).isEqualTo(INSTANCE_INDEX);
+		assertThat(metadata.get("instanceId")).isEqualTo(INSTANCE_ID);
+		assertThat(metadata.get("zone")).isEqualTo(ZONE);
+	}
+
 	@Test
-	public void testDirectRegistration() {
+	public void directRegistration() {
 		contextRunner.withPropertyValues("spring.cloud.services.registrationMethod=" + DIRECT_REGISTRATION_METHOD)
 			.run(context -> {
 				assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-				EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-				assertTrue(eurekaInstanceConfigBean.isPreferIpAddress());
-				assertEquals(IP + ":" + INSTANCE_ID, eurekaInstanceConfigBean.getInstanceId());
-				assertEquals(IP, eurekaInstanceConfigBean.getHostname());
-				assertEquals(PORT, eurekaInstanceConfigBean.getNonSecurePort());
-				assertFalse(eurekaInstanceConfigBean.getSecurePortEnabled());
+
+				var config = context.getBean(EurekaInstanceConfigBean.class);
+				assertThat(config.isPreferIpAddress()).isTrue();
+				assertThat(config.getInstanceId()).isEqualTo(IP + ":" + INSTANCE_ID);
+				assertThat(config.getHostname()).isEqualTo(IP);
+				assertThat(config.getNonSecurePort()).isEqualTo(PORT);
+				assertThat(config.getSecurePortEnabled()).isFalse();
 			});
 	}
 
 	@Test
-	public void testEmptyDefaultZoneUri() {
+	public void shouldNotAcceptEmptyDefaultZoneUri() {
 		contextRunner.withPropertyValues("eureka.client.serviceUrl.defaultZone=").run(context -> {
 			assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-			EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-			assertEquals(UNKNOWN_ZONE, eurekaInstanceConfigBean.getMetadataMap().get("zone"));
+
+			var eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+			assertThat(eurekaInstanceConfigBean.getMetadataMap().get("zone")).isEqualTo(UNKNOWN_ZONE);
 		});
 	}
 
 	@Test
-	public void testShortDefaultZoneUri() {
+	public void shouldNotAcceptShortDefaultZoneUri() {
 		contextRunner.withPropertyValues("eureka.client.serviceUrl.defaultZone=https://funkylocaldomainname/eureka/")
 			.run(context -> {
 				assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-				EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-				assertEquals(UNKNOWN_ZONE, eurekaInstanceConfigBean.getMetadataMap().get("zone"));
+
+				var eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+				assertThat(eurekaInstanceConfigBean.getMetadataMap().get("zone")).isEqualTo(UNKNOWN_ZONE);
 			});
 	}
 
 	@Test
-	public void testMalformedDefaultZoneUri() {
+	public void shouldNotAcceptMalformedDefaultZoneUri() {
 		contextRunner.withPropertyValues("eureka.client.serviceUrl.defaultZone=:").run(context -> {
 			assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
-			EurekaInstanceConfigBean eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
-			assertEquals(UNKNOWN_ZONE, eurekaInstanceConfigBean.getMetadataMap().get("zone"));
+
+			var eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+			assertThat(eurekaInstanceConfigBean.getMetadataMap().get("zone")).isEqualTo(UNKNOWN_ZONE);
 		});
 	}
 

@@ -15,27 +15,26 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertEquals;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.CF_APP_GUID;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.CF_INSTANCE_INDEX;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.SURGICAL_ROUTING_HEADER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SurgicalRoutingRequestTransformerTest {
 
 	private final SurgicalRoutingRequestTransformer transformer = new SurgicalRoutingRequestTransformer();
@@ -46,47 +45,55 @@ public class SurgicalRoutingRequestTransformerTest {
 	@Mock
 	private HttpRequest request;
 
-	@Before
-	public void setUp() {
-		HttpHeaders existingHeaders = new HttpHeaders();
-		existingHeaders.add("foo", "bar");
-		existingHeaders.add("foo", "baz");
+	@BeforeEach
+	public void setup() {
+		var existingHeaders = new HttpHeaders();
+		existingHeaders.addAll("Accept", List.of("text/plain", "text/html"));
+
 		when(request.getHeaders()).thenReturn(HttpHeaders.readOnlyHttpHeaders(existingHeaders));
 	}
 
 	@Test
 	public void headerIsSetWhenMetadataPresent() {
-		Map<String, String> metadata = new HashMap<>();
-		metadata.put("cfAppGuid", "123");
-		metadata.put("cfInstanceIndex", "4");
+		var metadata = Map.of(CF_APP_GUID, "::guid::", CF_INSTANCE_INDEX, "::index::");
 		when(instance.getMetadata()).thenReturn(metadata);
 
-		HttpRequest transformedRequest = transformer.transformRequest(request, instance);
+		var transformedRequest = transformer.transformRequest(request, instance);
 
-		assertThat(transformedRequest.getHeaders().get("foo"), contains("bar", "baz"));
-		assertEquals("123:4", transformedRequest.getHeaders().getFirst("X-CF-APP-INSTANCE"));
-
+		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
+		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER))
+			.isEqualTo("::guid::" + ":" + "::index::");
 	}
 
 	@Test
-	public void headerIsNotSetWhenMetadataNotPresent() {
-		when(instance.getMetadata()).thenReturn(Collections.emptyMap());
+	public void headerIsNotSetWhenAppGuidNotPresentInMetadata() {
+		var metadata = Map.of(CF_INSTANCE_INDEX, "::index::");
+		when(instance.getMetadata()).thenReturn(metadata);
 
-		HttpRequest transformedRequest = transformer.transformRequest(request, instance);
+		var transformedRequest = transformer.transformRequest(request, instance);
 
-		assertThat(transformedRequest.getHeaders().get("foo"), contains("bar", "baz"));
-		Assert.assertNull(transformedRequest.getHeaders().getFirst("X-CF-APP-INSTANCE"));
+		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
+		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();
+	}
 
+	@Test
+	public void headerIsNotSetWhenInstanceIndexPresentInMetadata() {
+		var metadata = Map.of(CF_APP_GUID, "::guid::");
+		when(instance.getMetadata()).thenReturn(metadata);
+
+		var transformedRequest = transformer.transformRequest(request, instance);
+
+		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
+		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();
 	}
 
 	@Test
 	public void headerIsNotSetWhenServiceInstanceIsNull() {
 
-		HttpRequest transformedRequest = transformer.transformRequest(request, null);
+		var transformedRequest = transformer.transformRequest(request, null);
 
-		assertThat(transformedRequest.getHeaders().get("foo"), contains("bar", "baz"));
-		Assert.assertNull(transformedRequest.getHeaders().getFirst("X-CF-APP-INSTANCE"));
-
+		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
+		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();
 	}
 
 }

@@ -17,13 +17,8 @@ package io.pivotal.spring.cloud.service.registry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,8 +31,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,95 +41,82 @@ import static org.mockito.Mockito.when;
  */
 public class SanitizingEurekaInstanceConfigBeanTest {
 
-	private AnnotationConfigApplicationContext ctx;
+	@Test
+	public void appIdentifiersAreDefaultedIfOnlySpringAppNameIsSet() {
+		var bean = createBeanWithProps("spring.application.name:san");
 
-	@After
-	public void tearDown() {
-		this.ctx.close();
+		assertThat(bean.getAppname()).isEqualTo("san");
+		assertThat(bean.getVirtualHostName()).isEqualTo("san");
+		assertThat(bean.getSecureVirtualHostName()).isEqualTo("san");
 	}
 
 	@Test
-	public void testAppIdentifiersAreDefaultedIfOnlySpringAppNameIsSet() {
-		SanitizingEurekaInstanceConfigBean bean = createBeanWithProps("spring.application.name:san");
-		assertEquals("san", bean.getAppname());
-		assertEquals("san", bean.getVirtualHostName());
-		assertEquals("san", bean.getSecureVirtualHostName());
+	public void appIdentifiersAreSanitisedIfOnlySpringAppNameIsSet() {
+		var bean = createBeanWithProps("spring.application.name:s_a.n");
+
+		assertThat(bean.getAppname()).isEqualTo("s-a.n");
+		assertThat(bean.getVirtualHostName()).isEqualTo("s-a.n");
+		assertThat(bean.getSecureVirtualHostName()).isEqualTo("s-a.n");
 	}
 
 	@Test
-	public void testAppIdentifiersAreSanitisedIfOnlySpringAppNameIsSet() {
-		SanitizingEurekaInstanceConfigBean bean = createBeanWithProps("spring.application.name:s_an");
-		assertEquals("s-an", bean.getAppname());
-		assertEquals("s-an", bean.getVirtualHostName());
-		assertEquals("s-an", bean.getSecureVirtualHostName());
+	public void appIdentifiersDefaultToEurekaAppName() {
+		var config = createBeanWithProps("spring.application.name:s_an", "eureka.instance.appname:e_an");
+
+		assertThat(config.getAppname()).isEqualTo("e_an");
+		assertThat(config.getVirtualHostName()).isEqualTo("e_an");
+		assertThat(config.getSecureVirtualHostName()).isEqualTo("e_an");
 	}
 
 	@Test
-	public void testAppIdentifiersDefaultToEurekaAppName() {
-		SanitizingEurekaInstanceConfigBean bean = createBeanWithProps("spring.application.name:s_an",
-				"eureka.instance.appname:e_an");
-		assertEquals("e_an", bean.getAppname());
-		assertEquals("e_an", bean.getVirtualHostName());
-		assertEquals("e_an", bean.getSecureVirtualHostName());
+	public void appIdentifiersCanBeSetToTheSameValueAndAreNotSanitized() {
+		var config = createBeanWithProps("spring.application.name:s_an", "eureka.instance.appname:app_name",
+				"eureka.instance.virtualHostName:app_name", "eureka.instance.secureVirtualHostName:app_name");
+
+		assertThat(config.getAppname()).isEqualTo("app_name");
+		assertThat(config.getVirtualHostName()).isEqualTo("app_name");
+		assertThat(config.getSecureVirtualHostName()).isEqualTo("app_name");
 	}
 
 	@Test
-	public void testAppIdentifiersCanBeSetToTheSameValueAndAreNotSanitized() {
-		SanitizingEurekaInstanceConfigBean bean = createBeanWithProps("spring.application.name:s_an",
-				"eureka.instance.appname:app_name", "eureka.instance.virtualHostName:app_name",
-				"eureka.instance.secureVirtualHostName:app_name");
-		assertEquals("app_name", bean.getAppname());
-		assertEquals("app_name", bean.getVirtualHostName());
-		assertEquals("app_name", bean.getSecureVirtualHostName());
+	public void relaxedPropertyBinding() {
+		var config = createBeanWithProps("spring.application.name:s_an", "eureka.instance.appname:app_name",
+				"eureka.instance.virtual_host_name:app_name", "eureka.instance.secure-virtual-host-name:app_name");
+
+		assertThat(config.getAppname()).isEqualTo("app_name");
+		assertThat(config.getVirtualHostName()).isEqualTo("app_name");
+		assertThat(config.getSecureVirtualHostName()).isEqualTo("app_name");
 	}
 
 	@Test
-	public void testRelaxedPropertyBinding() {
-		SanitizingEurekaInstanceConfigBean bean = createBeanWithProps("spring.application.name:s_an",
-				"eureka.instance.appname:app_name", "eureka.instance.virtual_host_name:app_name",
-				"eureka.instance.secure-virtual-host-name:app_name");
-		assertEquals("app_name", bean.getAppname());
-		assertEquals("app_name", bean.getVirtualHostName());
-		assertEquals("app_name", bean.getSecureVirtualHostName());
+	public void exceptionThrownIfVhnDiffersFromAppName() {
+		assertThatThrownBy(() -> createBeanWithProps("spring.application.name:san", "eureka.instance.appname:ean",
+				"eureka.instance.virtualHostName:vhn", "eureka.instance.secureVirtualHostName:ean"))
+			.isInstanceOf(BeanCreationException.class)
+			.hasMessageContaining("eureka.instance.virtualHostName");
+
 	}
 
 	@Test
-	public void testExceptionThrownIfVhnDiffersFromAppName() {
-		try {
-			createBeanWithProps("spring.application.name:san", "eureka.instance.appname:ean",
-					"eureka.instance.virtualHostName:vhn", "eureka.instance.secureVirtualHostName:ean");
-		}
-		catch (BeanCreationException e) {
-			assertThat(e.getMessage(), Matchers.containsString("eureka.instance.virtualHostName"));
-			return;
-		}
-		Assert.fail();
-	}
-
-	@Test
-	public void testExceptionThrownIfSvhnDiffersFromAppName() {
-		try {
-			createBeanWithProps("spring.application.name:san", "eureka.instance.appname:ean",
-					"eureka.instance.virtualHostName:ean", "eureka.instance.secureVirtualHostName:svhn");
-		}
-		catch (BeanCreationException e) {
-			assertThat(e.getMessage(), Matchers.containsString("eureka.instance.secureVirtualHostName"));
-			return;
-		}
-		Assert.fail();
+	public void exceptionThrownIfSvhnDiffersFromAppName() {
+		assertThatThrownBy(() -> createBeanWithProps("spring.application.name:san", "eureka.instance.appname:ean",
+				"eureka.instance.virtualHostName:ean", "eureka.instance.secureVirtualHostName:svhn"))
+			.isInstanceOf(BeanCreationException.class)
+			.hasMessageContaining("eureka.instance.secureVirtualHostName");
 	}
 
 	private SanitizingEurekaInstanceConfigBean createBeanWithProps(String... pairs) {
-		this.ctx = new AnnotationConfigApplicationContext();
+		var values = new ArrayList<>(Arrays.asList(pairs));
+		values.add("sanitizingEurekaInstanceConfigBean.integration.test:true");
+		values.add("eureka.client.enabled:false");
 
-		List<String> pairs1 = new ArrayList<>(Arrays.asList(pairs));
-		pairs1.add("sanitizingEurekaInstanceConfigBean.integration.test:true");
-		pairs1.add("eureka.client.enabled:false");
-		TestPropertyValues.of(pairs1).applyTo(ctx);
-		this.ctx.register(Context.class);
-		this.ctx.refresh();
+		try (var context = new AnnotationConfigApplicationContext()) {
+			TestPropertyValues.of(values).applyTo(context);
+			context.register(Context.class);
+			context.refresh();
 
-		return this.ctx.getBean(SanitizingEurekaInstanceConfigBean.class);
+			return context.getBean(SanitizingEurekaInstanceConfigBean.class);
+		}
 	}
 
 	@Configuration
@@ -144,17 +126,17 @@ public class SanitizingEurekaInstanceConfigBeanTest {
 	public static class Context {
 
 		@Bean
-		public static PropertySourcesPlaceholderConfigurer getPropertySourcesPlaceholderConfigurer() {
+		static PropertySourcesPlaceholderConfigurer getPropertySourcesPlaceholderConfigurer() {
 			return new PropertySourcesPlaceholderConfigurer();
 		}
 
 		@Bean
-		public VirtualHostNamesBean getVirtualHostNamesBean() {
+		VirtualHostNamesBean getVirtualHostNamesBean() {
 			return new VirtualHostNamesBean();
 		}
 
 		@Bean
-		public SanitizingEurekaInstanceConfigBean getSanitizingEurekaInstanceConfigBean() {
+		SanitizingEurekaInstanceConfigBean getSanitizingEurekaInstanceConfigBean() {
 			return new SanitizingEurekaInstanceConfigBean(getInetUtils());
 		}
 
