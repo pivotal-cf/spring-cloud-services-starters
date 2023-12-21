@@ -109,12 +109,11 @@ public class ConfigResourceClientAutoConfigurationTest {
 			.willReturn(aResponse().withHeader("Content-Type", "application/json;charset=UTF-8").withBody("""
 					{
 					  "access_token" : "access-token",
-					  "token_type" : "bearer",
-					  "scope" : "emails.write"
+					  "token_type" : "bearer"
 					}""")));
 
 		stubFor(get("/application/profile/label/path").withHost(equalTo("server.local"))
-			.willReturn(aResponse().withHeader("Content-Type", "plain/text").withBody("::text::")));
+			.willReturn(aResponse().withHeader("Content-Type", "text/plain").withBody("::content::")));
 	}
 
 	private void tryFetchingAnyResource(BeanFactory factory) {

@@ -60,6 +60,14 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public Resource getPlainTextResource(String path) {
+		return getPlainTextResource(null, null, path);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public Resource getPlainTextResource(String profile, String label, String path) {
 		return getResource(profile, label, path, ResourceType.PLAINTEXT);
 	}

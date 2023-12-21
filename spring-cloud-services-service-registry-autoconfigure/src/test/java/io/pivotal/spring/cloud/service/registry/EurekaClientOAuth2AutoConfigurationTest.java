@@ -103,8 +103,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 			.willReturn(aResponse().withHeader("Content-Type", "application/json;charset=UTF-8").withBody("""
 					{
 					  "access_token" : "access-token",
-					  "token_type" : "bearer",
-					  "scope" : "emails.write"
+					  "token_type" : "bearer"
 					}""")));
 	}
 

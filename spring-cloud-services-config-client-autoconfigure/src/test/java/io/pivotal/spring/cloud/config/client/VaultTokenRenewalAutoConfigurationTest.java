@@ -127,8 +127,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 			.willReturn(aResponse().withHeader("Content-Type", "application/json;charset=UTF-8").withBody("""
 					{
 					  "access_token" : "access-token",
-					  "token_type" : "bearer",
-					  "scope" : "emails.write"
+					  "token_type" : "bearer"
 					}""")));
 
 		stubFor(post("/vault/v1/auth/token/renew-self").withHost(equalTo("server.local"))
