@@ -16,21 +16,18 @@
 
 package io.pivotal.spring.cloud.config.client;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Daniel Lavoie
  */
-@RunWith(SpringRunner.class)
 @Import(ConfigResourceClientAutoConfiguration.class)
 @SpringBootTest(classes = DisabledConfigResourceClientTests.class)
 @ActiveProfiles("integration-test")
@@ -44,8 +41,8 @@ public class DisabledConfigResourceClientTests {
 
 	@Test
 	public void configClientBeanShouldNotBeInjected() {
-		Assert.assertNotNull("Spring container is not initialized.", environment);
-		Assert.assertNull(plainTextConfigClient);
+		assertThat(environment).isNotNull();
+		assertThat(plainTextConfigClient).isNull();
 	}
 
 }

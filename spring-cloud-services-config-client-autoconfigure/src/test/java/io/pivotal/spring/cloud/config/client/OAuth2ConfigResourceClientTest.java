@@ -21,25 +21,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author Daniel Lavoie
  * @author Dylan Roberts
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
 		properties = { "spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true",
 				"eureka.client.enabled=false", "spring.config.import=optional:configserver:" })
@@ -72,8 +70,8 @@ public class OAuth2ConfigResourceClientTest {
 
 	private ConfigResourceClient configClient;
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	public void setup() {
 		configClientProperties = new ConfigClientProperties(new MockEnvironment());
 		configClientProperties.setName("app");
 		configClientProperties.setProfile(null);
@@ -83,32 +81,35 @@ public class OAuth2ConfigResourceClientTest {
 
 	@Test
 	public void shouldFindSimplePlainFile() {
-		Assert.assertEquals(NGINX_CONFIG, read(configClient.getPlainTextResource(null, "master", "nginx.conf")));
+		assertThat(read(configClient.getPlainTextResource(null, "master", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
 
-		Assert.assertEquals(DEV_NGINX_CONFIG, read(configClient.getPlainTextResource("dev", "master", "nginx.conf")));
+		assertThat(read(configClient.getPlainTextResource("dev", "master", "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
 
 		configClientProperties.setProfile("test");
-		Assert.assertEquals(TEST_NGINX_CONFIG, read(configClient.getPlainTextResource(null, "master", "nginx.conf")));
+		assertThat(read(configClient.getPlainTextResource(null, "master", "nginx.conf"))).isEqualTo(TEST_NGINX_CONFIG);
 	}
 
-	@Test(expected = HttpClientErrorException.class)
+	@Test
 	public void missingConfigFileShouldReturnHttpError() {
-		configClient.getPlainTextResource(null, "master", "missing-config.xml");
+		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "master", "missing-config.xml"))
+			.isInstanceOf(HttpClientErrorException.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void missingApplicationNameShouldCrash() {
 		configClientProperties.setName("");
-		configClient.getPlainTextResource(null, "master", "nginx.conf");
+		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "master", "nginx.conf"))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void missingConfigServerUrlShouldCrash() {
 		configClientProperties.setUri(new String[] { "" });
-		configClient.getPlainTextResource(null, "master", "nginx.conf");
+		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "master", "nginx.conf"))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
-	public String read(Resource resource) {
+	private String read(Resource resource) {
 		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
 			return buffer.lines().collect(Collectors.joining("\n"));
 		}
