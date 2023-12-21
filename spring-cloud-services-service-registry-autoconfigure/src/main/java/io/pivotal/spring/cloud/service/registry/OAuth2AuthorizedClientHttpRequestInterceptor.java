@@ -16,19 +16,15 @@
 package io.pivotal.spring.cloud.service.registry;
 
 import java.io.IOException;
-import java.time.Clock;
-import java.time.Instant;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.endpoint.DefaultClientCredentialsTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2ClientCredentialsGrantRequest;
+import org.springframework.security.oauth2.client.*;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 
 /**
  * {@link ClientHttpRequestInterceptor} implementation to add authorization header to
@@ -38,26 +34,34 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
  */
 public class OAuth2AuthorizedClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-	final ClientRegistration clientRegistration;
+	private final AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedManager;
 
-	private OAuth2AccessToken accessToken;
+	private final OAuth2AuthorizeRequest authorizeRequest;
 
-	public OAuth2AuthorizedClientHttpRequestInterceptor(ClientRegistration clientRegistration) {
-		this.clientRegistration = clientRegistration;
+	public OAuth2AuthorizedClientHttpRequestInterceptor(ClientRegistration registration) {
+
+		var repository = new InMemoryClientRegistrationRepository(registration);
+		var service = new InMemoryOAuth2AuthorizedClientService(repository);
+
+		this.authorizedManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(repository, service);
+
+		var authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build();
+		authorizedManager.setAuthorizedClientProvider(authorizedClientProvider);
+
+		this.authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(registration.getRegistrationId())
+			.principal(registration.getRegistrationId())
+			.build();
 	}
 
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
-		Instant now = Clock.systemUTC().instant();
-		if (accessToken == null || now.isAfter(accessToken.getExpiresAt())) {
-			DefaultClientCredentialsTokenResponseClient tokenResponseClient = new DefaultClientCredentialsTokenResponseClient();
-			OAuth2ClientCredentialsGrantRequest clientCredentialsGrantRequest = new OAuth2ClientCredentialsGrantRequest(
-					clientRegistration);
-			accessToken = tokenResponseClient.getTokenResponse(clientCredentialsGrantRequest).getAccessToken();
+
+		OAuth2AuthorizedClient authorize = this.authorizedManager.authorize(this.authorizeRequest);
+		if (authorize != null) {
+			request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + authorize.getAccessToken().getTokenValue());
 		}
 
-		request.getHeaders().add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getTokenValue());
 		return execution.execute(request, body);
 	}
 

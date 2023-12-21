@@ -15,7 +15,6 @@
  */
 package io.pivotal.spring.cloud.config.client;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfiguration(after = ConfigClientAutoConfiguration.class)
 @ConditionalOnBean(ConfigClientProperties.class)
 @ConditionalOnProperty(prefix = "spring.cloud.config",
-		name = { "token", "client.oauth2.clientId", "client.oauth2.clientSecret", "client.oauth2.accessTokenUri" })
+		name = { "token", "client.oauth2.client-id", "client.oauth2.client-secret", "client.oauth2.access-token-uri" })
 @EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
 @EnableScheduling
 public class VaultTokenRenewalAutoConfiguration {
@@ -69,21 +68,22 @@ public class VaultTokenRenewalAutoConfiguration {
 			@Qualifier("vaultTokenRenewal") RestTemplate restTemplate,
 			@Value("${spring.cloud.config.token}") String vaultToken,
 			// Default to a 300 second (5 minute) TTL
-			@Value("${vault.token.ttl:300000}") long renewTTL) {
-		ClientRegistration clientRegistration = ClientRegistration.withRegistrationId("config-client")
+			@Value("${vault.token.ttl:300000}") long renewTtl) {
+
+		var clientRegistration = ClientRegistration.withRegistrationId("config-client")
 			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 			.clientId(configClientOAuth2Properties.getClientId())
 			.clientSecret(configClientOAuth2Properties.getClientSecret())
 			.scope(configClientOAuth2Properties.getScope())
 			.tokenUri(configClientOAuth2Properties.getAccessTokenUri())
 			.build();
+
 		restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
-		String obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
-		String refreshUri = configClientProperties.getUri()[0] + "/vault/v1/auth/token/renew-self";
 		// convert to seconds, since that's what Vault wants
-		long renewTTLInMS = renewTTL / 1000;
-		HttpEntity<Map<String, Long>> request = buildTokenRenewRequest(vaultToken, renewTTLInMS);
-		return new VaultTokenRefresher(restTemplate, obscuredToken, renewTTL, refreshUri, request);
+		var request = buildTokenRenewRequest(vaultToken, renewTtl / 1000);
+
+		return new VaultTokenRefresher(restTemplate, obscuredToken(vaultToken), renewTtl,
+				refreshUri(configClientProperties), request);
 	}
 
 	@Bean("vaultTokenRenewal")
@@ -91,12 +91,20 @@ public class VaultTokenRenewalAutoConfiguration {
 		return new RestTemplate();
 	}
 
-	private HttpEntity<Map<String, Long>> buildTokenRenewRequest(String vaultToken, long renewTTL) {
-		Map<String, Long> requestBody = new HashMap<>();
-		requestBody.put("increment", renewTTL);
-		HttpHeaders headers = new HttpHeaders();
+	private String refreshUri(ConfigClientProperties configClientProperties) {
+		return configClientProperties.getUri()[0] + "/vault/v1/auth/token/renew-self";
+	}
+
+	private String obscuredToken(String vaultToken) {
+		return vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
+	}
+
+	private HttpEntity<Map<String, Long>> buildTokenRenewRequest(String vaultToken, long renewTtlInMs) {
+		var requestBody = Map.of("increment", renewTtlInMs);
+		var headers = new HttpHeaders();
 		headers.set("X-Vault-Token", vaultToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
+
 		return new HttpEntity<>(requestBody, headers);
 	}
 
