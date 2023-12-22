@@ -28,11 +28,13 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.StandardEnvironment;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = PropertyMaskingEnvironmentPostProcessorTest.TestVaultApplication.class,
+		loader = PropertyMaskingEnvironmentPostProcessorTest.VaultPropertySourceContextLoader.class)
 public class PropertyMaskingEnvironmentPostProcessorTest {
 
 	private static final String VAULT_TEST_SANITIZE_PROPERTY = "MyHiddenVaultData";
@@ -40,6 +42,36 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 	private static final String CREDHUB_TEST_SANITIZE_PROPERTY = "MyHiddenCredhubData";
 
 	private static final String GIT_TEST_NON_SANITIZE_PROPERTY = "ReadableProperty";
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void vaultPropertyIsIncludedInSanitizeEndpoints() {
+		String sanitizeEndpointsProp = environment
+			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+
+		assertThat(sanitizeEndpointsProp).isNotNull();
+		assertThat(sanitizeEndpointsProp).contains(VAULT_TEST_SANITIZE_PROPERTY);
+	}
+
+	@Test
+	public void credhubPropertyIsIncludedInSanitizeEndpoints() {
+		String sanitizeEndpointsProp = environment
+			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+
+		assertThat(sanitizeEndpointsProp).isNotNull();
+		assertThat(sanitizeEndpointsProp).contains(CREDHUB_TEST_SANITIZE_PROPERTY);
+	}
+
+	@Test
+	public void gitPropertyIsNotIncludedInSanitizeEndpoints() {
+		String sanitizeEndpointsProp = environment
+			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
+
+		assertThat(sanitizeEndpointsProp).isNotNull();
+		assertThat(sanitizeEndpointsProp).doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);
+	}
 
 	@SpringBootApplication
 	public static class TestVaultApplication {
@@ -73,43 +105,6 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 			environment.getPropertySources().addFirst(credhubProperties);
 			environment.getPropertySources().addFirst(gitProperties);
 			return environment;
-		}
-
-	}
-
-	@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-	@ActiveProfiles({ "integration-test", "native" })
-	@ContextConfiguration(classes = TestVaultApplication.class, loader = VaultPropertySourceContextLoader.class)
-	public static class TestVaultConfigClientProperties {
-
-		@Autowired
-		Environment environment;
-
-		@Test
-		public void vaultPropertyIsIncludedInSanitizeEndpoints() {
-			String sanitizeEndpointsProp = environment
-				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
-
-			assertThat(sanitizeEndpointsProp).isNotNull();
-			assertThat(sanitizeEndpointsProp).contains(VAULT_TEST_SANITIZE_PROPERTY);
-		}
-
-		@Test
-		public void credhubPropertyIsIncludedInSanitizeEndpoints() {
-			String sanitizeEndpointsProp = environment
-				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
-
-			assertThat(sanitizeEndpointsProp).isNotNull();
-			assertThat(sanitizeEndpointsProp).contains(CREDHUB_TEST_SANITIZE_PROPERTY);
-		}
-
-		@Test
-		public void gitPropertyIsNotIncludedInSanitizeEndpoints() {
-			String sanitizeEndpointsProp = environment
-				.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
-
-			assertThat(sanitizeEndpointsProp).isNotNull();
-			assertThat(sanitizeEndpointsProp).doesNotContain(GIT_TEST_NON_SANITIZE_PROPERTY);
 		}
 
 	}

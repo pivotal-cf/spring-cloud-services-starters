@@ -39,8 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author Dylan Roberts
  */
 @SpringBootTest(classes = ConfigServerTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-		properties = { "spring.profiles.active=plaintext,native", "spring.cloud.config.enabled=true",
-				"eureka.client.enabled=false", "spring.config.import=optional:configserver:" })
+		properties = { "spring.cloud.config.enabled=true", "spring.config.import=optional:configserver:" })
 public class OAuth2ConfigResourceClientTest {
 
 	// @formatter:off
@@ -81,12 +80,12 @@ public class OAuth2ConfigResourceClientTest {
 
 	@Test
 	public void shouldFindSimplePlainFile() {
-		assertThat(read(configClient.getPlainTextResource(null, "master", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
+		assertThat(read(configClient.getPlainTextResource(null, "main", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
 
-		assertThat(read(configClient.getPlainTextResource("dev", "master", "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
+		assertThat(read(configClient.getPlainTextResource("dev", "main", "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
 
 		configClientProperties.setProfile("test");
-		assertThat(read(configClient.getPlainTextResource(null, "master", "nginx.conf"))).isEqualTo(TEST_NGINX_CONFIG);
+		assertThat(read(configClient.getPlainTextResource(null, "main", "nginx.conf"))).isEqualTo(TEST_NGINX_CONFIG);
 	}
 
 	@Test
