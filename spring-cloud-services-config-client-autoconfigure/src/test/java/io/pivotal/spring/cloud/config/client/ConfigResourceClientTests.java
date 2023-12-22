@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,7 +39,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 				"spring.cloud.config.client.oauth2.client-id=id",
 				"spring.cloud.config.client.oauth2.client-secret=secret",
 				"spring.cloud.config.client.oauth2.access-token-uri=http://uaa.local/token/uri" })
-@ActiveProfiles("integration-test")
 @WireMockTest(proxyMode = true)
 public class ConfigResourceClientTests {
 
