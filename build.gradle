@@ -18,7 +18,6 @@ buildscript {
     repositories {
         gradlePluginPortal()
         mavenCentral()
-        maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
         classpath("io.spring.gradle:dependency-management-plugin:1.1.4")
