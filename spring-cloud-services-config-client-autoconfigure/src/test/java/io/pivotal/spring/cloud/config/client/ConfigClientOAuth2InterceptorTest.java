@@ -20,31 +20,30 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.not;
+import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author Daniel Lavoie
- */
-@SpringBootTest(classes = ConfigResourceClientAutoConfiguration.class,
+@SpringBootTest(classes = ConfigClientOAuth2InterceptorTest.TestApplication.class,
 		properties = { "spring.config.import=optional:configserver:", "spring.cloud.config.enabled=true",
 				"spring.cloud.config.label=main", "spring.cloud.config.uri=http://localhost:8888",
 				"spring.cloud.config.client.oauth2.client-id=id",
 				"spring.cloud.config.client.oauth2.client-secret=secret",
+				"spring.cloud.config.client.oauth2.scope=profile,email",
 				"spring.cloud.config.client.oauth2.access-token-uri=http://localhost:9999/token/uri" })
-public class ConfigResourceClientTests {
+public class ConfigClientOAuth2InterceptorTest {
 
 	private static WireMockServer uaaServer;
 
@@ -76,52 +75,38 @@ public class ConfigResourceClientTests {
 		uaaServer.stop();
 	}
 
-	@Autowired
-	private ConfigResourceClient configResourceClient;
-
 	@Test
-	public void shouldLoadPlainText() throws IOException {
-		configServer.stubFor(
-				get("/application/development/dev/path").withHeader("Accept", not(equalTo("application/octet-stream")))
-					.willReturn(aResponse().withHeader("Content-Type", "plain/text").withBody("::text::")));
-
-		var resource = configResourceClient.getPlainTextResource("development", "dev", "path");
-
-		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::text::");
+	void configurationIsLoadedUsingAccessToken() {
+		configServer.verify(getRequestedFor(urlEqualTo("/application/default/main")).withHeader("Authorization",
+				equalTo("Bearer access-token")));
+		configServer.verify(getRequestedFor(urlEqualTo("/application/native/main")).withHeader("Authorization",
+				equalTo("Bearer access-token")));
 	}
 
 	@Test
-	public void shouldLoadBinaryResource() throws IOException {
-		configServer
-			.stubFor(get("/application/production/prd/path").withHeader("Accept", equalTo("application/octet-stream"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::binary::")));
+	void accessTokenIsRequestedUsingClientOAuthProperties() {
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
 
-		var resource = configResourceClient.getBinaryResource("production", "prd", "path");
-
-		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::binary::");
+		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
+			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
+			.withHeader("Authorization", equalTo("Basic " + base64Credentials))
+			.withRequestBody(containing("grant_type=client_credentials")));
 	}
 
 	@Test
-	public void shouldLoadPlainTextWithDefaultProfileAndLabel() throws IOException {
-		configServer.stubFor(get("/application/default/main/path")
-			.withHeader("Accept", not(equalTo("application/octet-stream")))
-			.willReturn(
-					aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::default text::")));
+	void optionalScopePropertyShouldBeIncludedInTokenRequest() {
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
 
-		var resource = configResourceClient.getPlainTextResource("path");
-		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::default text::");
+		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
+			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
+			.withHeader("Authorization", equalTo("Basic " + base64Credentials))
+			.withRequestBody(containing("grant_type=client_credentials"))
+			.withRequestBody(containing("scope=profile+email")));
 	}
 
-	@Test
-	public void shouldLoadBinaryResourceWithDefaultProfileAndLabel() throws IOException {
-		configServer.stubFor(get("/application/default/main/path")
-			.withHeader("Accept", equalTo("application/octet-stream"))
-			.willReturn(
-					aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::default binary::")));
+	@SpringBootApplication
+	static class TestApplication {
 
-		var resource = configResourceClient.getBinaryResource("path");
-
-		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::default binary::");
 	}
 
 }

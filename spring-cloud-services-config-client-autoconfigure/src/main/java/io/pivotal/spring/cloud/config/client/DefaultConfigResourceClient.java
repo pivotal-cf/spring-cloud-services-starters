@@ -38,7 +38,7 @@ import static org.springframework.cloud.config.client.ConfigClientProperties.TOK
  * @author Daniel Lavoie
  * @author Anshul Mehra
  */
-class OAuth2ConfigResourceClient implements ConfigResourceClient {
+class DefaultConfigResourceClient implements ConfigResourceClient {
 
 	private enum ResourceType {
 
@@ -50,7 +50,7 @@ class OAuth2ConfigResourceClient implements ConfigResourceClient {
 
 	private final RestTemplate restTemplate;
 
-	protected OAuth2ConfigResourceClient(RestTemplate restTemplate,
+	protected DefaultConfigResourceClient(RestTemplate restTemplate,
 			final ConfigClientProperties configClientProperties) {
 		this.restTemplate = restTemplate;
 		this.configClientProperties = configClientProperties;

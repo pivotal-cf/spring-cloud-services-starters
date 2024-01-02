@@ -74,11 +74,11 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 	}
 
 	@SpringBootApplication
-	public static class TestVaultApplication {
+	static class TestVaultApplication {
 
 	}
 
-	public static class VaultPropertySourceContextLoader extends SpringBootContextLoader {
+	static class VaultPropertySourceContextLoader extends SpringBootContextLoader {
 
 		@Override
 		protected ConfigurableEnvironment getEnvironment() {
