@@ -28,7 +28,7 @@ dependencies {
     testImplementation('org.junit.vintage:junit-vintage-engine')
     testImplementation("org.springframework.cloud:spring-cloud-config-server")
     testImplementation("org.wiremock:wiremock-standalone:${wireMockVersion}")
-    testImplementation("org.awaitility:awaitility:4.2.0")
+    testImplementation("org.awaitility:awaitility:4.2.1")
 }
 
 publishing {
