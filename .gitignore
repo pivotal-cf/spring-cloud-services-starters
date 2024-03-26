@@ -12,3 +12,4 @@ target
 bin
 .idea
 out
+.history/

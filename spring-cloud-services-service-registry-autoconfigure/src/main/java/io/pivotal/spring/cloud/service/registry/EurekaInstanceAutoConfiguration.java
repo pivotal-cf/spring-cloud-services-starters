@@ -155,13 +155,13 @@ public class EurekaInstanceAutoConfiguration {
 			hostname = new URI(defaultZoneUri).getHost();
 		}
 		catch (URISyntaxException e) {
-			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE + " %s", DEFAULT_ZONE_PROPERTY,
-					defaultZoneUri, UNKNOWN_ZONE, e));
+			LOGGER.warning((INDETERMINATE_EUREKA_ZONE_MESSAGE + " %s").formatted(DEFAULT_ZONE_PROPERTY, defaultZoneUri,
+					UNKNOWN_ZONE, e));
 			return UNKNOWN_ZONE;
 		}
 		if (hostname == null || !hostname.contains(".")) {
-			LOGGER.warning(String.format(INDETERMINATE_EUREKA_ZONE_MESSAGE, DEFAULT_ZONE_PROPERTY, defaultZoneUri,
-					UNKNOWN_ZONE));
+			LOGGER.warning(
+					INDETERMINATE_EUREKA_ZONE_MESSAGE.formatted(DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE));
 			return UNKNOWN_ZONE;
 		}
 		return hostname.substring(hostname.indexOf('.') + 1);
