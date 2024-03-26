@@ -50,7 +50,7 @@ public class SurgicalRoutingRequestTransformer implements LoadBalancerRequestTra
 			return request;
 		}
 
-		final var headerValue = String.format("%s:%s", metadata.get(CF_APP_GUID), metadata.get(CF_INSTANCE_INDEX));
+		final var headerValue = "%s:%s".formatted(metadata.get(CF_APP_GUID), metadata.get(CF_INSTANCE_INDEX));
 
 		// request.getHeaders might be immutable, so return a wrapper
 		return new HttpRequestWrapper(request) {

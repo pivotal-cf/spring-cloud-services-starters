@@ -127,9 +127,9 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 
 	private String[] applicationProperties(String clientId, String clientSecret, String scope) {
 		return new String[] { "eureka.client.oauth2.access-token-uri=http://uaa.local/token/uri",
-				String.format("eureka.client.oauth2.client-id=%s", clientId),
-				String.format("eureka.client.oauth2.client-secret=%s", clientSecret),
-				String.format("eureka.client.oauth2.scope=%s", scope), };
+				"eureka.client.oauth2.client-id=%s".formatted(clientId),
+				"eureka.client.oauth2.client-secret=%s".formatted(clientSecret),
+				"eureka.client.oauth2.scope=%s".formatted(scope), };
 	}
 
 }
