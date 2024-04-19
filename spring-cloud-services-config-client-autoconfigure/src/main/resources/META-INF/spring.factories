@@ -1,5 +1,5 @@
 org.springframework.boot.context.config.ConfigDataLocationResolver=\
-io.pivotal.spring.cloud.config.client.ConfigClientOAuth2ConfigDataLocationResolver
+io.pivotal.spring.cloud.config.client.OAuth2ConfigDataLocationResolver
 
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapConfiguration
