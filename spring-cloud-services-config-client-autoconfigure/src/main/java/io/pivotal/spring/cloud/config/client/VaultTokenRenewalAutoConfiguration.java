@@ -51,7 +51,7 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfiguration(after = ConfigClientAutoConfiguration.class)
 @ConditionalOnBean(ConfigClientProperties.class)
 @ConditionalOnProperty(name = "spring.cloud.config.token")
-@EnableConfigurationProperties(ConfigClientOAuth2Properties.class)
+@EnableConfigurationProperties
 @EnableScheduling
 public class VaultTokenRenewalAutoConfiguration {
 
@@ -60,9 +60,6 @@ public class VaultTokenRenewalAutoConfiguration {
 	private static final String VAULT_TOKEN_HEADER = "X-Vault-Token";
 
 	private static final String REFRESH_PATH = "/vault/v1/auth/token/renew-self";
-
-	@Value("${spring.cloud.config.token}")
-	private String vaultToken;
 
 	// Default to a 300 second (5 minute) TTL
 	@Value("${vault.token.ttl:300000}")
@@ -75,19 +72,19 @@ public class VaultTokenRenewalAutoConfiguration {
 			ConfigClientProperties configClientProperties) {
 
 		var refreshUri = configClientProperties.getUri()[0] + REFRESH_PATH;
-		var obscuredToken = this.vaultToken.substring(0, 4) + "[*]"
-				+ this.vaultToken.substring(this.vaultToken.length() - 4);
+		String vaultToken = configClientProperties.getToken();
+		var obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
 
 		return new VaultTokenRefresher(configClientRestTemplate, obscuredToken, ttl, refreshUri,
-				buildTokenRenewRequest());
+				buildTokenRenewRequest(vaultToken));
 	}
 
-	private HttpEntity<Map<String, Long>> buildTokenRenewRequest() {
+	private HttpEntity<Map<String, Long>> buildTokenRenewRequest(String vaultToken) {
 		// convert to seconds, since that's what Vault wants
 		var ttlInSeconds = this.ttl / 1000;
 		var requestBody = Map.of("increment", ttlInSeconds);
 		var headers = new HttpHeaders();
-		headers.set(VAULT_TOKEN_HEADER, this.vaultToken);
+		headers.set(VAULT_TOKEN_HEADER, vaultToken);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(requestBody, headers);
