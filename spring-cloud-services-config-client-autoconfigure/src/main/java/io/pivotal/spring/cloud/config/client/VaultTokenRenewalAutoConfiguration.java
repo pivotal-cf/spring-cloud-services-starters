@@ -20,6 +20,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -69,7 +70,8 @@ public class VaultTokenRenewalAutoConfiguration {
 
 	@Bean
 	@ConditionalOnBean(value = RestTemplate.class, name = "configClientRestTemplate")
-	public VaultTokenRefresher vaultTokenRefresher(RestTemplate configClientRestTemplate,
+	public VaultTokenRefresher vaultTokenRefresher(
+			@Qualifier("configClientRestTemplate") RestTemplate configClientRestTemplate,
 			ConfigClientProperties configClientProperties) {
 
 		var refreshUri = configClientProperties.getUri()[0] + REFRESH_PATH;
