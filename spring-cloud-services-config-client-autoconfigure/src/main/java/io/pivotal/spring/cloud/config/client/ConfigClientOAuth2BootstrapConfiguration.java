@@ -16,6 +16,7 @@
 
 package io.pivotal.spring.cloud.config.client;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +33,8 @@ public class ConfigClientOAuth2BootstrapConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(ConfigServicePropertySourceLocator.class)
 	@ConditionalOnBean(value = RestTemplate.class, name = "configClientRestTemplate")
-	public ConfigServicePropertySourceLocator configServicePropertySourceLocator(RestTemplate configClientRestTemplate,
+	public ConfigServicePropertySourceLocator configServicePropertySourceLocator(
+			@Qualifier("configClientRestTemplate") RestTemplate configClientRestTemplate,
 			ConfigClientProperties configClientProperties) {
 
 		var configServicePropertySourceLocator = new ConfigServicePropertySourceLocator(configClientProperties);

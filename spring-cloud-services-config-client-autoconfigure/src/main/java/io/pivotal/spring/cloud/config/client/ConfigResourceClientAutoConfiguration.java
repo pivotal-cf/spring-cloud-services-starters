@@ -16,6 +16,7 @@
 
 package io.pivotal.spring.cloud.config.client;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -37,7 +38,8 @@ public class ConfigResourceClientAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean(ConfigResourceClient.class)
 	@ConditionalOnBean(value = RestTemplate.class, name = "configClientRestTemplate")
-	public ConfigResourceClient configResourceClient(RestTemplate configClientRestTemplate,
+	public ConfigResourceClient configResourceClient(
+			@Qualifier("configClientRestTemplate") RestTemplate configClientRestTemplate,
 			ConfigClientProperties configClientProperties) {
 		return new DefaultConfigResourceClient(configClientRestTemplate, configClientProperties);
 	}
