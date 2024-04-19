@@ -16,8 +16,12 @@
 package io.pivotal.spring.cloud.config.client;
 
 import org.apache.commons.logging.Log;
-import org.springframework.boot.BootstrapRegistry;
-import org.springframework.boot.context.config.*;
+import org.springframework.boot.context.config.ConfigDataLocation;
+import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
+import org.springframework.boot.context.config.ConfigDataLocationResolver;
+import org.springframework.boot.context.config.ConfigDataLocationResolverContext;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.boot.context.config.Profiles;
 import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.cloud.config.client.ConfigClientRequestTemplateFactory;
@@ -29,6 +33,8 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+
+import static io.pivotal.spring.cloud.config.client.ConfigClientOAuth2Properties.PREFIX;
 
 /**
  * Using oauth2 properties to configure an authorization interceptor for the
@@ -44,13 +50,13 @@ import java.util.List;
  * {@link ConfigResourceClientAutoConfiguration} and
  * {@link VaultTokenRenewalAutoConfiguration} after application startup.
  */
-public class ConfigClientOAuth2ConfigDataLocationResolver
+public class OAuth2ConfigDataLocationResolver
 		implements ConfigDataLocationResolver<ConfigServerConfigDataResource>, Ordered {
 
 	private final Log log;
 
-	public ConfigClientOAuth2ConfigDataLocationResolver(DeferredLogFactory factory) {
-		this.log = factory.getLog(ConfigClientOAuth2ConfigDataLocationResolver.class);
+	public OAuth2ConfigDataLocationResolver(DeferredLogFactory factory) {
+		this.log = factory.getLog(OAuth2ConfigDataLocationResolver.class);
 	}
 
 	@Override
@@ -65,34 +71,29 @@ public class ConfigClientOAuth2ConfigDataLocationResolver
 			return false;
 		}
 
-		var oAuth2Properties = binder.bind(ConfigClientOAuth2Properties.PREFIX, ConfigClientOAuth2Properties.class)
-			.orElse(null);
-		if (oAuth2Properties == null) {
-			log.warn("Config Client oauth2 properties are missing. Skipping the auth interceptor configuration");
-			return false;
-		}
-
 		var bootstrapContext = resolverContext.getBootstrapContext();
 
-		// Register the oauth2 properties
-		bootstrapContext.registerIfAbsent(ConfigClientOAuth2Properties.class,
-				BootstrapRegistry.InstanceSupplier.of(oAuth2Properties).withScope(BootstrapRegistry.Scope.PROTOTYPE));
-
-		// Register the custom factory with oauth2 interceptor.
-		bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
-				context -> new ConfigClientOAuth2RequestTemplateFactory(this.log,
-						context.get(ConfigClientProperties.class), oAuth2Properties));
+		var oAuth2Properties = binder.bind(PREFIX, ConfigClientOAuth2Properties.class).orElse(null);
+		if (oAuth2Properties != null) {
+			// Register the custom factory with oauth2 interceptor.
+			bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
+					context -> new OAuth2ConfigClientRequestTemplateFactory(this.log,
+							context.get(ConfigClientProperties.class), oAuth2Properties));
+		}
+		else {
+			log.warn("Config Client oauth2 properties are missing. Skipping the auth interceptor configuration");
+			// Register the default factory.
+			bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
+					context -> new ConfigClientRequestTemplateFactory(this.log,
+							context.get(ConfigClientProperties.class)));
+		}
 
 		bootstrapContext.addCloseListener(event -> {
-			var beanFactory = event.getApplicationContext().getBeanFactory();
-
 			// Add the RestTemplate as bean, once the startup is finished.
-			beanFactory.registerSingleton("configClientRestTemplate",
-					event.getBootstrapContext().get(RestTemplate.class));
+			event.getApplicationContext()
+				.getBeanFactory()
+				.registerSingleton("configClientRestTemplate", event.getBootstrapContext().get(RestTemplate.class));
 
-			// Add the OAuth2 Properties as bean, once the startup is finished.
-			beanFactory.registerSingleton("configClientOAuth2Properties",
-					event.getBootstrapContext().get(ConfigClientOAuth2Properties.class));
 		});
 
 		return false;
@@ -120,11 +121,11 @@ public class ConfigClientOAuth2ConfigDataLocationResolver
 		return -2;
 	}
 
-	private static class ConfigClientOAuth2RequestTemplateFactory extends ConfigClientRequestTemplateFactory {
+	private static class OAuth2ConfigClientRequestTemplateFactory extends ConfigClientRequestTemplateFactory {
 
 		private final ClientRegistration clientRegistration;
 
-		public ConfigClientOAuth2RequestTemplateFactory(Log log, ConfigClientProperties clientProperties,
+		public OAuth2ConfigClientRequestTemplateFactory(Log log, ConfigClientProperties clientProperties,
 				ConfigClientOAuth2Properties oAuth2Properties) {
 			super(log, clientProperties);
 
