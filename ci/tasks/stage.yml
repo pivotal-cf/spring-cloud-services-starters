@@ -1,12 +1,6 @@
 ---
 platform: linux
-image_resource:
-  type: registry-image
-  source:
-    repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
-    username: ((corporate-harbor-robot-account.username))
-    password: ((corporate-harbor-robot-account.password))
-    tag: jdk-17
+
 inputs:
   - name: git-repo
 outputs:
@@ -14,8 +8,8 @@ outputs:
   - name: distribution-repository
 params:
   RELEASE_TYPE:
-  USER_NAME: ((git-username))
-  USER_EMAIL: ((git-email))
+  USER_NAME: ((github.git-username))
+  USER_EMAIL: ((github.git-email))
 caches:
   - path: maven
   - path: gradle

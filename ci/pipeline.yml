@@ -5,19 +5,53 @@ aliases:
     params:
       icon_emoji: ":animal-1252:"
       username: concourse
-      channel: ((scs-slack-failure-channel))
+      channel: ((slack.failure-channel))
       text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
 
 jobs:
   - name: build-ci-images
     plan:
-      - get: ci-images-git-repo
-        trigger: true
-      - put: scs-starters-ci-image
+      - in_parallel:
+          - get: ci-images-src
+            trigger: true
+          - get: oci-build-task-image
+          - get: alpine-image
+      - task: docker-config
+        image: alpine-image
+        config:
+          platform: linux
+          outputs:
+            - name: docker-config
+          params:
+            DOCKER_CONFIG_JSON: ((broadcom-jfrog-artifactory/dockerconfig))
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                echo "$DOCKER_CONFIG_JSON" > docker-config/config.json
+      - task: build
+        image: oci-build-task-image
+        privileged: true
+        config:
+          platform: linux
+          inputs:
+            - name: ci-image-src
+            - name: docker-config
+          outputs:
+            - name: image
+          params:
+            CONTEXT: ci-images-src/ci/images/scs-starters-ci
+            DOCKER_CONFIG: docker-config
+          run:
+            path: build
+      - put: ci-image
+        inputs: detect
         params:
-          build: ci-images-git-repo/ci/images/scs-starters-ci
+          image: image/image.tar
         get_params:
-          skip_download: "true"
+          skip_download: true
+    on_failure: *slack-failure-notification
 
   - name: build
     serial: true
@@ -28,12 +62,12 @@ jobs:
     - task: build-project
       file: git-repo/ci/tasks/build-project.yml
       params:
-        ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-        ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+        ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+        ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
     - put: artifactory-repo
       params: &artifactory-params
-        signing_key: ((signing-key))
-        signing_passphrase: ((signing-passphrase))
+        signing_key: ((broadcom-jfrog-artifactory/signing.key))
+        signing_passphrase: ((broadcom-jfrog-artifactory/signing.passphrase))
         repo: libs-snapshot-local
         folder: distribution-repository
         build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
@@ -162,20 +196,24 @@ resource_types:
   - name: artifactory-resource
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
-      tag: 0.0.14
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/springio/artifactory-resource
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 0.0.19
 
   - name: slack-notification
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/cfcommunity/slack-notification-resource
-      tag: latest
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/cfcommunity/slack-notification-resource
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 1.7.1
 
 resources:
   - name: git-repo
     type: git
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
       fetch_tags: true
@@ -183,31 +221,49 @@ resources:
   - name: git-repo-staging
     type: git
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((github-username))/staging
 
-  - name: ci-images-git-repo
+  - name: ci-images-src
     type: git
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       paths: ["ci/images/*"]
 
-  - name: scs-starters-ci-image
+  - name: ci-image
     type: docker-image
     source:
-      repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
-      username: ((corporate-harbor-robot-account.username))
-      password: ((corporate-harbor-robot-account.password))
+      repository: spring-scs-docker-dev-local.((broadcom-jfrog-artifactory/host))/ci/scs-starters
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
       tag: jdk-17
+
+  - name: osspi-image
+    type: registry-image
+    icon: docker
+    source:
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/pivotalosl/osspi-runner
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 1
+
+  - name: alpine-image
+    type: registry-image
+    icon: docker
+    source:
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/alpine
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 3.19.1
 
   - name: artifactory-repo
     type: artifactory-resource
     source:
-      uri: ((artifactory-server))
-      username: ((scs-artifactory-username))
-      password: ((scs-artifactory-password))
-      build_name: ((build-name))
+      uri: https://((broadcom-jfrog-artifactory/host))/artifactory
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      build_name: spring-cloud-services-starters
 
   - name: alert
     type: slack-notification
