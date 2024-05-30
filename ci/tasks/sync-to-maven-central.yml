@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: git-repo
+  - name: src
   - name: artifactory
 
 params:
@@ -12,4 +12,4 @@ params:
   SONATYPE_STAGING_PROFILE_ID: ((sonatype.staging-profile-id))
 
 run:
-  path: git-repo/ci/scripts/sync-to-maven-central.sh
+  path: src/ci/scripts/sync-to-maven-central.sh

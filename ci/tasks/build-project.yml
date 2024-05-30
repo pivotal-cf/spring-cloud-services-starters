@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: git-repo
+  - name: src
 
 outputs:
   - name: distribution-repository
@@ -12,5 +12,5 @@ caches:
   - path: gradle
 
 run:
-  path: git-repo/ci/scripts/build-project.sh
+  path: src/ci/scripts/build-project.sh
 

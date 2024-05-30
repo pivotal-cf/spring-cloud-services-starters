@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: git-repo
+  - name: src
   - name: artifactory
 
 outputs:
@@ -20,4 +20,4 @@ params:
   ARTIFACTORY_REPOSITORY_RELEASE: spring-enterprise-maven-prod-local
 
 run:
-  path: git-repo/ci/scripts/promote.sh
+  path: src/ci/scripts/promote.sh

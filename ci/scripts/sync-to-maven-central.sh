@@ -2,7 +2,7 @@
 set -euo pipefail
 
 readonly BUILD_INFO_LOCATION="$(pwd)/artifactory/build-info.json"
-readonly CONFIG_DIR="$(pwd)/git-repo/ci/config"
+readonly CONFIG_DIR="$(pwd)/src/ci/config"
 
 java -jar /opt/concourse-release-scripts*.jar \
 	--spring.config.location="${CONFIG_DIR}/release-scripts.yml" \

@@ -65,12 +65,12 @@ jobs:
     public: true
     plan:
     - in_parallel:
-      - get: git-repo
+      - get: src
         trigger: true
       - get: ci-image
     - task: build-project
       image: ci-image
-      file: git-repo/ci/tasks/build-project.yml
+      file: src/ci/tasks/build-project.yml
     - put: artifactory
       params:
         <<: *artifactory-params
@@ -81,12 +81,12 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
           passed: [build]
         - get: ci-image
       - task: stage
         image: ci-image
-        file: git-repo/ci/tasks/stage.yml
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: M
       - put: artifactory
@@ -101,12 +101,12 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
           passed: [build]
         - get: ci-image
       - task: stage
         image: ci-image
-        file: git-repo/ci/tasks/stage.yml
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RC
       - put: artifactory
@@ -121,12 +121,12 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
           passed: [build]
         - get: ci-image
       - task: stage
         image: ci-image
-        file: git-repo/ci/tasks/stage.yml
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RELEASE
       - put: artifactory
@@ -141,7 +141,7 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
         - get: artifactory
           passed: [stage-milestone]
           params:
@@ -149,7 +149,7 @@ jobs:
         - get: ci-image
       - task: promote
         image: ci-image
-        file: git-repo/ci/tasks/promote.yml
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: M
 
@@ -157,7 +157,7 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
         - get: artifactory
           passed: [stage-rc]
           params:
@@ -165,7 +165,7 @@ jobs:
         - get: ci-image
       - task: promote
         image: ci-image
-        file: git-repo/ci/tasks/promote.yml
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RC
 
@@ -173,7 +173,7 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
         - get: artifactory
           passed: [stage-release]
           params:
@@ -181,7 +181,7 @@ jobs:
         - get: ci-image
       - task: promote
         image: ci-image
-        file: git-repo/ci/tasks/promote.yml
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RELEASE
 
@@ -189,7 +189,7 @@ jobs:
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
+        - get: src
         - get: artifactory
           passed: [promote-release]
           params:
@@ -197,7 +197,7 @@ jobs:
         - get: ci-image
       - task: sync-to-maven-central
         image: ci-image
-        file: git-repo/ci/tasks/sync-to-maven-central.yml
+        file: src/ci/tasks/sync-to-maven-central.yml
 
 resource_types:
   - name: artifactory-resource
@@ -217,7 +217,7 @@ resource_types:
       tag: 1.7.1
 
 resources:
-  - name: git-repo
+  - name: src
     type: git
     icon: github
     source:

@@ -2,7 +2,7 @@
 platform: linux
 
 inputs:
-  - name: git-repo
+  - name: src
 
 outputs:
   - name: stage-git-repo
@@ -18,4 +18,4 @@ params:
   USER_EMAIL: ((github.git-email))
 
 run:
-  path: git-repo/ci/scripts/stage.sh
+  path: src/ci/scripts/stage.sh
