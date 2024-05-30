@@ -1,3 +1,0 @@
-build-name: spring-cloud-services-starters
-artifactory-server: https://repo.spring.io
-scs-slack-failure-channel: "#spring-cloud-services"
