@@ -5,214 +5,283 @@ aliases:
     params:
       icon_emoji: ":animal-1252:"
       username: concourse
-      channel: ((scs-slack-failure-channel))
+      channel: ((slack.failure-channel))
       text: <!here> Build <${ATC_EXTERNAL_URL}/builds/$BUILD_ID|$BUILD_NAME> of job $BUILD_JOB_NAME in the $BUILD_PIPELINE_NAME pipeline has failed!
+  - &artifactory-params
+    signing_key: ((broadcom-jfrog-artifactory/signing.key))
+    signing_passphrase: ((broadcom-jfrog-artifactory/signing.passphrase))
+    folder: distribution-repository
+    build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
+    build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
+    disable_checksum_uploads: true
 
 jobs:
   - name: build-ci-images
     plan:
-      - get: ci-images-git-repo
-        trigger: true
-      - put: scs-starters-ci-image
+      - in_parallel:
+          - get: ci-images-src
+            trigger: true
+          - get: oci-build-task-image
+          - get: alpine-image
+      - task: docker-config
+        image: alpine-image
+        config:
+          platform: linux
+          outputs:
+            - name: docker-config
+          params:
+            DOCKER_CONFIG_JSON: ((broadcom-jfrog-artifactory/dockerconfig))
+          run:
+            path: sh
+            args:
+              - -exc
+              - |
+                echo "$DOCKER_CONFIG_JSON" > docker-config/config.json
+      - task: build
+        image: oci-build-task-image
+        privileged: true
+        config:
+          platform: linux
+          inputs:
+            - name: ci-images-src
+            - name: docker-config
+          outputs:
+            - name: image
+          params:
+            CONTEXT: ci-images-src/ci/images/scs-starters-ci
+            DOCKER_CONFIG: docker-config
+          run:
+            path: build
+      - put: ci-image
+        inputs: detect
         params:
-          build: ci-images-git-repo/ci/images/scs-starters-ci
+          image: image/image.tar
         get_params:
-          skip_download: "true"
+          skip_download: true
+    on_failure: *slack-failure-notification
 
   - name: build
     serial: true
     public: true
     plan:
-    - get: git-repo
-      trigger: true
+    - in_parallel:
+      - get: src
+        trigger: true
+      - get: ci-image
     - task: build-project
-      file: git-repo/ci/tasks/build-project.yml
+      image: ci-image
+      file: src/ci/tasks/build-project.yml
+    - put: artifactory
       params:
-        ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-        ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
-    - put: artifactory-repo
-      params: &artifactory-params
-        signing_key: ((signing-key))
-        signing_passphrase: ((signing-passphrase))
-        repo: libs-snapshot-local
-        folder: distribution-repository
-        build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
-        build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
-        disable_checksum_uploads: true
-    on_failure:
-      *slack-failure-notification
+        <<: *artifactory-params
+        repo: spring-enterprise-maven-dev-local
+    on_failure: *slack-failure-notification
 
   - name: stage-milestone
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: src
+          passed: [build]
+        - get: ci-image
       - task: stage
-        file: git-repo/ci/tasks/stage.yml
+        image: ci-image
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: M
-      - put: artifactory-repo
+      - put: artifactory
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
-      - put: git-repo-staging
+          repo: spring-enterprise-maven-stage-local
+      - put: staging-src
         params:
           repository: stage-git-repo
 
   - name: stage-rc
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: src
+          passed: [build]
+        - get: ci-image
       - task: stage
-        file: git-repo/ci/tasks/stage.yml
+        image: ci-image
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RC
-      - put: artifactory-repo
+      - put: artifactory
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
-      - put: git-repo-staging
+          repo: spring-enterprise-maven-stage-local
+      - put: staging-src
         params:
           repository: stage-git-repo
 
   - name: stage-release
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: src
+          passed: [build]
+        - get: ci-image
       - task: stage
-        file: git-repo/ci/tasks/stage.yml
+        image: ci-image
+        file: src/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RELEASE
-      - put: artifactory-repo
+      - put: artifactory
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
-      - put: git-repo-staging
+          repo: spring-enterprise-maven-stage-local
+      - put: staging-src
         params:
           repository: stage-git-repo
 
   - name: promote-milestone
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-milestone]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: src
+        - get: artifactory
+          passed: [stage-milestone]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
-        file: git-repo/ci/tasks/promote.yml
+        image: ci-image
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: M
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
 
   - name: promote-rc
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-rc]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: src
+        - get: artifactory
+          passed: [stage-rc]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
-        file: git-repo/ci/tasks/promote.yml
+        image: ci-image
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RC
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
 
   - name: promote-release
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-release]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: src
+        - get: artifactory
+          passed: [stage-release]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
-        file: git-repo/ci/tasks/promote.yml
+        image: ci-image
+        file: src/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RELEASE
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
 
   - name: sync-to-maven-central
     serial: true
     plan:
       - in_parallel:
-        - get: git-repo
-        - get: artifactory-repo
+        - get: src
+        - get: artifactory
           passed: [promote-release]
           params:
             save_build_info: true
+        - get: ci-image
       - task: sync-to-maven-central
-        file: git-repo/ci/tasks/sync-to-maven-central.yml
-        params:
-          SONATYPE_URL: ((sonatype-url))
-          SONATYPE_USERNAME: ((sonatype-user-token))
-          SONATYPE_PASSWORD: ((sonatype-user-token-password))
-          SONATYPE_STAGING_PROFILE_ID: ((sonatype-staging-profile-id))
+        image: ci-image
+        file: src/ci/tasks/sync-to-maven-central.yml
 
 resource_types:
   - name: artifactory-resource
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/springio/artifactory-resource
-      tag: 0.0.14
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/springio/artifactory-resource
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 0.0.19
 
   - name: slack-notification
     type: registry-image
     source:
-      repository: ((dockerhub-mirror-registry))/cfcommunity/slack-notification-resource
-      tag: latest
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/cfcommunity/slack-notification-resource
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 1.7.1
 
 resources:
-  - name: git-repo
+  - name: src
     type: git
+    icon: github
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       ignore_paths: ["ci/images/*"]
       fetch_tags: true
 
-  - name: git-repo-staging
+  - name: staging-src
     type: git
+    icon: github
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
-      branch: ((github-username))/staging
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      branch: ((github.git-email))/staging
 
-  - name: ci-images-git-repo
+  - name: ci-images-src
     type: git
+    icon: github
     source:
-      uri: https://((github/scsbot.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
+      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
       paths: ["ci/images/*"]
 
-  - name: scs-starters-ci-image
-    type: docker-image
+  - name: ci-image
+    type: registry-image
+    icon: docker
     source:
-      repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
-      username: ((corporate-harbor-robot-account.username))
-      password: ((corporate-harbor-robot-account.password))
+      repository: spring-scs-docker-dev-local.((broadcom-jfrog-artifactory/host))/ci/scs-starters
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
       tag: jdk-17
 
-  - name: artifactory-repo
-    type: artifactory-resource
+  - name: oci-build-task-image
+    type: registry-image
+    icon: docker
     source:
-      uri: ((artifactory-server))
-      username: ((scs-artifactory-username))
-      password: ((scs-artifactory-password))
-      build_name: ((build-name))
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/concourse/oci-build-task
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 0.11.1
+
+  - name: alpine-image
+    type: registry-image
+    icon: docker
+    source:
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/alpine
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 3.19.1
+
+  - name: artifactory
+    type: artifactory-resource
+    icon: cube-outline
+    source:
+      uri: https://((broadcom-jfrog-artifactory/host))/artifactory
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      project: ((broadcom-jfrog-artifactory/project))
+      build_name: spring-cloud-services-starters
 
   - name: alert
     type: slack-notification
     source:
-      url: ((scs-slack-webhook))
+      url: ((slack.webhook))
 
 groups:
   - name: "build"

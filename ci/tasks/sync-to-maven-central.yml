@@ -1,19 +1,15 @@
 ---
 platform: linux
-image_resource:
-  type: registry-image
-  source:
-    repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
-    username: ((corporate-harbor-robot-account.username))
-    password: ((corporate-harbor-robot-account.password))
-    tag: jdk-17
+
 inputs:
-  - name: git-repo
-  - name: artifactory-repo
+  - name: src
+  - name: artifactory
+
 params:
-  SONATYPE_URL:
-  SONATYPE_USERNAME:
-  SONATYPE_PASSWORD:
-  SONATYPE_STAGING_PROFILE_ID:
+  SONATYPE_URL: ((sonatype.url))
+  SONATYPE_USERNAME: ((sonatype.user-token))
+  SONATYPE_PASSWORD: ((sonatype.user-token-password))
+  SONATYPE_STAGING_PROFILE_ID: ((sonatype.staging-profile-id))
+
 run:
-  path: git-repo/ci/scripts/sync-to-maven-central.sh
+  path: src/ci/scripts/sync-to-maven-central.sh

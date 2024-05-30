@@ -7,13 +7,12 @@ readonly FLY_TARGET=scs
 main() {
   fly -t "$FLY_TARGET" sync
 
-  pushd "$(dirname $0)/../ci" > /dev/null
-    echo "Setting starters pipeline..."
-    fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.0.x \
-      --config pipeline.yml \
-      --load-vars-from config-concourse.yml \
-      --var branch="4.0.x"
-  popd > /dev/null
+  pushd "$(dirname $0)/../ci" >/dev/null
+  echo "Setting starters pipeline..."
+  fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.0.x \
+    --config pipeline.yml \
+    --var branch="4.0.x"
+  popd >/dev/null
 }
 
 main
