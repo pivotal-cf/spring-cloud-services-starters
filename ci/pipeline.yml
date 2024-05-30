@@ -36,7 +36,7 @@ jobs:
         config:
           platform: linux
           inputs:
-            - name: ci-image-src
+            - name: ci-images-src
             - name: docker-config
           outputs:
             - name: image
@@ -57,9 +57,12 @@ jobs:
     serial: true
     public: true
     plan:
-    - get: git-repo
-      trigger: true
+    - in_parallel:
+      - get: git-repo
+        trigger: true
+      - get: ci-image
     - task: build-project
+      image: ci-image
       file: git-repo/ci/tasks/build-project.yml
       params:
         ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
@@ -68,27 +71,29 @@ jobs:
       params: &artifactory-params
         signing_key: ((broadcom-jfrog-artifactory/signing.key))
         signing_passphrase: ((broadcom-jfrog-artifactory/signing.passphrase))
-        repo: libs-snapshot-local
+        repo: spring-enterprise-maven-dev-local
         folder: distribution-repository
         build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
         build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
         disable_checksum_uploads: true
-    on_failure:
-      *slack-failure-notification
+    on_failure: *slack-failure-notification
 
   - name: stage-milestone
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: git-repo
+          passed: [build]
+        - get: ci-image
       - task: stage
+        image: ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: M
       - put: artifactory-repo
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
+          repo: spring-enterprise-maven-stage-local
       - put: git-repo-staging
         params:
           repository: stage-git-repo
@@ -96,16 +101,19 @@ jobs:
   - name: stage-rc
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: git-repo
+          passed: [build]
+        - get: ci-image
       - task: stage
+        image: ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RC
       - put: artifactory-repo
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
+          repo: spring-enterprise-maven-stage-local
       - put: git-repo-staging
         params:
           repository: stage-git-repo
@@ -113,16 +121,19 @@ jobs:
   - name: stage-release
     serial: true
     plan:
-      - get: git-repo
-        passed: [build]
+      - in_parallel:
+        - get: git-repo
+          passed: [build]
+        - get: ci-image
       - task: stage
+        image: ci-image
         file: git-repo/ci/tasks/stage.yml
         params:
           RELEASE_TYPE: RELEASE
       - put: artifactory-repo
         params:
           <<: *artifactory-params
-          repo: libs-staging-local
+          repo: spring-enterprise-maven-stage-local
       - put: git-repo-staging
         params:
           repository: stage-git-repo
@@ -130,50 +141,62 @@ jobs:
   - name: promote-milestone
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-milestone]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [stage-milestone]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
+        image: ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: M
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+          ARTIFACTORY_SERVER: https://((broadcom-jfrog-artifactory/host))
+          ARTIFACTORY_PROJECT: ((broadcom-jfrog-artifactory/project))
+          ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+          ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
 
   - name: promote-rc
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-rc]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [stage-rc]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
+        image: ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RC
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+          ARTIFACTORY_SERVER: https://((broadcom-jfrog-artifactory/host))
+          ARTIFACTORY_PROJECT: ((broadcom-jfrog-artifactory/project))
+          ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+          ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
 
   - name: promote-release
     serial: true
     plan:
-      - get: git-repo
-      - get: artifactory-repo
-        passed: [stage-release]
-        params:
-          save_build_info: true
+      - in_parallel:
+        - get: git-repo
+        - get: artifactory-repo
+          passed: [stage-release]
+          params:
+            save_build_info: true
+        - get: ci-image
       - task: promote
+        image: ci-image
         file: git-repo/ci/tasks/promote.yml
         params:
           RELEASE_TYPE: RELEASE
-          ARTIFACTORY_SERVER: ((artifactory-server))
-          ARTIFACTORY_USERNAME: ((scs-artifactory-username))
-          ARTIFACTORY_PASSWORD: ((scs-artifactory-password))
+          ARTIFACTORY_SERVER: https://((broadcom-jfrog-artifactory/host))
+          ARTIFACTORY_PROJECT: ((broadcom-jfrog-artifactory/project))
+          ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+          ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
 
   - name: sync-to-maven-central
     serial: true
@@ -184,7 +207,9 @@ jobs:
           passed: [promote-release]
           params:
             save_build_info: true
+        - get: ci-image
       - task: sync-to-maven-central
+        image: ci-image
         file: git-repo/ci/tasks/sync-to-maven-central.yml
         params:
           SONATYPE_URL: ((sonatype-url))
@@ -222,7 +247,7 @@ resources:
     type: git
     source:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
-      branch: ((github-username))/staging
+      branch: ((github.git-email))/staging
 
   - name: ci-images-src
     type: git
@@ -232,21 +257,21 @@ resources:
       paths: ["ci/images/*"]
 
   - name: ci-image
-    type: docker-image
+    type: registry-image
     source:
       repository: spring-scs-docker-dev-local.((broadcom-jfrog-artifactory/host))/ci/scs-starters
       username: ((broadcom-jfrog-artifactory/robot-account.username))
       password: ((broadcom-jfrog-artifactory/robot-account.password))
       tag: jdk-17
 
-  - name: osspi-image
+  - name: oci-build-task-image
     type: registry-image
     icon: docker
     source:
-      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/pivotalosl/osspi-runner
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/concourse/oci-build-task
       username: ((broadcom-jfrog-artifactory/robot-account.username))
       password: ((broadcom-jfrog-artifactory/robot-account.password))
-      tag: 1
+      tag: 0.11.1
 
   - name: alpine-image
     type: registry-image
