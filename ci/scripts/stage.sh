@@ -5,7 +5,7 @@ set -eo pipefail
 source "$(dirname "$0")/common.sh"
 repository=$(pwd)/distribution-repository
 
-git clone git-repo stage-git-repo
+git clone src stage-git-repo
 echo
 
 pushd stage-git-repo >/dev/null
@@ -15,17 +15,17 @@ git config user.email $USER_EMAIL
 
 snapshotVersion=$(awk -F '=' '$1 == "version" { print $2 }' gradle.properties)
 if [[ $RELEASE_TYPE == "M" ]]; then
-  stageVersion=$(get_next_milestone_release "$snapshotVersion")
-  nextVersion="$snapshotVersion"
+	stageVersion=$(get_next_milestone_release "$snapshotVersion")
+	nextVersion="$snapshotVersion"
 elif [[ $RELEASE_TYPE == "RC" ]]; then
-  stageVersion=$(get_next_rc_release "$snapshotVersion")
-  nextVersion="$snapshotVersion"
+	stageVersion=$(get_next_rc_release "$snapshotVersion")
+	nextVersion="$snapshotVersion"
 elif [[ $RELEASE_TYPE == "RELEASE" ]]; then
-  stageVersion=$(get_next_release "$snapshotVersion")
-  nextVersion=$(bump_version_number "$snapshotVersion")
+	stageVersion=$(get_next_release "$snapshotVersion")
+	nextVersion=$(bump_version_number "$snapshotVersion")
 else
-  echo "Unknown release type $RELEASE_TYPE" >&2
-  exit 1
+	echo "Unknown release type $RELEASE_TYPE" >&2
+	exit 1
 fi
 
 echo "Current version is v$snapshotVersion"
@@ -44,10 +44,10 @@ echo
 
 git reset --hard HEAD^
 if [[ $nextVersion != $snapshotVersion ]]; then
-  echo "Setting next development version (v$nextVersion)"
-  sed -i "s/version=$snapshotVersion/version=$nextVersion/" gradle.properties
-  git add gradle.properties
-  git commit -m "Next development version (v$nextVersion)"
+	echo "Setting next development version (v$nextVersion)"
+	sed -i "s/version=$snapshotVersion/version=$nextVersion/" gradle.properties
+	git add gradle.properties
+	git commit -m "Next development version (v$nextVersion)"
 fi
 
 echo "DONE"
