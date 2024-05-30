@@ -3,11 +3,13 @@ platform: linux
 
 inputs:
   - name: git-repo
-  - name: artifactory-repo
+  - name: artifactory
+
 params:
-  SONATYPE_URL:
-  SONATYPE_USERNAME:
-  SONATYPE_PASSWORD:
-  SONATYPE_STAGING_PROFILE_ID:
+  SONATYPE_URL: ((sonatype.url))
+  SONATYPE_USERNAME: ((sonatype.user-token))
+  SONATYPE_PASSWORD: ((sonatype.user-token-password))
+  SONATYPE_STAGING_PROFILE_ID: ((sonatype.staging-profile-id))
+
 run:
   path: git-repo/ci/scripts/sync-to-maven-central.sh

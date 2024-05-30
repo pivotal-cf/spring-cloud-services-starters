@@ -3,14 +3,21 @@ platform: linux
 
 inputs:
   - name: git-repo
-  - name: artifactory-repo
+  - name: artifactory
+
 outputs:
   - name: version
+
 params:
   RELEASE_TYPE:
-  ARTIFACTORY_SERVER:
-  ARTIFACTORY_PROJECT:
-  ARTIFACTORY_USERNAME:
-  ARTIFACTORY_PASSWORD:
+  ARTIFACTORY_URL: https://((broadcom-jfrog-artifactory/host))/artifactory
+  ARTIFACTORY_PROJECT: ((broadcom-jfrog-artifactory/project))
+  ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+  ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
+  ARTIFACTORY_REPOSITORY_STAGING: spring-enterprise-maven-stage-local
+  ARTIFACTORY_REPOSITORY_MILESTONE: spring-enterprise-maven-prod-local
+  ARTIFACTORY_REPOSITORY_RELEASE_CANDIDATE: spring-enterprise-maven-prod-local
+  ARTIFACTORY_REPOSITORY_RELEASE: spring-enterprise-maven-prod-local
+
 run:
   path: git-repo/ci/scripts/promote.sh
