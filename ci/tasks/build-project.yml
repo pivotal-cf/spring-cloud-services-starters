@@ -1,21 +1,16 @@
 ---
 platform: linux
-image_resource:
-  type: registry-image
-  source:
-    repository: ((corporate-harbor-registry))/((docker-hub-organization))/scs-starters-ci
-    username: ((corporate-harbor-robot-account.username))
-    password: ((corporate-harbor-robot-account.password))
-    tag: jdk-17
+
 inputs:
-  - name: git-repo
+  - name: src
+
 outputs:
   - name: distribution-repository
+
 caches:
   - path: maven
   - path: gradle
+
 run:
-  path: git-repo/ci/scripts/build-project.sh
-params:
-  ARTIFACTORY_USERNAME:
-  ARTIFACTORY_PASSWORD:
+  path: src/ci/scripts/build-project.sh
+
