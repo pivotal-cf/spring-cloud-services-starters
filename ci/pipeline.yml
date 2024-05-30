@@ -93,7 +93,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: spring-enterprise-maven-stage-local
-      - put: git-repo-staging
+      - put: staging-src
         params:
           repository: stage-git-repo
 
@@ -113,7 +113,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: spring-enterprise-maven-stage-local
-      - put: git-repo-staging
+      - put: staging-src
         params:
           repository: stage-git-repo
 
@@ -133,7 +133,7 @@ jobs:
         params:
           <<: *artifactory-params
           repo: spring-enterprise-maven-stage-local
-      - put: git-repo-staging
+      - put: staging-src
         params:
           repository: stage-git-repo
 
@@ -226,7 +226,7 @@ resources:
       ignore_paths: ["ci/images/*"]
       fetch_tags: true
 
-  - name: git-repo-staging
+  - name: staging-src
     type: git
     icon: github
     source:
@@ -243,6 +243,7 @@ resources:
 
   - name: ci-image
     type: registry-image
+    icon: docker
     source:
       repository: spring-scs-docker-dev-local.((broadcom-jfrog-artifactory/host))/ci/scs-starters
       username: ((broadcom-jfrog-artifactory/robot-account.username))
