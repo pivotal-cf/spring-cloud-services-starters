@@ -28,13 +28,16 @@ import org.springframework.cloud.config.client.ConfigClientRequestTemplateFactor
 import org.springframework.cloud.config.client.ConfigServerConfigDataLocationResolver;
 import org.springframework.cloud.config.client.ConfigServerConfigDataResource;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 
-import static io.pivotal.spring.cloud.config.client.ConfigClientOAuth2Properties.PREFIX;
+import static org.springframework.cloud.config.client.ConfigClientProperties.AUTHORIZATION;
 
 /**
  * Using oauth2 properties to configure an authorization interceptor for the
@@ -42,9 +45,9 @@ import static io.pivotal.spring.cloud.config.client.ConfigClientOAuth2Properties
  * <p>
  * Note: Despite implementing {@link ConfigDataLocationResolver}, this class does not
  * resolve any location. It only configures and registers the
- * {@link ConfigClientRequestTemplateFactory} which later will be used by
- * {@link ConfigServerConfigDataLocationResolver} to create <code>RestTemplate</code> for
- * calling config server.
+ * {@link ConfigClientRequestTemplateFactory} and <code>RestTemplate</code> which later
+ * will be used by {@link ConfigServerConfigDataLocationResolver} for calling config
+ * server.
  * <p>
  * Finally, it registers the <code>RestTemplate</code> bean to be consumed by
  * {@link ConfigResourceClientAutoConfiguration} and
@@ -73,28 +76,29 @@ public class OAuth2ConfigDataLocationResolver
 
 		var bootstrapContext = resolverContext.getBootstrapContext();
 
-		var oAuth2Properties = binder.bind(PREFIX, ConfigClientOAuth2Properties.class).orElse(null);
-		if (oAuth2Properties != null) {
-			// Register the custom factory with oauth2 interceptor.
-			bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
-					context -> new OAuth2ConfigClientRequestTemplateFactory(this.log,
-							context.get(ConfigClientProperties.class), oAuth2Properties));
-		}
-		else {
-			log.warn("Config Client oauth2 properties are missing. Skipping the auth interceptor configuration");
-			// Register the default factory.
-			bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
-					context -> new ConfigClientRequestTemplateFactory(this.log,
-							context.get(ConfigClientProperties.class)));
-		}
+		var oAuth2Properties = binder.bind(ConfigClientOAuth2Properties.PREFIX, ConfigClientOAuth2Properties.class)
+			.orElse(null);
+		var clientProperties = binder.bind(ConfigClientProperties.PREFIX, ConfigClientProperties.class)
+			.orElse(new ConfigClientProperties(new StandardEnvironment()));
 
-		bootstrapContext.addCloseListener(event -> {
-			// Add the RestTemplate as bean, once the startup is finished.
-			event.getApplicationContext()
-				.getBeanFactory()
-				.registerSingleton("configClientRestTemplate", event.getBootstrapContext().get(RestTemplate.class));
+		// Register the custom factory with oauth2 interceptor.
+		bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
+				context -> new OAuth2ConfigClientRequestTemplateFactory(this.log, clientProperties, oAuth2Properties));
+		var factory = (OAuth2ConfigClientRequestTemplateFactory) bootstrapContext
+			.get(ConfigClientRequestTemplateFactory.class);
+		// Update the factory, in case it was registered earlier
+		factory.update(clientProperties, oAuth2Properties);
 
-		});
+		// Register the template with oauth2 interceptor.
+		bootstrapContext.registerIfAbsent(RestTemplate.class, context -> factory.create());
+		var template = bootstrapContext.get(RestTemplate.class);
+		// Update the template, in case it was registered earlier
+		factory.updateTemplate(template);
+
+		// Add the RestTemplate as bean, once the startup is finished.
+		bootstrapContext.addCloseListener(event -> event.getApplicationContext()
+			.getBeanFactory()
+			.registerSingleton("configClientRestTemplate", event.getBootstrapContext().get(RestTemplate.class)));
 
 		return false;
 	}
@@ -123,26 +127,74 @@ public class OAuth2ConfigDataLocationResolver
 
 	private static class OAuth2ConfigClientRequestTemplateFactory extends ConfigClientRequestTemplateFactory {
 
-		private final ClientRegistration clientRegistration;
+		private ConfigClientProperties properties;
+
+		private ConfigClientOAuth2Properties oAuth2Properties;
 
 		public OAuth2ConfigClientRequestTemplateFactory(Log log, ConfigClientProperties clientProperties,
 				ConfigClientOAuth2Properties oAuth2Properties) {
 			super(log, clientProperties);
 
-			this.clientRegistration = ClientRegistration.withRegistrationId("config-client")
-				.clientId(oAuth2Properties.getClientId())
-				.clientSecret(oAuth2Properties.getClientSecret())
-				.tokenUri(oAuth2Properties.getAccessTokenUri())
-				.scope(oAuth2Properties.getScope())
-				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.build();
+			this.properties = clientProperties;
+			this.oAuth2Properties = oAuth2Properties;
+		}
+
+		public void update(ConfigClientProperties clientProperties, ConfigClientOAuth2Properties oAuth2Properties) {
+			this.properties = clientProperties;
+			this.oAuth2Properties = oAuth2Properties;
 		}
 
 		@Override
 		public RestTemplate create() {
-			var restTemplate = super.create();
-			restTemplate.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
-			return restTemplate;
+			if (properties.getRequestReadTimeout() < 0) {
+				throw new IllegalStateException("Invalid Value for Read Timeout set.");
+			}
+			if (properties.getRequestConnectTimeout() < 0) {
+				throw new IllegalStateException("Invalid Value for Connect Timeout set.");
+			}
+
+			return updateTemplate(new RestTemplate());
+		}
+
+		@Override
+		public void addAuthorizationToken(HttpHeaders httpHeaders, String username, String password) {
+			String authorization = properties.getHeaders().get(AUTHORIZATION);
+
+			if (password != null && authorization != null) {
+				throw new IllegalStateException("You must set either 'password' or 'authorization'");
+			}
+
+			if (password != null) {
+				byte[] token = java.util.Base64.getEncoder().encode((username + ":" + password).getBytes());
+				httpHeaders.add("Authorization", "Basic " + new String(token));
+			}
+			else if (authorization != null) {
+				httpHeaders.add("Authorization", authorization);
+			}
+		}
+
+		RestTemplate updateTemplate(RestTemplate template) {
+			template.setRequestFactory(createHttpRequestFactory(properties));
+
+			var headers = new HashMap<>(properties.getHeaders());
+			headers.remove(AUTHORIZATION); // To avoid redundant addition of header
+			if (!headers.isEmpty()) {
+				template.setInterceptors(List.of(new GenericRequestHeaderInterceptor(headers)));
+			}
+
+			if (this.oAuth2Properties != null) {
+				var clientRegistration = ClientRegistration.withRegistrationId("config-client")
+					.clientId(oAuth2Properties.getClientId())
+					.clientSecret(oAuth2Properties.getClientSecret())
+					.tokenUri(oAuth2Properties.getAccessTokenUri())
+					.scope(oAuth2Properties.getScope())
+					.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+					.build();
+
+				template.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
+			}
+
+			return template;
 		}
 
 	}
