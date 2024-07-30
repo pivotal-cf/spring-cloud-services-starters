@@ -30,10 +30,12 @@ import org.springframework.cloud.config.client.ConfigServerConfigDataResource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -145,6 +147,11 @@ public class OAuth2ConfigDataLocationResolver
 		}
 
 		@Override
+		public ConfigClientProperties getProperties() {
+			return this.properties;
+		}
+
+		@Override
 		public RestTemplate create() {
 			if (properties.getRequestReadTimeout() < 0) {
 				throw new IllegalStateException("Invalid Value for Read Timeout set.");
@@ -176,10 +183,12 @@ public class OAuth2ConfigDataLocationResolver
 		RestTemplate updateTemplate(RestTemplate template) {
 			template.setRequestFactory(createHttpRequestFactory(properties));
 
+			var interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+
 			var headers = new HashMap<>(properties.getHeaders());
 			headers.remove(AUTHORIZATION); // To avoid redundant addition of header
 			if (!headers.isEmpty()) {
-				template.setInterceptors(List.of(new GenericRequestHeaderInterceptor(headers)));
+				interceptors.add(new GenericRequestHeaderInterceptor(headers));
 			}
 
 			if (this.oAuth2Properties != null) {
@@ -191,9 +200,10 @@ public class OAuth2ConfigDataLocationResolver
 					.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 					.build();
 
-				template.getInterceptors().add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
+				interceptors.add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
 			}
 
+			template.setInterceptors(interceptors);
 			return template;
 		}
 
