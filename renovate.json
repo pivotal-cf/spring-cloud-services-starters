@@ -1,3 +1,40 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json"
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "baseBranches": [
+    "main"
+  ],
+  "rebaseWhen": "behind-base-branch",
+  "enabledManagers": [
+    "custom.regex",
+    "gradle",
+    "gradle-wrapper"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "ignoreDeps": [],
+  "packageRules": [
+    {
+      "labels": [
+        "dependencies",
+        "gradle"
+      ],
+      "matchFileNames": [
+        "gradle/**/*"
+      ]
+    },
+    {
+      "labels": [
+        "dependencies",
+        "java"
+      ],
+      "matchFileNames": [
+        "**/*.gradle",
+        "**/gradle.*"
+      ]
+    }
+  ],
+  "prConcurrentLimit": 0,
+  "prHourlyLimit": 0,
+  "customManagers": []
 }

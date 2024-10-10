@@ -1,0 +1,25 @@
+---
+platform: linux
+
+inputs:
+  - name: src
+
+params:
+  DOCKER_CONFIG_JSON: ((docker/config))
+  GITHUB_COM_TOKEN: ((github.token))
+  ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+  ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
+
+run:
+  path: /bin/bash
+  args:
+    - -euo
+    - pipefail
+    - -c
+    - |
+      mkdir -p ~/.docker
+      echo "$DOCKER_CONFIG_JSON" >~/.docker/config.json
+      cd src
+      git config --global --add safe.directory $PWD
+      renovate --token ${GITHUB_COM_TOKEN} pivotal-cf/spring-cloud-services-starters
+
