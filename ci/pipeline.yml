@@ -77,6 +77,19 @@ jobs:
           repo: spring-enterprise-maven-dev-local
     on_failure: *failure-notification
 
+  - name: renovate
+    plan:
+      - in_parallel:
+          - get: src
+          - get: weekly
+            trigger: true
+          - get: renovate-image
+          - get: alpine-image
+      - task: renovate
+        image: renovate-image
+        file: src/ci/tasks/renovate.yml
+    on_failure: *failure-notification
+
   - name: stage-milestone
     serial: true
     plan:
@@ -278,6 +291,25 @@ resources:
       project: ((broadcom-jfrog-artifactory/project))
       build_name: spring-cloud-services-starters
 
+  - name: weekly
+    type: time
+    icon: calendar-clock
+    source:
+      start: 12:00 AM
+      stop: 1:00 AM
+      days:
+        - Friday
+      location: America/New_York
+      initial_version: true
+
+  - name: renovate-image
+    type: registry-image
+    source:
+      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/renovate/renovate
+      username: ((broadcom-jfrog-artifactory/robot-account.username))
+      password: ((broadcom-jfrog-artifactory/robot-account.password))
+      tag: 38.91.1
+
   - name: notify
     type: notify-type
     icon: bullhorn
@@ -288,6 +320,7 @@ groups:
   - name: "build"
     jobs:
       - build
+      - renovate
   - name: "milestone"
     jobs:
       - stage-milestone
