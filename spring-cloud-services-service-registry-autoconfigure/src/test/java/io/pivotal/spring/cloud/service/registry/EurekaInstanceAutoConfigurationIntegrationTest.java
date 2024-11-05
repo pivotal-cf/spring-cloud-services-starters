@@ -18,7 +18,9 @@ package io.pivotal.spring.cloud.service.registry;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +42,9 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 		@Autowired
 		private EurekaInstanceConfigBean config;
 
+		@Value("${spring.cloud.loadbalancer.configurations:}")
+		String loadBalancerConfigurations;
+
 		@Test
 		public void eurekaConfigBean() {
 			assertThat(config.getInstanceId()).isEqualTo("1.2.3.4:instance-id");
@@ -50,6 +55,11 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 			assertThat(config.getNonSecurePort()).isEqualTo(54321);
 			assertThat(config.getMetadataMap().get("zone")).isEqualTo("east.my-cf.com");
 			assertThat(config.getSecurePortEnabled()).isFalse();
+		}
+
+		@Test
+		public void loadBalancerConfigurations() {
+			assertThat(loadBalancerConfigurations).isEmpty();
 		}
 
 	}
@@ -65,6 +75,9 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 		@Autowired
 		private EurekaInstanceConfigBean config;
 
+		@Value("${spring.cloud.loadbalancer.configurations:}")
+		String loadBalancerConfigurations;
+
 		@Test
 		public void eurekaConfigBean() {
 			assertThat(config.getInstanceId()).isEqualTo("www.route.local:instance-id");
@@ -76,6 +89,36 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 			assertThat(config.getSecurePort()).isEqualTo(443);
 			assertThat(config.getMetadataMap().get("zone")).isEqualTo("west.my-cf.com");
 			assertThat(config.getSecurePortEnabled()).isTrue();
+		}
+
+		@Test
+		public void loadBalancerConfigurations() {
+			assertThat(loadBalancerConfigurations).isEmpty();
+		}
+
+	}
+
+	@Nested
+	@SpringBootTest(classes = TestApplication.class,
+			properties = { "vcap.application.uris[0]=www.route.local",
+					"scs.starters.eureka.client.zone.configuration.enabled=true",
+					"eureka.client.serviceUrl.defaultZone=https://eureka-123.west.my-cf.com/eureka/" })
+	class LoadBalancerEnabledRegistrationTest {
+
+		@Autowired
+		private EurekaInstanceConfigBean config;
+
+		@Value("${spring.cloud.loadbalancer.configurations:}")
+		String loadBalancerConfigurations;
+
+		@Test
+		public void eurekaConfigBean() {
+			assertThat(config.getMetadataMap().get("zone")).isEqualTo("eureka-123.west.my-cf.com");
+		}
+
+		@Test
+		public void loadBalancerConfigurations() {
+			assertThat(loadBalancerConfigurations).isEqualTo("zone-preference");
 		}
 
 	}

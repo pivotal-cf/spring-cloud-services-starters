@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.cloud.loadbalancer.config.LoadBalancerZoneConfig;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +52,8 @@ public class EurekaInstanceAutoConfigurationTest {
 	private static final String INSTANCE_ID = UUID.randomUUID().toString();
 
 	private static final String ZONE_URI = "https://eureka-123.west.my-cf.com/eureka/";
+
+	private static final String LB_ENABLED_ZONE = "eureka-123.west.my-cf.com";
 
 	private static final String ZONE = "west.my-cf.com";
 
@@ -85,20 +88,6 @@ public class EurekaInstanceAutoConfigurationTest {
 
 			assertRouteRegistration(context.getBean(EurekaInstanceConfigBean.class));
 		});
-	}
-
-	private static void assertRouteRegistration(EurekaInstanceConfigBean config) {
-		assertThat(config.getInstanceId()).isEqualTo(HOSTNAME + ":" + INSTANCE_ID);
-		assertThat(config.getHostname()).isEqualTo(HOSTNAME);
-		assertThat(config.getNonSecurePort()).isEqualTo(80);
-		assertThat(config.getSecurePort()).isEqualTo(443);
-		assertThat(config.getSecurePortEnabled()).isTrue();
-
-		var metadata = config.getMetadataMap();
-		assertThat(metadata.get("cfAppGuid")).isEqualTo(INSTANCE_GUID);
-		assertThat(metadata.get("cfInstanceIndex")).isEqualTo(INSTANCE_INDEX);
-		assertThat(metadata.get("instanceId")).isEqualTo(INSTANCE_ID);
-		assertThat(metadata.get("zone")).isEqualTo(ZONE);
 	}
 
 	@Test
@@ -145,6 +134,30 @@ public class EurekaInstanceAutoConfigurationTest {
 			var eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
 			assertThat(eurekaInstanceConfigBean.getMetadataMap().get("zone")).isEqualTo(UNKNOWN_ZONE);
 		});
+	}
+
+	@Test
+	public void shouldConfigFullHostnameAzZoneWhenZoneConfigurationEnabled() {
+		contextRunner.withPropertyValues("scs.starters.eureka.client.zone.configuration.enabled=true").run(context -> {
+			assertThat(context).hasSingleBean(EurekaInstanceConfigBean.class);
+
+			var eurekaInstanceConfigBean = context.getBean(EurekaInstanceConfigBean.class);
+			assertThat(eurekaInstanceConfigBean.getMetadataMap().get("zone")).isEqualTo(LB_ENABLED_ZONE);
+		});
+	}
+
+	private static void assertRouteRegistration(EurekaInstanceConfigBean config) {
+		assertThat(config.getInstanceId()).isEqualTo(HOSTNAME + ":" + INSTANCE_ID);
+		assertThat(config.getHostname()).isEqualTo(HOSTNAME);
+		assertThat(config.getNonSecurePort()).isEqualTo(80);
+		assertThat(config.getSecurePort()).isEqualTo(443);
+		assertThat(config.getSecurePortEnabled()).isTrue();
+
+		var metadata = config.getMetadataMap();
+		assertThat(metadata.get("cfAppGuid")).isEqualTo(INSTANCE_GUID);
+		assertThat(metadata.get("cfInstanceIndex")).isEqualTo(INSTANCE_INDEX);
+		assertThat(metadata.get("instanceId")).isEqualTo(INSTANCE_ID);
+		assertThat(metadata.get("zone")).isEqualTo(ZONE);
 	}
 
 }
