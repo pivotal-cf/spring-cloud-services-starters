@@ -52,8 +52,6 @@ public class EurekaInstanceAutoConfiguration {
 
 	private static final String UNKNOWN_ZONE = "unknown";
 
-	private static final String INDETERMINATE_EUREKA_ZONE_MESSAGE = "Eureka zone could not be determined from %s=\"%s\". Using \"%s\".";
-
 	private static final String DEFAULT_ZONE_PROPERTY = "eureka.client.serviceUrl.defaultZone";
 
 	private static final String ROUTE_REGISTRATION_METHOD = "route";
@@ -87,6 +85,9 @@ public class EurekaInstanceAutoConfiguration {
 
 	@Value("${" + DEFAULT_ZONE_PROPERTY + ":}")
 	private String zoneUri;
+
+	@Value("${" + EurekaClientEnvironmentPostProcessor.ZONE_CONFIGURATION_FLAG + ":false}")
+	private boolean isZoneConfigurationEnabled;
 
 	@Bean
 	public VirtualHostNamesBean getVirtualHostNames() {
@@ -149,22 +150,28 @@ public class EurekaInstanceAutoConfiguration {
 		return eurekaInstanceConfigBean;
 	}
 
-	private static String zoneFromUri(String defaultZoneUri) {
+	private String zoneFromUri(String defaultZoneUri) {
 		String hostname;
 		try {
 			hostname = new URI(defaultZoneUri).getHost();
 		}
 		catch (URISyntaxException e) {
-			LOGGER.warning((INDETERMINATE_EUREKA_ZONE_MESSAGE + " %s").formatted(DEFAULT_ZONE_PROPERTY, defaultZoneUri,
-					UNKNOWN_ZONE, e));
+			LOGGER.warning(String.format("Eureka zone could not be determined from %s=\"%s\". Using \"%s\". %s",
+					DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE, e));
 			return UNKNOWN_ZONE;
 		}
-		if (hostname == null || !hostname.contains(".")) {
-			LOGGER.warning(
-					INDETERMINATE_EUREKA_ZONE_MESSAGE.formatted(DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE));
-			return UNKNOWN_ZONE;
+		if (hostname != null) {
+			if (isZoneConfigurationEnabled) {
+				return hostname;
+			}
+			if (hostname.contains(".")) {
+				return hostname.substring(hostname.indexOf('.') + 1);
+			}
 		}
-		return hostname.substring(hostname.indexOf('.') + 1);
+
+		LOGGER.warning(String.format("Eureka zone could not be determined from %s=\"%s\". Using \"%s\".",
+				DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE));
+		return UNKNOWN_ZONE;
 	}
 
 	private SanitizingEurekaInstanceConfigBean getDefaultRegistration() {
