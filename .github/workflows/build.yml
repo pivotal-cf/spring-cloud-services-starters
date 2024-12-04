@@ -2,16 +2,16 @@ name: build
 
 on:
   push:
-    branches: [ main ]
+    branches: [4.0.x]
   pull_request:
-    branches: [ main ]
+    branches: [4.0.x]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '17' ]
+        java: ["17"]
     name: Java ${{ matrix.Java }} build
     steps:
       - uses: actions/checkout@v2
