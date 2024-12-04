@@ -1,37 +1,18 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": [
-    "main"
-  ],
+  "baseBranches": ["main", "4.1.x", "4.0.x"],
   "rebaseWhen": "behind-base-branch",
-  "enabledManagers": [
-    "custom.regex",
-    "gradle",
-    "gradle-wrapper"
-  ],
-  "extends": [
-    "config:recommended"
-  ],
+  "enabledManagers": ["custom.regex", "gradle", "gradle-wrapper"],
+  "extends": ["config:recommended"],
   "ignoreDeps": [],
   "packageRules": [
     {
-      "labels": [
-        "dependencies",
-        "gradle"
-      ],
-      "matchFileNames": [
-        "gradle/**/*"
-      ]
+      "labels": ["dependencies", "gradle"],
+      "matchFileNames": ["gradle/**/*"]
     },
     {
-      "labels": [
-        "dependencies",
-        "java"
-      ],
-      "matchFileNames": [
-        "**/*.gradle",
-        "**/gradle.*"
-      ]
+      "labels": ["dependencies", "java"],
+      "matchFileNames": ["**/*.gradle", "**/gradle.*"]
     }
   ],
   "prConcurrentLimit": 0,
