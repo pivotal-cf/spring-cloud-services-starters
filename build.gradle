@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("io.spring.gradle:dependency-management-plugin:1.1.4")
+        classpath("io.spring.gradle:dependency-management-plugin:1.1.6")
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:5.2.5")
         classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.40")
         classpath("io.spring.nohttp:nohttp-gradle:0.0.11")
