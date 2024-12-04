@@ -231,7 +231,7 @@ resources:
     icon: github
     source:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
-      branch: ((github.git-email))/staging
+      branch: ((github.git-email))/staging-((branch))
 
   - name: ci-images-src
     type: git
