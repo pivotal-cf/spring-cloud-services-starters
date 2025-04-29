@@ -33,7 +33,7 @@ apply plugin: "io.spring.nohttp"
 
 ext {
     springBootVersion = "3.3.5"
-    springCloudVersion = "2023.0.5"
+    springCloudVersion = "2024.0.1"
     javaCfEnvVersion = "3.3.0"
     nohttpVersion = "0.0.11"
     wireMockVersion = "3.10.0"
