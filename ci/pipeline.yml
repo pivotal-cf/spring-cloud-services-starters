@@ -84,7 +84,6 @@ jobs:
           - get: weekly
             trigger: true
           - get: renovate-image
-          - get: alpine-image
       - task: renovate
         image: renovate-image
         file: src/ci/tasks/renovate.yml
@@ -308,7 +307,7 @@ resources:
       repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/renovate/renovate
       username: ((broadcom-jfrog-artifactory/robot-account.username))
       password: ((broadcom-jfrog-artifactory/robot-account.password))
-      tag: 38.91.1
+      tag: 39.263.0
 
   - name: notify
     type: notify-type
