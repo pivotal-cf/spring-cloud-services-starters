@@ -27,7 +27,7 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter-api')
     testImplementation("org.springframework.cloud:spring-cloud-config-server")
     testImplementation("org.wiremock:wiremock-standalone:${wireMockVersion}")
-    testImplementation("org.awaitility:awaitility:4.2.2")
+    testImplementation("org.awaitility:awaitility:4.3.0")
 }
 
 publishing {
