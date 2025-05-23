@@ -107,7 +107,7 @@ class DefaultConfigResourceClient implements ConfigResourceClient {
 			label = configClientProperties.getLabel();
 		}
 
-		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromHttpUrl(configClientProperties.getUri()[0])
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(configClientProperties.getUri()[0])
 			.pathSegment(configClientProperties.getName())
 			.pathSegment(profile)
 			.pathSegment(label)
