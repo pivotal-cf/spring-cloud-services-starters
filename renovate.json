@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": ["main", "4.1.x", "4.0.x"],
+  "baseBranches": ["main", "4.2.x", "4.1.x", "4.0.x"],
   "rebaseWhen": "behind-base-branch",
   "enabledManagers": ["custom.regex", "gradle", "gradle-wrapper"],
   "extends": ["config:recommended"],
@@ -20,19 +20,29 @@
       "matchBaseBranches": ["4.0.x"]
     },
     {
+      "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
+      "allowedVersions": "< 2023.0.0",
+      "matchBaseBranches": ["4.0.x"]
+    },
+    {
       "matchPackageNames": ["org.springframework.boot:spring-boot-dependencies", "org.springframework.boot:spring-boot-gradle-plugin"],
       "allowedVersions": "< 3.4.0",
       "matchBaseBranches": ["4.1.x"]
     },
     {
       "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
-      "allowedVersions": "< 2023.0.0",
-      "matchBaseBranches": ["4.0.x"]
+      "allowedVersions": "< 2024.0.0",
+      "matchBaseBranches": ["4.1.x"]
+    },
+    {
+      "matchPackageNames": ["org.springframework.boot:spring-boot-dependencies", "org.springframework.boot:spring-boot-gradle-plugin"],
+      "allowedVersions": "< 3.5.0",
+      "matchBaseBranches": ["4.2.x"]
     },
     {
       "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
-      "allowedVersions": "< 2024.0.0",
-      "matchBaseBranches": ["4.1.x"]
+      "allowedVersions": "< 2025.0.0",
+      "matchBaseBranches": ["4.2.x"]
     }
   ],
   "prConcurrentLimit": 0,
