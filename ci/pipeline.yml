@@ -6,7 +6,7 @@ aliases:
     no_get: true
     params:
       alert_type: failed
-      message: SCS Starters (4.2.x)
+      message: SCS Starters (4.3.x)
   - &artifactory-params
     signing_key: ((broadcom-jfrog-artifactory/signing.key))
     signing_passphrase: ((broadcom-jfrog-artifactory/signing.passphrase))
