@@ -32,7 +32,7 @@ buildscript {
 apply plugin: "io.spring.nohttp"
 
 ext {
-    springBootVersion = "3.4.5"
+    springBootVersion = "3.4.6"
     springCloudVersion = "2024.0.1"
     javaCfEnvVersion = "3.4.0"
     nohttpVersion = "0.0.11"
