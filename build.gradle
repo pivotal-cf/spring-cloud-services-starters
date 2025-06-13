@@ -36,7 +36,7 @@ ext {
     springCloudVersion = "2024.0.1"
     javaCfEnvVersion = "3.4.0"
     nohttpVersion = "0.0.11"
-    wireMockVersion = "3.13.0"
+    wireMockVersion = "3.13.1"
 }
 
 configure(allprojects) {
