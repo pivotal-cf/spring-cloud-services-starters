@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": ["main", "4.2.x", "4.1.x", "4.0.x"],
+  "baseBranches": ["main", "4.2.x", "4.1.x"],
   "rebaseWhen": "behind-base-branch",
   "enabledManagers": ["custom.regex", "gradle", "gradle-wrapper"],
   "extends": ["config:recommended"],
