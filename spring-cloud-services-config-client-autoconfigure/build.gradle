@@ -24,10 +24,12 @@ dependencies {
     api("io.pivotal.cfenv:java-cfenv")
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('org.junit.jupiter:junit-jupiter-api')
     testImplementation("org.springframework.cloud:spring-cloud-config-server")
+    testImplementation('org.junit.jupiter:junit-jupiter-api')
     testImplementation("org.wiremock:wiremock-standalone:${wireMockVersion}")
     testImplementation("org.awaitility:awaitility:4.3.0")
+
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 publishing {
