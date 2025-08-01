@@ -135,6 +135,17 @@ configure(javaProjects) {
             failedTests.each { test -> println "FAILED test: ${test.className} > ${test.name}" }
         }
 
+        finalizedBy jacocoTestReport // report is always generated after tests run
+
+        jacocoTestReport {
+            dependsOn test // tests are required to run before generating the report
+
+            reports {
+                xml.required = true
+                html.required = false
+                csv.required = false
+            }
+        }
     }
 
     jar {
@@ -154,7 +165,7 @@ configure(javaProjects) {
     javadoc {
         description = "Generates project-level javadoc for use in -javadoc jar"
 
-        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.memberLevel = JavadocMemberLevel.PROTECTED
         options.author = true
         options.header = project.name
         options.links(project.ext.javadocLinks)
@@ -172,18 +183,18 @@ configure(javaProjects) {
         }
     }
 
-    task allDependencyInsight(type: DependencyInsightReportTask) {}
-    task allDependencies(type: DependencyReportTask) {}
+    tasks.register('allDependencyInsight', DependencyInsightReportTask) {}
+    tasks.register('allDependencies', DependencyReportTask) {}
 }
 
 configure(rootProject) {
     description = "Spring Cloud Services Starter Build"
 
-    task api(type: Javadoc) {
+    tasks.register('api', Javadoc) {
         group = "Documentation"
         description = "Generates aggregated Javadoc API documentation."
         title = "${rootProject.description} ${version} API"
-        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.memberLevel = JavadocMemberLevel.PROTECTED
         options.author = true
         options.header = rootProject.description
         options.links(project.ext.javadocLinks)
@@ -198,28 +209,9 @@ configure(rootProject) {
         })
 
         maxMemory = "1024m"
-        destinationDir = new File(buildDir, "api")
+        destinationDir = layout.buildDirectory.file("api")
     }
 
-}
-
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-
-    projectsWithSource.each { subproject ->
-        sourceSets subproject.sourceSets.main
-    }
-
-    reports {
-        xml.required = true
-        xml.destination new File("${buildDir}/reports/jacoco/report.xml")
-        html.required = false
-        csv.required = false
-    }
-}
-
-codeCoverageReport.dependsOn {
-    subprojects*.test
 }
 
 configure(subprojects) {
