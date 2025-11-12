@@ -20,7 +20,7 @@ apply plugin: "java-platform"
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${rootProject.ext.springCloudVersion}"
+        mavenBom "${libs.spring.cloud.dependencies.get().module}:${libs.versions.spring.cloud.get()}"
     }
     dependencies {
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-config-client:${project.version}"
