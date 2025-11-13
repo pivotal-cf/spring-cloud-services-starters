@@ -11,7 +11,7 @@ function main() {
 	echo "Setting starters pipeline..."
 	fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.3.x \
 		--config pipeline.yml \
-		--var branch="main"
+		--var branch="4.3.x"
 	popd >/dev/null
 }
 

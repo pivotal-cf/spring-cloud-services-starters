@@ -16,50 +16,6 @@ aliases:
     disable_checksum_uploads: true
 
 jobs:
-  - name: build-ci-images
-    plan:
-      - in_parallel:
-          - get: ci-images-src
-            trigger: true
-          - get: oci-build-task-image
-          - get: alpine-image
-      - task: docker-config
-        image: alpine-image
-        config:
-          platform: linux
-          outputs:
-            - name: docker-config
-          params:
-            DOCKER_CONFIG_JSON: ((broadcom-jfrog-artifactory/dockerconfig))
-          run:
-            path: sh
-            args:
-              - -exc
-              - |
-                echo "$DOCKER_CONFIG_JSON" > docker-config/config.json
-      - task: build
-        image: oci-build-task-image
-        privileged: true
-        config:
-          platform: linux
-          inputs:
-            - name: ci-images-src
-            - name: docker-config
-          outputs:
-            - name: image
-          params:
-            CONTEXT: ci-images-src/ci/images/scs-starters-ci
-            DOCKER_CONFIG: docker-config
-          run:
-            path: build
-      - put: ci-image
-        inputs: detect
-        params:
-          image: image/image.tar
-        get_params:
-          skip_download: true
-    on_failure: *failure-notification
-
   - name: build
     serial: true
     public: true
@@ -75,18 +31,6 @@ jobs:
         params:
           <<: *artifactory-params
           repo: spring-enterprise-maven-dev-local
-    on_failure: *failure-notification
-
-  - name: renovate
-    plan:
-      - in_parallel:
-          - get: src
-          - get: weekly
-            trigger: true
-          - get: renovate-image
-      - task: renovate
-        image: renovate-image
-        file: src/ci/tasks/renovate.yml
     on_failure: *failure-notification
 
   - name: stage-milestone
@@ -245,14 +189,6 @@ resources:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((github.git-email))/staging-((branch))
 
-  - name: ci-images-src
-    type: git
-    icon: github
-    source:
-      uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
-      branch: ((branch))
-      paths: ["ci/images/*"]
-
   - name: ci-image
     type: registry-image
     icon: docker
@@ -261,24 +197,6 @@ resources:
       username: ((broadcom-jfrog-artifactory/robot-account.username))
       password: ((broadcom-jfrog-artifactory/robot-account.password))
       tag: jdk-17
-
-  - name: oci-build-task-image
-    type: registry-image
-    icon: docker
-    source:
-      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/concourse/oci-build-task
-      username: ((broadcom-jfrog-artifactory/robot-account.username))
-      password: ((broadcom-jfrog-artifactory/robot-account.password))
-      tag: 0.11.1
-
-  - name: alpine-image
-    type: registry-image
-    icon: docker
-    source:
-      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/alpine
-      username: ((broadcom-jfrog-artifactory/robot-account.username))
-      password: ((broadcom-jfrog-artifactory/robot-account.password))
-      tag: 3.19.1
 
   - name: artifactory
     type: artifactory-resource
@@ -290,25 +208,6 @@ resources:
       project: ((broadcom-jfrog-artifactory/project))
       build_name: spring-cloud-services-starters
 
-  - name: weekly
-    type: time
-    icon: calendar-clock
-    source:
-      start: 12:00 AM
-      stop: 1:00 AM
-      days:
-        - Friday
-      location: America/New_York
-      initial_version: true
-
-  - name: renovate-image
-    type: registry-image
-    source:
-      repository: spring-scs-docker-virtual.((broadcom-jfrog-artifactory/host))/renovate/renovate
-      username: ((broadcom-jfrog-artifactory/robot-account.username))
-      password: ((broadcom-jfrog-artifactory/robot-account.password))
-      tag: 39.263.0
-
   - name: notify
     type: notify-type
     icon: bullhorn
@@ -319,7 +218,6 @@ groups:
   - name: "build"
     jobs:
       - build
-      - renovate
   - name: "milestone"
     jobs:
       - stage-milestone
@@ -333,6 +231,3 @@ groups:
       - stage-release
       - promote-release
       - sync-to-maven-central
-  - name: "ci-images"
-    jobs:
-      - build-ci-images
