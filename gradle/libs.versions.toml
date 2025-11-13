@@ -1,0 +1,27 @@
+[versions]
+spring-boot = "3.4.11"
+spring-cloud = "2024.0.2"
+java-cfenv = "3.5.0"
+wiremock = "3.13.1"
+nohttp = "0.0.11"
+awaitility = "4.3.0"
+dependency-management-plugin = "1.1.7"
+build-info-extractor-gradle = "6.0.2"
+spring-javaformat-gradle-plugin = "0.0.47"
+
+[libraries]
+spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
+spring-cloud-dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "spring-cloud" }
+java-cfenv = { module = "io.pivotal.cfenv:java-cfenv", version.ref = "java-cfenv" }
+java-cfenv-scs = { module = "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs", version.ref = "java-cfenv" }
+
+# Testing
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
+nohttp = { module = "io.spring.nohttp:nohttp", version.ref = "nohttp" }
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
+
+# Build plugins (for buildscript classpath)
+dependency-management-plugin = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "dependency-management-plugin" }
+build-info-extractor-gradle = { module = "org.jfrog.buildinfo:build-info-extractor-gradle", version.ref = "build-info-extractor-gradle" }
+spring-javaformat-gradle-plugin = { module = "io.spring.javaformat:spring-javaformat-gradle-plugin", version.ref = "spring-javaformat-gradle-plugin" }
+nohttp-gradle = { module = "io.spring.nohttp:nohttp-gradle", version.ref = "nohttp" }
