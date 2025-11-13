@@ -25,7 +25,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation('org.junit.jupiter:junit-jupiter-api')
-    testImplementation("org.wiremock:wiremock-standalone:${wireMockVersion}")
+    testImplementation(libs.wiremock.standalone)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
