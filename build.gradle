@@ -20,24 +20,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("io.spring.gradle:dependency-management-plugin:1.1.7")
-        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:6.0.2")
-        classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.47")
-        classpath("io.spring.nohttp:nohttp-gradle:0.0.11")
+        classpath(libs.dependency.management.plugin)
+        classpath(libs.build.info.extractor.gradle)
+        classpath(libs.spring.javaformat.gradle.plugin)
+        classpath(libs.nohttp.gradle)
     }
 }
 
 // NoHttp has to be applied at the root level
 // so that it reads all the root files, including the gradle ones.
 apply plugin: "io.spring.nohttp"
-
-ext {
-    springBootVersion = "3.3.13"
-    springCloudVersion = "2023.0.6"
-    javaCfEnvVersion = "3.5.0"
-    nohttpVersion = "0.0.11"
-    wireMockVersion = "3.13.1"
-}
 
 configure(allprojects) {
     group = "io.pivotal.spring.cloud"
@@ -173,13 +165,13 @@ configure(javaProjects) {
     }
 
     dependencies {
-        testRuntimeOnly("io.spring.nohttp:nohttp:${nohttpVersion}")
+        testRuntimeOnly(libs.nohttp)
     }
 
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+            mavenBom "${libs.spring.cloud.dependencies.get().module}:${libs.versions.spring.cloud.get()}"
+            mavenBom "${libs.spring.boot.dependencies.get().module}:${libs.versions.spring.boot.get()}"
         }
     }
 
@@ -209,7 +201,7 @@ configure(rootProject) {
         })
 
         maxMemory = "1024m"
-        destinationDir = layout.buildDirectory.file("api")
+        destinationDir = layout.buildDirectory.dir("api").get().asFile
     }
 
 }
@@ -217,8 +209,8 @@ configure(rootProject) {
 configure(subprojects) {
     dependencyManagement {
         dependencies {
-            dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${javaCfEnvVersion}"
-            dependency "io.pivotal.cfenv:java-cfenv:${javaCfEnvVersion}"
+            dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${libs.versions.java.cfenv.get()}"
+            dependency "io.pivotal.cfenv:java-cfenv:${libs.versions.java.cfenv.get()}"
         }
     }
 }
