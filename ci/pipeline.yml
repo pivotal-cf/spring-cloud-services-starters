@@ -30,7 +30,7 @@ jobs:
           outputs:
             - name: docker-config
           params:
-            DOCKER_CONFIG_JSON: ((broadcom-jfrog-artifactory/dockerconfig))
+            DOCKER_CONFIG_JSON: ((docker/config))
           run:
             path: sh
             args:
