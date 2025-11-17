@@ -4,6 +4,6 @@ io.pivotal.spring.cloud.config.client.OAuth2ConfigDataLocationResolver
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
 io.pivotal.spring.cloud.config.client.ConfigClientOAuth2BootstrapConfiguration
 
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.EnvironmentPostProcessor=\
 io.pivotal.spring.cloud.config.client.PropertyMaskingEnvironmentPostProcessor,\
 io.pivotal.spring.cloud.config.client.ConfigClientEnvironmentPostProcessor

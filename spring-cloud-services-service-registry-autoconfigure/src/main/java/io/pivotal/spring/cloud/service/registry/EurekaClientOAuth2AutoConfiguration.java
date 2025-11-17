@@ -24,7 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.netflix.eureka.RestClientTimeoutProperties;
+import org.springframework.cloud.netflix.eureka.TimeoutProperties;
 import org.springframework.cloud.netflix.eureka.config.DiscoveryClientOptionalArgsConfiguration;
 import org.springframework.cloud.netflix.eureka.http.DefaultEurekaClientHttpRequestFactorySupplier;
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
@@ -37,7 +37,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
  * @author Dylan Roberts
  */
 @AutoConfiguration(before = DiscoveryClientOptionalArgsConfiguration.class)
-@EnableConfigurationProperties({ EurekaClientOAuth2Properties.class, RestClientTimeoutProperties.class })
+@EnableConfigurationProperties({ EurekaClientOAuth2Properties.class, TimeoutProperties.class })
 @ConditionalOnClass({ EurekaClientConfig.class })
 @ConditionalOnProperty(prefix = "eureka.client.oauth2", name = { "client-id", "client-secret", "access-token-uri" })
 public class EurekaClientOAuth2AutoConfiguration {
@@ -46,7 +46,7 @@ public class EurekaClientOAuth2AutoConfiguration {
 	@ConditionalOnMissingBean
 	@ConditionalOnClass(name = "org.springframework.web.client.RestTemplate")
 	EurekaClientHttpRequestFactorySupplier eurekaClientOAuth2HttpRequestFactorySupplier(
-			EurekaClientOAuth2Properties eurekaClientOAuth2Properties, RestClientTimeoutProperties timeoutProperties) {
+			EurekaClientOAuth2Properties eurekaClientOAuth2Properties, TimeoutProperties timeoutProperties) {
 		var clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
 			.clientId(eurekaClientOAuth2Properties.getClientId())
 			.clientSecret(eurekaClientOAuth2Properties.getClientSecret())
