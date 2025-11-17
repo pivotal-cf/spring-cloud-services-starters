@@ -26,66 +26,33 @@ The release artifacts are available from Maven Central. You may also build and i
 
 Include the BOM and starter dependencies in your project using Maven or Gradle.
 
-=== Maven BOM
+=== Maven
 
 `pom.xml`
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<dependencies>
+    <dependency>
+        <groupId>io.pivotal.spring.cloud</groupId>
+        <artifactId>spring-cloud-services-starter-config-client</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.pivotal.spring.cloud</groupId>
+        <artifactId>spring-cloud-services-starter-service-registry</artifactId>
+    </dependency>
+</dependencies>
 
-    <groupId>org.demo</groupId>
-    <artifactId>spring-cloud-services-demo</artifactId>
-    <version>0.1.0</version>
-    <packaging>jar</packaging>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>${spring-boot.version}</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
-    </properties>
-
+<dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>io.pivotal.spring.cloud</groupId>
-            <artifactId>spring-cloud-services-starter-config-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.pivotal.spring.cloud</groupId>
-            <artifactId>spring-cloud-services-starter-service-registry</artifactId>
+            <artifactId>spring-cloud-services-dependencies</artifactId>
+            <version>${spring-cloud-services.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.pivotal.spring.cloud</groupId>
-                <artifactId>spring-cloud-services-dependencies</artifactId>
-                <version>${spring-cloud-services.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
+</dependencyManagement>
 ```
 
 === Gradle
@@ -93,27 +60,6 @@ Include the BOM and starter dependencies in your project using Maven or Gradle.
 `build.gradle`
 
 ```groovy
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath("io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE")
-    }
-}
-
-apply plugin: "java"
-apply plugin: "eclipse"
-apply plugin: "idea"
-apply plugin: "spring-boot"
-apply plugin: "io.spring.dependency-management"
-
-jar {
-    baseName = "spring-cloud-services-demo"
-    version =  "0.1.0"
-}
-
 dependencyManagement {
     imports {
         mavenBom "io.pivotal.spring.cloud:spring-cloud-services-dependencies:${springCloudServicesVersion}"
@@ -123,10 +69,6 @@ dependencyManagement {
 dependencies {
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-config-client")
     compile("io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry")
-}
-
-repositories {
-    mavenCentral()
 }
 ```
 
