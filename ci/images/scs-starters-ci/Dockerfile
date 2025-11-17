@@ -1,4 +1,4 @@
-FROM spring-scs-docker-virtual.usw1.packages.broadcom.com/ci/concourse-release-scripts:0.4.2-SNAPSHOT
+FROM spring-scs-docker-virtual.usw1.packages.broadcom.com/ci/concourse-release-scripts:0.4.2
 
 RUN apt-get update && apt-get install --no-install-recommends -y net-tools git
 RUN rm -rf /var/lib/apt/lists/*
