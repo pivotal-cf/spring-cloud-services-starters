@@ -1,2 +1,2 @@
-org.springframework.boot.env.EnvironmentPostProcessor=\
+org.springframework.boot.EnvironmentPostProcessor=\
 io.pivotal.spring.cloud.service.registry.EurekaClientEnvironmentPostProcessor

@@ -88,7 +88,7 @@ public class ConfigClientOAuth2InterceptorTest {
 		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
 
 		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
-			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
+			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
 			.withHeader("Authorization", equalTo("Basic " + base64Credentials))
 			.withRequestBody(containing("grant_type=client_credentials")));
 	}
@@ -98,7 +98,7 @@ public class ConfigClientOAuth2InterceptorTest {
 		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
 
 		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
-			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded;charset=UTF-8"))
+			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
 			.withHeader("Authorization", equalTo("Basic " + base64Credentials))
 			.withRequestBody(containing("grant_type=client_credentials"))
 			.withRequestBody(containing("scope=profile+email")));
