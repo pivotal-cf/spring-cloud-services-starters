@@ -2,7 +2,7 @@
 spring-boot = "4.0.0-RC2"
 spring-cloud = "2025.1.0-RC1"
 java-cfenv = "3.5.0"
-wiremock = "3.13.1"
+wiremock = "3.13.2"
 nohttp = "0.0.11"
 awaitility = "4.3.0"
 dependency-management-plugin = "1.1.7"
