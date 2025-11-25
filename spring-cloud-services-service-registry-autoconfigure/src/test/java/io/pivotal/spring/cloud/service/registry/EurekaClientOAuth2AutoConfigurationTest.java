@@ -24,6 +24,7 @@ import org.springframework.http.HttpMethod;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -62,7 +63,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 	@Test
 	void authInterceptorIsConfiguredWhenOAuth2PropertiesArePresent() {
 		var pairs = applicationProperties("id", "secret");
-		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes(StandardCharsets.UTF_8));
 
 		stubTokenEndpoint();
 
@@ -81,7 +82,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 	@Test
 	void optionalScopePropertyShouldBeIncludedInTokenRequest() {
 		var pairs = applicationProperties("id", "secret", "profile,email");
-		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes(StandardCharsets.UTF_8));
 
 		stubTokenEndpoint();
 

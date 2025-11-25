@@ -35,6 +35,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -172,8 +173,9 @@ public class OAuth2ConfigDataLocationResolver
 			}
 
 			if (password != null) {
-				byte[] token = java.util.Base64.getEncoder().encode((username + ":" + password).getBytes());
-				httpHeaders.add("Authorization", "Basic " + new String(token));
+				byte[] token = java.util.Base64.getEncoder()
+					.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8));
+				httpHeaders.add("Authorization", "Basic " + new String(token, StandardCharsets.UTF_8));
 			}
 			else if (authorization != null) {
 				httpHeaders.add("Authorization", authorization);
