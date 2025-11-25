@@ -15,7 +15,8 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.bind.Binder;
@@ -26,7 +27,7 @@ import org.springframework.util.StringUtils;
 
 final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean implements InitializingBean {
 
-	private static final Logger LOGGER = Logger.getLogger(SanitizingEurekaInstanceConfigBean.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(SanitizingEurekaInstanceConfigBean.class);
 
 	public SanitizingEurekaInstanceConfigBean(InetUtils inetUtils) {
 		super(inetUtils);
@@ -48,8 +49,8 @@ final class SanitizingEurekaInstanceConfigBean extends EurekaInstanceConfigBean 
 			// default to a hostname-sanitized spring application name
 			var sanitizedAppName = sanitizeHostname(springAppName);
 			if (!springAppName.equals(sanitizedAppName)) {
-				LOGGER.warning("Spring application name '" + springAppName
-						+ "' was sanitized to produce eureka.instance.appname '" + sanitizedAppName + "'");
+				LOGGER.warn("Spring application name '{}' was sanitized to produce eureka.instance.appname '{}'",
+						springAppName, sanitizedAppName);
 			}
 			setAppname(sanitizedAppName);
 			setVirtualHostName(sanitizedAppName);

@@ -18,7 +18,9 @@ package io.pivotal.spring.cloud.service.registry;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -48,7 +50,7 @@ import org.springframework.util.ObjectUtils;
 @ConditionalOnExpression("'${vcap.application.uris[0]:}'!='' || '${cf.instance.ip:}'!=''")
 public class EurekaInstanceAutoConfiguration {
 
-	private static final Logger LOGGER = Logger.getLogger(EurekaInstanceAutoConfiguration.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(EurekaInstanceAutoConfiguration.class);
 
 	private static final String UNKNOWN_ZONE = "unknown";
 
@@ -97,7 +99,7 @@ public class EurekaInstanceAutoConfiguration {
 	@Bean
 	public EurekaInstanceConfigBean eurekaInstanceConfigBean() {
 		if (!ObjectUtils.isEmpty(registrationMethod)) {
-			LOGGER.info("Eureka registration method: " + registrationMethod);
+			LOGGER.info("Eureka registration method: {}", registrationMethod);
 
 			if (ROUTE_REGISTRATION_METHOD.equals(registrationMethod)) {
 				return getRouteRegistration();
@@ -156,8 +158,8 @@ public class EurekaInstanceAutoConfiguration {
 			hostname = new URI(defaultZoneUri).getHost();
 		}
 		catch (URISyntaxException e) {
-			LOGGER.warning(String.format("Eureka zone could not be determined from %s=\"%s\". Using \"%s\". %s",
-					DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE, e));
+			LOGGER.warn("Eureka zone could not be determined from {}=\"{}\". Using \"{}\".", DEFAULT_ZONE_PROPERTY,
+					defaultZoneUri, UNKNOWN_ZONE, e);
 			return UNKNOWN_ZONE;
 		}
 		if (hostname != null) {
@@ -169,8 +171,8 @@ public class EurekaInstanceAutoConfiguration {
 			}
 		}
 
-		LOGGER.warning(String.format("Eureka zone could not be determined from %s=\"%s\". Using \"%s\".",
-				DEFAULT_ZONE_PROPERTY, defaultZoneUri, UNKNOWN_ZONE));
+		LOGGER.warn("Eureka zone could not be determined from {}=\"{}\". Using \"{}\".", DEFAULT_ZONE_PROPERTY,
+				defaultZoneUri, UNKNOWN_ZONE);
 		return UNKNOWN_ZONE;
 	}
 
