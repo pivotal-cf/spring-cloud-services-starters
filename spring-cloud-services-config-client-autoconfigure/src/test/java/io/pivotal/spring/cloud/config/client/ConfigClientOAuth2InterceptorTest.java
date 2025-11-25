@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -85,7 +86,7 @@ public class ConfigClientOAuth2InterceptorTest {
 
 	@Test
 	void accessTokenIsRequestedUsingClientOAuthProperties() {
-		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes(StandardCharsets.UTF_8));
 
 		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
 			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
@@ -95,7 +96,7 @@ public class ConfigClientOAuth2InterceptorTest {
 
 	@Test
 	void optionalScopePropertyShouldBeIncludedInTokenRequest() {
-		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes());
+		String base64Credentials = Base64.getEncoder().encodeToString(("id:secret").getBytes(StandardCharsets.UTF_8));
 
 		uaaServer.verify(postRequestedFor(urlEqualTo("/token/uri"))
 			.withHeader("Content-Type", equalTo("application/x-www-form-urlencoded"))
