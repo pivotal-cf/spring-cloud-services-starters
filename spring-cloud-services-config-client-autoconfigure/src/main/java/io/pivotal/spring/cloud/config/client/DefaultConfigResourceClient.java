@@ -21,18 +21,16 @@ import java.util.Optional;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.springframework.cloud.config.client.ConfigClientProperties.TOKEN_HEADER;
 
 /**
- * {@link RestTemplate} based implementation of {@link ConfigResourceClient}. Config
- * Server URI, default application name, profiles and labels are provided by
+ * {@link RestClient} based implementation of {@link ConfigResourceClient}. Config Server
+ * URI, default application name, profiles and labels are provided by
  * {@link ConfigClientProperties}.
  *
  * @author Daniel Lavoie
@@ -48,11 +46,10 @@ class DefaultConfigResourceClient implements ConfigResourceClient {
 
 	private final ConfigClientProperties configClientProperties;
 
-	private final RestTemplate restTemplate;
+	private final RestClient restClient;
 
-	protected DefaultConfigResourceClient(RestTemplate restTemplate,
-			final ConfigClientProperties configClientProperties) {
-		this.restTemplate = restTemplate;
+	protected DefaultConfigResourceClient(RestClient restClient, final ConfigClientProperties configClientProperties) {
+		this.restClient = restClient;
 		this.configClientProperties = configClientProperties;
 	}
 
@@ -112,16 +109,16 @@ class DefaultConfigResourceClient implements ConfigResourceClient {
 			.pathSegment(profile)
 			.pathSegment(label)
 			.pathSegment(path);
-		RequestEntity.HeadersBuilder<?> requestBuilder = RequestEntity.get(urlBuilder.build().toUri());
+
+		var spec = restClient.get().uri(urlBuilder.build().toUri());
 		if (StringUtils.hasText(configClientProperties.getToken())) {
-			requestBuilder.header(TOKEN_HEADER, configClientProperties.getToken());
+			spec = spec.header(TOKEN_HEADER, configClientProperties.getToken());
 		}
 		if (resourceType == ResourceType.BINARY) {
-			requestBuilder.accept(MediaType.APPLICATION_OCTET_STREAM);
+			spec = spec.accept(MediaType.APPLICATION_OCTET_STREAM);
 		}
 
-		ResponseEntity<Resource> forEntity = restTemplate.exchange(requestBuilder.build(), Resource.class);
-		return forEntity.getBody();
+		return spec.retrieve().body(Resource.class);
 	}
 
 }

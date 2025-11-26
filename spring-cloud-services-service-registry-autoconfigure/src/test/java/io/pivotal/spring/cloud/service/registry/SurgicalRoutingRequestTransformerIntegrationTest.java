@@ -36,7 +36,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,8 +89,8 @@ public class SurgicalRoutingRequestTransformerIntegrationTest {
 
 		@LoadBalanced
 		@Bean
-		public RestTemplate restTemplate() {
-			return new RestTemplate();
+		public RestClient restClient() {
+			return RestClient.create();
 		}
 
 	}

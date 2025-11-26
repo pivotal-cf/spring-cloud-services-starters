@@ -33,6 +33,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -52,8 +53,8 @@ import static org.springframework.cloud.config.client.ConfigClientProperties.AUT
  * will be used by {@link ConfigServerConfigDataLocationResolver} for calling config
  * server.
  * <p>
- * Finally, it registers the <code>RestTemplate</code> bean to be consumed by
- * {@link ConfigResourceClientAutoConfiguration} and
+ * Finally, it registers the <code>RestTemplate</code> and <code>RestClient</code> beans
+ * to be consumed by {@link ConfigResourceClientAutoConfiguration} and
  * {@link VaultTokenRenewalAutoConfiguration} after application startup.
  */
 public class OAuth2ConfigDataLocationResolver
@@ -98,10 +99,15 @@ public class OAuth2ConfigDataLocationResolver
 		// Update the template, in case it was registered earlier
 		factory.updateTemplate(template);
 
-		// Add the RestTemplate as bean, once the startup is finished.
-		bootstrapContext.addCloseListener(event -> event.getApplicationContext()
-			.getBeanFactory()
-			.registerSingleton("configClientRestTemplate", event.getBootstrapContext().get(RestTemplate.class)));
+		// Add the RestTemplate and RestClient as beans, once the startup is finished.
+		bootstrapContext.addCloseListener(event -> {
+			var beanFactory = event.getApplicationContext().getBeanFactory();
+			var eventBootstrapContext = event.getBootstrapContext();
+			var restTemplate = eventBootstrapContext.get(RestTemplate.class);
+			beanFactory.registerSingleton("configClientRestClient", RestClient.create(restTemplate));
+			// Legacy
+			beanFactory.registerSingleton("configClientRestTemplate", restTemplate);
+		});
 
 		return false;
 	}

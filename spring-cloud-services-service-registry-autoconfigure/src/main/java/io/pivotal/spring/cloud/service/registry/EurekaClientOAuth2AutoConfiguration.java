@@ -44,7 +44,6 @@ public class EurekaClientOAuth2AutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	@ConditionalOnClass(name = "org.springframework.web.client.RestTemplate")
 	EurekaClientHttpRequestFactorySupplier eurekaClientOAuth2HttpRequestFactorySupplier(
 			EurekaClientOAuth2Properties eurekaClientOAuth2Properties, TimeoutProperties timeoutProperties) {
 		var clientRegistration = ClientRegistration.withRegistrationId("eureka-client")
