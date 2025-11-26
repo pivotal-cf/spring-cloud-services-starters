@@ -34,12 +34,12 @@ public class ConfigResourceClientAutoConfigurationTest {
 
 	@Test
 	void shouldNotCreateConfigResourceClientWhenRestClientIsMissing() {
-		contextRunner.run(context -> assertThat(context).doesNotHaveBean(ConfigResourceClient.class));
+		this.contextRunner.run(context -> assertThat(context).doesNotHaveBean(ConfigResourceClient.class));
 	}
 
 	@Test
 	void shouldCreateConfigResourceClientWhenRestClientIsPresent() {
-		contextRunner.withBean("configClientRestClient", RestClient.class, RestClient::create)
+		this.contextRunner.withBean("configClientRestClient", RestClient.class, RestClient::create)
 			.run(context -> assertThat(context).hasSingleBean(ConfigResourceClient.class));
 	}
 

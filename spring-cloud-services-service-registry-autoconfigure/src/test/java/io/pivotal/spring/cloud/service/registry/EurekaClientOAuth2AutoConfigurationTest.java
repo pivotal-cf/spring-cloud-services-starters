@@ -15,17 +15,18 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.boot.autoconfigure.AutoConfigurations;
-import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
-import org.springframework.http.HttpMethod;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
+import org.springframework.http.HttpMethod;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -48,7 +49,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 
 	@Test
 	void configurationIsNotEnabledWhenOAuth2PropertiesAreMissing() {
-		contextRunner
+		this.contextRunner
 			.run(context -> assertThat(context).doesNotHaveBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
 	}
 
@@ -56,7 +57,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 	void configurationIsEnabledWhenOAuth2PropertiesArePresent() {
 		var pairs = applicationProperties("::id::", "::secret::");
 
-		contextRunner.withPropertyValues(pairs)
+		this.contextRunner.withPropertyValues(pairs)
 			.run(context -> assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class));
 	}
 
@@ -67,7 +68,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 
 		stubTokenEndpoint();
 
-		contextRunner.withPropertyValues(pairs).run(context -> {
+		this.contextRunner.withPropertyValues(pairs).run(context -> {
 			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 
 			callAnyEndpoint(context);
@@ -86,7 +87,7 @@ public class EurekaClientOAuth2AutoConfigurationTest {
 
 		stubTokenEndpoint();
 
-		contextRunner.withPropertyValues(pairs).run(context -> {
+		this.contextRunner.withPropertyValues(pairs).run(context -> {
 			assertThat(context).hasSingleBean(EurekaClientOAuth2HttpRequestFactorySupplier.class);
 
 			callAnyEndpoint(context);

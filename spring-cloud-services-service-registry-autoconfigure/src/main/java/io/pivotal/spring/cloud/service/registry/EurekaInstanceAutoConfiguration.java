@@ -98,14 +98,14 @@ public class EurekaInstanceAutoConfiguration {
 
 	@Bean
 	public EurekaInstanceConfigBean eurekaInstanceConfigBean() {
-		if (!ObjectUtils.isEmpty(registrationMethod)) {
-			LOGGER.info("Eureka registration method: {}", registrationMethod);
+		if (!ObjectUtils.isEmpty(this.registrationMethod)) {
+			LOGGER.info("Eureka registration method: {}", this.registrationMethod);
 
-			if (ROUTE_REGISTRATION_METHOD.equals(registrationMethod)) {
+			if (ROUTE_REGISTRATION_METHOD.equals(this.registrationMethod)) {
 				return getRouteRegistration();
 			}
 
-			if (DIRECT_REGISTRATION_METHOD.equals(registrationMethod)) {
+			if (DIRECT_REGISTRATION_METHOD.equals(this.registrationMethod)) {
 				return getDirectRegistration();
 			}
 		}
@@ -122,32 +122,32 @@ public class EurekaInstanceAutoConfiguration {
 	private SanitizingEurekaInstanceConfigBean getRouteRegistration() {
 		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = getDefaults();
 		eurekaInstanceConfigBean.setSecurePortEnabled(true);
-		eurekaInstanceConfigBean.setInstanceId(hostname + ":" + instanceId);
+		eurekaInstanceConfigBean.setInstanceId(this.hostname + ":" + this.instanceId);
 		return eurekaInstanceConfigBean;
 	}
 
 	private SanitizingEurekaInstanceConfigBean getDirectRegistration() {
 		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = getDefaults();
 		eurekaInstanceConfigBean.setPreferIpAddress(true);
-		eurekaInstanceConfigBean.setNonSecurePort(port);
-		eurekaInstanceConfigBean.setInstanceId(ip + ":" + instanceId);
+		eurekaInstanceConfigBean.setNonSecurePort(this.port);
+		eurekaInstanceConfigBean.setInstanceId(this.ip + ":" + this.instanceId);
 		return eurekaInstanceConfigBean;
 	}
 
 	private SanitizingEurekaInstanceConfigBean getDefaults() {
 		InetUtilsProperties inetUtilsProperties = new InetUtilsProperties();
-		inetUtilsProperties.setDefaultHostname(hostname);
-		inetUtilsProperties.setDefaultIpAddress(ip);
+		inetUtilsProperties.setDefaultHostname(this.hostname);
+		inetUtilsProperties.setDefaultIpAddress(this.ip);
 
 		SanitizingEurekaInstanceConfigBean eurekaInstanceConfigBean = new SanitizingEurekaInstanceConfigBean(
 				new InetUtils(inetUtilsProperties));
-		eurekaInstanceConfigBean.setHostname(hostname);
-		eurekaInstanceConfigBean.setIpAddress(ip);
+		eurekaInstanceConfigBean.setHostname(this.hostname);
+		eurekaInstanceConfigBean.setIpAddress(this.ip);
 		Map<String, String> metadataMap = eurekaInstanceConfigBean.getMetadataMap();
-		metadataMap.put(SurgicalRoutingRequestTransformer.CF_APP_GUID, cfAppGuid);
-		metadataMap.put(SurgicalRoutingRequestTransformer.CF_INSTANCE_INDEX, cfInstanceIndex);
-		metadataMap.put(INSTANCE_ID, instanceId);
-		metadataMap.put(ZONE, zoneFromUri(zoneUri));
+		metadataMap.put(SurgicalRoutingRequestTransformer.CF_APP_GUID, this.cfAppGuid);
+		metadataMap.put(SurgicalRoutingRequestTransformer.CF_INSTANCE_INDEX, this.cfInstanceIndex);
+		metadataMap.put(INSTANCE_ID, this.instanceId);
+		metadataMap.put(ZONE, zoneFromUri(this.zoneUri));
 
 		return eurekaInstanceConfigBean;
 	}
@@ -163,7 +163,7 @@ public class EurekaInstanceAutoConfiguration {
 			return UNKNOWN_ZONE;
 		}
 		if (hostname != null) {
-			if (isZoneConfigurationEnabled) {
+			if (this.isZoneConfigurationEnabled) {
 				return hostname;
 			}
 			if (hostname.contains(".")) {

@@ -15,14 +15,15 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
 import org.springframework.cloud.netflix.eureka.http.DefaultEurekaClientHttpRequestFactorySupplier;
 import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFactorySupplier;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.InterceptingClientHttpRequestFactory;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import java.util.List;
 
 /**
  * {@link EurekaClientHttpRequestFactorySupplier} implementation to add authorization
@@ -43,10 +44,11 @@ public class EurekaClientOAuth2HttpRequestFactorySupplier implements EurekaClien
 
 	@Override
 	public ClientHttpRequestFactory get(SSLContext sslContext, HostnameVerifier hostnameVerifier) {
-		var clientHttpRequestFactory = defaultEurekaClientHttpRequestFactorySupplier.get(sslContext, hostnameVerifier);
+		var clientHttpRequestFactory = this.defaultEurekaClientHttpRequestFactorySupplier.get(sslContext,
+				hostnameVerifier);
 
 		return new InterceptingClientHttpRequestFactory(clientHttpRequestFactory,
-				List.of(oAuth2AuthorizedClientHttpRequestInterceptor));
+				List.of(this.oAuth2AuthorizedClientHttpRequestInterceptor));
 	}
 
 }

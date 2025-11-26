@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,66 +76,68 @@ public class DefaultConfigResourceClientTest {
 
 	@BeforeEach
 	public void setup() {
-		configClientProperties = new ConfigClientProperties(new MockEnvironment());
-		configClientProperties.setName("app");
-		configClientProperties.setProfile("default");
-		configClientProperties.setLabel("main");
-		configClientProperties.setUri(new String[] { "http://localhost:" + port });
-		configClient = new DefaultConfigResourceClient(RestClient.create(), configClientProperties);
+		this.configClientProperties = new ConfigClientProperties(new MockEnvironment());
+		this.configClientProperties.setName("app");
+		this.configClientProperties.setProfile("default");
+		this.configClientProperties.setLabel("main");
+		this.configClientProperties.setUri(new String[] { "http://localhost:" + this.port });
+		this.configClient = new DefaultConfigResourceClient(RestClient.create(), this.configClientProperties);
 	}
 
 	@Test
 	public void shouldFindResourcesUsingDefaultProfile() {
-		assertThat(read(configClient.getPlainTextResource(null, "main", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
-		assertThat(read(configClient.getBinaryResource(null, "main", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
+		assertThat(read(this.configClient.getPlainTextResource(null, "main", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
+		assertThat(read(this.configClient.getBinaryResource(null, "main", "nginx.conf"))).isEqualTo(NGINX_CONFIG);
 	}
 
 	@Test
 	public void shouldFindResourcesUsingDefaultLabel() {
-		assertThat(read(configClient.getPlainTextResource("dev", null, "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
-		assertThat(read(configClient.getBinaryResource("dev", null, "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
+		assertThat(read(this.configClient.getPlainTextResource("dev", null, "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
+		assertThat(read(this.configClient.getBinaryResource("dev", null, "nginx.conf"))).isEqualTo(DEV_NGINX_CONFIG);
 	}
 
 	@Test
 	public void shouldFindResourcesUsingDefaultProfileAndLabel() {
-		assertThat(read(configClient.getPlainTextResource("nginx.conf"))).isEqualTo(NGINX_CONFIG);
-		assertThat(read(configClient.getBinaryResource("nginx.conf"))).isEqualTo(NGINX_CONFIG);
+		assertThat(read(this.configClient.getPlainTextResource("nginx.conf"))).isEqualTo(NGINX_CONFIG);
+		assertThat(read(this.configClient.getBinaryResource("nginx.conf"))).isEqualTo(NGINX_CONFIG);
 	}
 
 	@Test
 	public void shouldFindResourceWithGivenProfileAndLabel() {
-		assertThat(read(configClient.getPlainTextResource("test", "main", "nginx.conf"))).isEqualTo(TEST_NGINX_CONFIG);
-		assertThat(read(configClient.getBinaryResource("test", "main", "nginx.conf"))).isEqualTo(TEST_NGINX_CONFIG);
+		assertThat(read(this.configClient.getPlainTextResource("test", "main", "nginx.conf")))
+			.isEqualTo(TEST_NGINX_CONFIG);
+		assertThat(read(this.configClient.getBinaryResource("test", "main", "nginx.conf")))
+			.isEqualTo(TEST_NGINX_CONFIG);
 	}
 
 	@Test
 	public void missingResourceShouldReturnHttpError() {
-		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "main", "missing-config.xml"))
+		assertThatThrownBy(() -> this.configClient.getPlainTextResource(null, "main", "missing-config.xml"))
 			.isInstanceOf(HttpClientErrorException.class);
 
-		assertThatThrownBy(() -> configClient.getBinaryResource(null, "main", "missing-config.bin"))
+		assertThatThrownBy(() -> this.configClient.getBinaryResource(null, "main", "missing-config.bin"))
 			.isInstanceOf(HttpClientErrorException.class);
 	}
 
 	@Test
 	public void missingApplicationNameShouldCrash() {
-		configClientProperties.setName("");
+		this.configClientProperties.setName("");
 
-		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "main", "nginx.conf"))
+		assertThatThrownBy(() -> this.configClient.getPlainTextResource(null, "main", "nginx.conf"))
 			.isInstanceOf(IllegalArgumentException.class);
 
-		assertThatThrownBy(() -> configClient.getBinaryResource(null, "main", "nginx.conf"))
+		assertThatThrownBy(() -> this.configClient.getBinaryResource(null, "main", "nginx.conf"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	public void missingConfigServerUrlShouldCrash() {
-		configClientProperties.setUri(new String[] { "" });
+		this.configClientProperties.setUri(new String[] { "" });
 
-		assertThatThrownBy(() -> configClient.getPlainTextResource(null, "main", "nginx.conf"))
+		assertThatThrownBy(() -> this.configClient.getPlainTextResource(null, "main", "nginx.conf"))
 			.isInstanceOf(IllegalArgumentException.class);
 
-		assertThatThrownBy(() -> configClient.getBinaryResource(null, "main", "nginx.conf"))
+		assertThatThrownBy(() -> this.configClient.getBinaryResource(null, "main", "nginx.conf"))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 

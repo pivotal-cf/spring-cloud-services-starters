@@ -21,7 +21,7 @@ dependencies {
     api "org.springframework.security:spring-security-oauth2-client"
     api "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"
     api project(":spring-cloud-services-service-registry-autoconfigure")
-    api "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs"
+    api libs.java.cfenv.scs
 }
 
 publishing {

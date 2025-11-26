@@ -75,7 +75,7 @@ public class VaultTokenRenewalAutoConfiguration {
 		String vaultToken = configClientProperties.getToken();
 		var obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
 
-		return new VaultTokenRefresher(configClientRestClient, obscuredToken, ttl, refreshUri,
+		return new VaultTokenRefresher(configClientRestClient, obscuredToken, this.ttl, refreshUri,
 				buildTokenRenewRequest(vaultToken));
 	}
 
@@ -115,16 +115,16 @@ public class VaultTokenRenewalAutoConfiguration {
 		@Scheduled(fixedRateString = "${vault.token.renew.rate:60000}")
 		public void refreshVaultToken() {
 			try {
-				LOGGER.debug("Renewing Vault token {} for {} milliseconds.", obscuredToken, ttl);
-				restClient.post()
-					.uri(refreshUri)
-					.headers(headers -> headers.putAll(request.getHeaders()))
-					.body(request.getBody())
+				LOGGER.debug("Renewing Vault token {} for {} milliseconds.", this.obscuredToken, this.ttl);
+				this.restClient.post()
+					.uri(this.refreshUri)
+					.headers(headers -> headers.putAll(this.request.getHeaders()))
+					.body(this.request.getBody())
 					.retrieve()
 					.toBodilessEntity();
 			}
 			catch (RestClientException e) {
-				LOGGER.error("Unable to renew Vault token {}. Is the token invalid or expired?", obscuredToken);
+				LOGGER.error("Unable to renew Vault token {}. Is the token invalid or expired?", this.obscuredToken);
 			}
 		}
 

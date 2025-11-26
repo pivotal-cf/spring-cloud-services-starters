@@ -15,7 +15,13 @@
  */
 package io.pivotal.spring.cloud.config.client;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
+
 import org.springframework.boot.context.config.ConfigDataLocation;
 import org.springframework.boot.context.config.ConfigDataLocationNotFoundException;
 import org.springframework.boot.context.config.ConfigDataLocationResolver;
@@ -35,11 +41,6 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 import static org.springframework.cloud.config.client.ConfigClientProperties.AUTHORIZATION;
 
@@ -160,10 +161,10 @@ public class OAuth2ConfigDataLocationResolver
 
 		@Override
 		public RestTemplate create() {
-			if (properties.getRequestReadTimeout() < 0) {
+			if (this.properties.getRequestReadTimeout() < 0) {
 				throw new IllegalStateException("Invalid Value for Read Timeout set.");
 			}
-			if (properties.getRequestConnectTimeout() < 0) {
+			if (this.properties.getRequestConnectTimeout() < 0) {
 				throw new IllegalStateException("Invalid Value for Connect Timeout set.");
 			}
 
@@ -172,7 +173,7 @@ public class OAuth2ConfigDataLocationResolver
 
 		@Override
 		public void addAuthorizationToken(HttpHeaders httpHeaders, String username, String password) {
-			String authorization = properties.getHeaders().get(AUTHORIZATION);
+			String authorization = this.properties.getHeaders().get(AUTHORIZATION);
 
 			if (password != null && authorization != null) {
 				throw new IllegalStateException("You must set either 'password' or 'authorization'");
@@ -189,11 +190,11 @@ public class OAuth2ConfigDataLocationResolver
 		}
 
 		RestTemplate updateTemplate(RestTemplate template) {
-			template.setRequestFactory(createHttpRequestFactory(properties));
+			template.setRequestFactory(createHttpRequestFactory(this.properties));
 
 			var interceptors = new ArrayList<ClientHttpRequestInterceptor>();
 
-			var headers = new HashMap<>(properties.getHeaders());
+			var headers = new HashMap<>(this.properties.getHeaders());
 			headers.remove(AUTHORIZATION); // To avoid redundant addition of header
 			if (!headers.isEmpty()) {
 				interceptors.add(new GenericRequestHeaderInterceptor(headers));
@@ -201,10 +202,10 @@ public class OAuth2ConfigDataLocationResolver
 
 			if (this.oAuth2Properties != null) {
 				var clientRegistration = ClientRegistration.withRegistrationId("config-client")
-					.clientId(oAuth2Properties.getClientId())
-					.clientSecret(oAuth2Properties.getClientSecret())
-					.tokenUri(oAuth2Properties.getAccessTokenUri())
-					.scope(oAuth2Properties.getScope())
+					.clientId(this.oAuth2Properties.getClientId())
+					.clientSecret(this.oAuth2Properties.getClientSecret())
+					.tokenUri(this.oAuth2Properties.getAccessTokenUri())
+					.scope(this.oAuth2Properties.getScope())
 					.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 					.build();
 

@@ -21,7 +21,7 @@ dependencies {
     api('org.springframework.cloud:spring-cloud-starter-config')
     api('org.springframework.retry:spring-retry')
     api("org.springframework.security:spring-security-oauth2-client")
-    api("io.pivotal.cfenv:java-cfenv")
+    api(libs.java.cfenv)
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
     testImplementation("org.springframework.cloud:spring-cloud-config-server")
@@ -29,6 +29,8 @@ dependencies {
     testImplementation(libs.awaitility)
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    checkstyle(libs.spring.javaformat)
 }
 
 publishing {

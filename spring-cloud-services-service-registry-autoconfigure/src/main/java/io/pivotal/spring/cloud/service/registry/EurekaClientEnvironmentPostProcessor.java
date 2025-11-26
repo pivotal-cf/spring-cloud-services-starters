@@ -15,15 +15,15 @@
  */
 package io.pivotal.spring.cloud.service.registry;
 
+import java.util.Map;
+
+import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.config.ConfigDataEnvironmentPostProcessor;
-import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
-
-import java.util.Map;
 
 /**
  * An EnvironmentPostProcessor to configure the load-balancer if feature flag is enabled.

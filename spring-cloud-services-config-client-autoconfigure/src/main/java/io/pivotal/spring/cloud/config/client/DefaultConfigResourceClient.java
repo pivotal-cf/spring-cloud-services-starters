@@ -86,33 +86,33 @@ class DefaultConfigResourceClient implements ConfigResourceClient {
 	}
 
 	private Resource getResource(String profile, String label, String path, ResourceType resourceType) {
-		Assert.isTrue(configClientProperties.getName() != null && !configClientProperties.getName().isEmpty(),
+		Assert.isTrue(this.configClientProperties.getName() != null && !this.configClientProperties.getName().isEmpty(),
 				"Spring application name is undefined.");
 
-		Assert.notEmpty(configClientProperties.getUri(), "Config server URI is undefined");
-		Assert.hasText(configClientProperties.getUri()[0], "Config server URI is undefined.");
-		Assert.hasText(Optional.ofNullable(label).orElse(configClientProperties.getLabel()), "label is undefined");
+		Assert.notEmpty(this.configClientProperties.getUri(), "Config server URI is undefined");
+		Assert.hasText(this.configClientProperties.getUri()[0], "Config server URI is undefined.");
+		Assert.hasText(Optional.ofNullable(label).orElse(this.configClientProperties.getLabel()), "label is undefined");
 
 		if (profile == null) {
-			profile = configClientProperties.getProfile();
+			profile = this.configClientProperties.getProfile();
 			if (profile == null || profile.isEmpty()) {
 				profile = "default";
 			}
 		}
 
 		if (label == null) {
-			label = configClientProperties.getLabel();
+			label = this.configClientProperties.getLabel();
 		}
 
-		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(configClientProperties.getUri()[0])
-			.pathSegment(configClientProperties.getName())
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromUriString(this.configClientProperties.getUri()[0])
+			.pathSegment(this.configClientProperties.getName())
 			.pathSegment(profile)
 			.pathSegment(label)
 			.pathSegment(path);
 
-		var spec = restClient.get().uri(urlBuilder.build().toUri());
-		if (StringUtils.hasText(configClientProperties.getToken())) {
-			spec = spec.header(TOKEN_HEADER, configClientProperties.getToken());
+		var spec = this.restClient.get().uri(urlBuilder.build().toUri());
+		if (StringUtils.hasText(this.configClientProperties.getToken())) {
+			spec = spec.header(TOKEN_HEADER, this.configClientProperties.getToken());
 		}
 		if (resourceType == ResourceType.BINARY) {
 			spec = spec.accept(MediaType.APPLICATION_OCTET_STREAM);

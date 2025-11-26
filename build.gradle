@@ -20,16 +20,20 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(libs.dependency.management.plugin)
-        classpath(libs.build.info.extractor.gradle)
-        classpath(libs.spring.javaformat.gradle.plugin)
-        classpath(libs.nohttp.gradle)
+        classpath(libs.spring.dependency.management.plugin)
+        classpath(libs.build.info.extractor.plugin)
+        classpath(libs.spring.javaformat.plugin)
+        classpath(libs.nohttp.plugin)
     }
 }
 
-// NoHttp has to be applied at the root level
-// so that it reads all the root files, including the gradle ones.
-apply plugin: "io.spring.nohttp"
+plugins {
+    alias(libs.plugins.nohttp)
+}
+
+checkstyle {
+    configDirectory.set(file("${project.rootDir}/checkstyle/"))
+}
 
 configure(allprojects) {
     group = "io.pivotal.spring.cloud"
@@ -38,9 +42,7 @@ configure(allprojects) {
     apply plugin: "eclipse"
     apply plugin: "idea"
     apply plugin: "jacoco"
-    apply plugin: "checkstyle"
-    apply plugin: "io.spring.dependency-management"
-    apply plugin: "io.spring.javaformat"
+    apply plugin: libs.plugins.spring.dependency.management.get().pluginId
 
     ext {
         javadocLinks = [
@@ -51,27 +53,24 @@ configure(allprojects) {
 
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/release" }
+        maven { url = "https://repo.spring.io/release" }
         if (version =~ /((-M|-RC)[0-9]+|-SNAPSHOT)$/) {
-            maven { url "https://repo.spring.io/milestone" }
+            maven { url = "https://repo.spring.io/milestone" }
         }
         if (version.endsWith('-SNAPSHOT')) {
-            maven { url "https://repo.spring.io/snapshot" }
+            maven { url = "https://repo.spring.io/snapshot" }
         }
     }
 }
 
 subprojects {
     apply from: "${rootProject.projectDir}/publish-maven.gradle"
-
-    checkstyle {
-        configDirectory = file("${project.rootDir}/ci/config/")
-        toolVersion = 8.16
-    }
 }
 
 configure(javaProjects) {
     apply plugin: "java-library"
+    apply plugin: "checkstyle"
+    apply plugin: libs.plugins.spring.javaformat.get().pluginId
 
     compileJava {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -173,6 +172,20 @@ configure(javaProjects) {
             mavenBom "${libs.spring.cloud.dependencies.get().module}:${libs.versions.spring.cloud.get()}"
             mavenBom "${libs.spring.boot.dependencies.get().module}:${libs.versions.spring.boot.get()}"
         }
+    }
+
+    checkstyle {
+        configDirectory = rootProject.file("checkstyle")
+        showViolations = true
+    }
+
+    tasks.named("checkstyleMain", Checkstyle) {
+        source = fileTree("src/main/java")
+    }
+
+    tasks.named("checkstyleTest", Checkstyle) {
+        source = fileTree("src/test/java")
+        configFile = configDirectory.get().file("checkstyle-test.xml").asFile
     }
 
     tasks.register('allDependencyInsight', DependencyInsightReportTask) {}

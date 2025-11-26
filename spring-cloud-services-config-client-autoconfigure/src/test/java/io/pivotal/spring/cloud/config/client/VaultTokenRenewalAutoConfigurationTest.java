@@ -26,7 +26,15 @@ import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.web.client.RestClient;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.moreThan;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration.VaultTokenRefresher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -46,12 +54,12 @@ public class VaultTokenRenewalAutoConfigurationTest {
 
 	@Test
 	void configurationIsNotEnabledWhenTokenIsMissing() {
-		contextRunner.run(context -> assertThat(context).doesNotHaveBean(VaultTokenRefresher.class));
+		this.contextRunner.run(context -> assertThat(context).doesNotHaveBean(VaultTokenRefresher.class));
 	}
 
 	@Test
 	void configurationIsEnabledWhenTokenIsPresent() {
-		contextRunner.withPropertyValues("spring.cloud.config.token=vault-token")
+		this.contextRunner.withPropertyValues("spring.cloud.config.token=vault-token")
 			.run(context -> assertThat(context).hasSingleBean(VaultTokenRefresher.class));
 	}
 
@@ -60,7 +68,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 		stubFor(post("/vault/v1/auth/token/renew-self").withHost(equalTo("server.local"))
 			.willReturn(aResponse().withHeader("Content-Type", "plain/text").withBody("new-token")));
 
-		contextRunner.withPropertyValues("spring.cloud.config.token=vault-token").run(context -> {
+		this.contextRunner.withPropertyValues("spring.cloud.config.token=vault-token").run(context -> {
 			assertThat(context).hasSingleBean(VaultTokenRefresher.class);
 
 			await().atMost(3L, TimeUnit.SECONDS)
