@@ -32,7 +32,7 @@ import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static io.pivotal.spring.cloud.config.client.DefaultConfigResourceClientTest.ConfigServerTestApplication;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,7 +80,7 @@ public class DefaultConfigResourceClientTest {
 		configClientProperties.setProfile("default");
 		configClientProperties.setLabel("main");
 		configClientProperties.setUri(new String[] { "http://localhost:" + port });
-		configClient = new DefaultConfigResourceClient(new RestTemplate(), configClientProperties);
+		configClient = new DefaultConfigResourceClient(RestClient.create(), configClientProperties);
 	}
 
 	@Test

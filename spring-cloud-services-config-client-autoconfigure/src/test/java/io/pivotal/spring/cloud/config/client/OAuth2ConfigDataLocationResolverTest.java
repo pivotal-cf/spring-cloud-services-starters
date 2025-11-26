@@ -88,8 +88,8 @@ class OAuth2ConfigDataLocationResolverTest {
 			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
 			assertThat(bootstrapContext.isRegistered(ConfigClientRequestTemplateFactory.class)).isTrue();
+			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
 
 			var template = bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).isEmpty();

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration.VaultTokenRefresher;
@@ -42,7 +42,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 		.withConfiguration(
 				AutoConfigurations.of(ConfigClientAutoConfiguration.class, VaultTokenRenewalAutoConfiguration.class))
 		.withPropertyValues(applicationProperties())
-		.withBean("configClientRestTemplate", RestTemplate.class);
+		.withBean("configClientRestClient", RestClient.class, RestClient::create);
 
 	@Test
 	void configurationIsNotEnabledWhenTokenIsMissing() {
@@ -63,13 +63,12 @@ public class VaultTokenRenewalAutoConfigurationTest {
 		contextRunner.withPropertyValues("spring.cloud.config.token=vault-token").run(context -> {
 			assertThat(context).hasSingleBean(VaultTokenRefresher.class);
 
-			await().atMost(3L, TimeUnit.SECONDS).untilAsserted(() -> {
-				verify(moreThan(2),
+			await().atMost(3L, TimeUnit.SECONDS)
+				.untilAsserted(() -> verify(moreThan(2),
 						postRequestedFor(urlEqualTo("/vault/v1/auth/token/renew-self"))
 							.withHeader("Content-Type", equalTo("application/json"))
 							.withHeader("X-Vault-Token", equalTo("vault-token"))
-							.withRequestBody(containing("{\"increment\":300}")));
-			});
+							.withRequestBody(containing("{\"increment\":300}"))));
 		});
 	}
 

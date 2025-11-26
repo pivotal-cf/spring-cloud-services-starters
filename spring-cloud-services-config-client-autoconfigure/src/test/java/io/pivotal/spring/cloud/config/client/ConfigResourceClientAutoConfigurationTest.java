@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,13 +33,13 @@ public class ConfigResourceClientAutoConfigurationTest {
 			AutoConfigurations.of(ConfigResourceClientAutoConfiguration.class, ConfigClientAutoConfiguration.class));
 
 	@Test
-	void shouldNotCreateConfigResourceClientWhenRestTemplateIsMissing() {
+	void shouldNotCreateConfigResourceClientWhenRestClientIsMissing() {
 		contextRunner.run(context -> assertThat(context).doesNotHaveBean(ConfigResourceClient.class));
 	}
 
 	@Test
-	void shouldCreateConfigResourceClientWhenRestTemplateIsPresent() {
-		contextRunner.withBean("configClientRestTemplate", RestTemplate.class)
+	void shouldCreateConfigResourceClientWhenRestClientIsPresent() {
+		contextRunner.withBean("configClientRestClient", RestClient.class, RestClient::create)
 			.run(context -> assertThat(context).hasSingleBean(ConfigResourceClient.class));
 	}
 

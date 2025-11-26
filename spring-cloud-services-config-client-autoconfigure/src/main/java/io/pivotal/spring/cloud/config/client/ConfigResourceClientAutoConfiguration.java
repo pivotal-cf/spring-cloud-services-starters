@@ -24,7 +24,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.cloud.config.client.ConfigClientProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 /**
  * @author Daniel Lavoie
@@ -37,11 +37,11 @@ public class ConfigResourceClientAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean(ConfigResourceClient.class)
-	@ConditionalOnBean(value = RestTemplate.class, name = "configClientRestTemplate")
+	@ConditionalOnBean(value = RestClient.class, name = "configClientRestClient")
 	public ConfigResourceClient configResourceClient(
-			@Qualifier("configClientRestTemplate") RestTemplate configClientRestTemplate,
+			@Qualifier("configClientRestClient") RestClient configClientRestClient,
 			ConfigClientProperties configClientProperties) {
-		return new DefaultConfigResourceClient(configClientRestTemplate, configClientProperties);
+		return new DefaultConfigResourceClient(configClientRestClient, configClientProperties);
 	}
 
 }

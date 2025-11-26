@@ -34,8 +34,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Configuration for a periodic Vault token renewer. Conditionally configured if there is
@@ -66,16 +66,16 @@ public class VaultTokenRenewalAutoConfiguration {
 	long ttl;
 
 	@Bean
-	@ConditionalOnBean(value = RestTemplate.class, name = "configClientRestTemplate")
+	@ConditionalOnBean(value = RestClient.class, name = "configClientRestClient")
 	public VaultTokenRefresher vaultTokenRefresher(
-			@Qualifier("configClientRestTemplate") RestTemplate configClientRestTemplate,
+			@Qualifier("configClientRestClient") RestClient configClientRestClient,
 			ConfigClientProperties configClientProperties) {
 
 		var refreshUri = configClientProperties.getUri()[0] + REFRESH_PATH;
 		String vaultToken = configClientProperties.getToken();
 		var obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
 
-		return new VaultTokenRefresher(configClientRestTemplate, obscuredToken, ttl, refreshUri,
+		return new VaultTokenRefresher(configClientRestClient, obscuredToken, ttl, refreshUri,
 				buildTokenRenewRequest(vaultToken));
 	}
 
@@ -100,11 +100,11 @@ public class VaultTokenRenewalAutoConfiguration {
 
 		private final HttpEntity<Map<String, Long>> request;
 
-		private final RestTemplate restTemplate;
+		private final RestClient restClient;
 
-		VaultTokenRefresher(RestTemplate restTemplate, String obscuredToken, long ttl, String refreshUri,
+		VaultTokenRefresher(RestClient restClient, String obscuredToken, long ttl, String refreshUri,
 				HttpEntity<Map<String, Long>> request) {
-			this.restTemplate = restTemplate;
+			this.restClient = restClient;
 			this.obscuredToken = obscuredToken;
 			this.ttl = ttl;
 			this.refreshUri = refreshUri;
@@ -115,8 +115,13 @@ public class VaultTokenRenewalAutoConfiguration {
 		@Scheduled(fixedRateString = "${vault.token.renew.rate:60000}")
 		public void refreshVaultToken() {
 			try {
-				LOGGER.debug("Renewing Vault token " + obscuredToken + " for " + ttl + " milliseconds.");
-				restTemplate.postForObject(refreshUri, request, String.class);
+				LOGGER.debug("Renewing Vault token {} for {} milliseconds.", obscuredToken, ttl);
+				restClient.post()
+					.uri(refreshUri)
+					.headers(headers -> headers.putAll(request.getHeaders()))
+					.body(request.getBody())
+					.retrieve()
+					.toBodilessEntity();
 			}
 			catch (RestClientException e) {
 				LOGGER.error("Unable to renew Vault token {}. Is the token invalid or expired?", obscuredToken);
