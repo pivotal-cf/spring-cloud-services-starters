@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.EnvironmentPostProcessor;
+import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MutablePropertySources;
@@ -65,8 +65,9 @@ public class PropertyMaskingEnvironmentPostProcessor implements EnvironmentPostP
 		MutablePropertySources propertySources = environment.getPropertySources();
 		Set<PropertySource<?>> configserverPropertySources = new HashSet<>();
 		for (PropertySource<?> propertySource : propertySources) {
-			if (propertySource.getName().startsWith("configserver:"))
+			if (propertySource.getName().startsWith("configserver:")) {
 				configserverPropertySources.add(propertySource);
+			}
 		}
 
 		Stream<String> vaultKeyNameStream = configserverPropertySources.stream()

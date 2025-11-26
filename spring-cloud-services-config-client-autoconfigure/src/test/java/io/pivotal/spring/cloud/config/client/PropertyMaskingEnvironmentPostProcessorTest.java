@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootContextLoader;
@@ -48,7 +49,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 
 	@Test
 	public void vaultPropertyIsIncludedInSanitizeEndpoints() {
-		String sanitizeEndpointsProp = environment
+		String sanitizeEndpointsProp = this.environment
 			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 		assertThat(sanitizeEndpointsProp).isNotNull();
@@ -57,7 +58,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 
 	@Test
 	public void credhubPropertyIsIncludedInSanitizeEndpoints() {
-		String sanitizeEndpointsProp = environment
+		String sanitizeEndpointsProp = this.environment
 			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 		assertThat(sanitizeEndpointsProp).isNotNull();
@@ -66,7 +67,7 @@ public class PropertyMaskingEnvironmentPostProcessorTest {
 
 	@Test
 	public void gitPropertyIsNotIncludedInSanitizeEndpoints() {
-		String sanitizeEndpointsProp = environment
+		String sanitizeEndpointsProp = this.environment
 			.getProperty(PropertyMaskingEnvironmentPostProcessor.SANITIZE_ENV_KEY);
 
 		assertThat(sanitizeEndpointsProp).isNotNull();

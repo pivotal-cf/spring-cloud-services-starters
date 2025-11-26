@@ -16,15 +16,16 @@
 
 package io.pivotal.spring.cloud.config.client;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -85,7 +86,7 @@ public class ConfigResourceClientTests {
 				get("/application/development/dev/path").withHeader("Accept", not(equalTo("application/octet-stream")))
 					.willReturn(aResponse().withHeader("Content-Type", "plain/text").withBody("::text::")));
 
-		var resource = configResourceClient.getPlainTextResource("development", "dev", "path");
+		var resource = this.configResourceClient.getPlainTextResource("development", "dev", "path");
 
 		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::text::");
 	}
@@ -96,7 +97,7 @@ public class ConfigResourceClientTests {
 			.stubFor(get("/application/production/prd/path").withHeader("Accept", equalTo("application/octet-stream"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::binary::")));
 
-		var resource = configResourceClient.getBinaryResource("production", "prd", "path");
+		var resource = this.configResourceClient.getBinaryResource("production", "prd", "path");
 
 		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::binary::");
 	}
@@ -108,7 +109,7 @@ public class ConfigResourceClientTests {
 			.willReturn(
 					aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::default text::")));
 
-		var resource = configResourceClient.getPlainTextResource("path");
+		var resource = this.configResourceClient.getPlainTextResource("path");
 		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::default text::");
 	}
 
@@ -119,7 +120,7 @@ public class ConfigResourceClientTests {
 			.willReturn(
 					aResponse().withHeader("Content-Type", "application/octet-stream").withBody("::default binary::")));
 
-		var resource = configResourceClient.getBinaryResource("path");
+		var resource = this.configResourceClient.getBinaryResource("path");
 
 		assertThat(resource.getContentAsString(StandardCharsets.UTF_8)).isEqualTo("::default binary::");
 	}

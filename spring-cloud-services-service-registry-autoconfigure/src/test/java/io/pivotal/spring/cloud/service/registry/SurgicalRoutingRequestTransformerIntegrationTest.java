@@ -38,7 +38,9 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.web.client.RestClient;
 
-import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.*;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.CF_APP_GUID;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.CF_INSTANCE_INDEX;
+import static io.pivotal.spring.cloud.service.registry.SurgicalRoutingRequestTransformer.SURGICAL_ROUTING_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -66,16 +68,16 @@ public class SurgicalRoutingRequestTransformerIntegrationTest {
 	@Test
 	public void headerIsSetWhenMetadataPresent() throws Exception {
 		var metadata = Map.of(CF_APP_GUID, "::app-guid::", CF_INSTANCE_INDEX, "::instance-index::");
-		when(instance.getMetadata()).thenReturn(metadata);
+		when(this.instance.getMetadata()).thenReturn(metadata);
 
 		var originalHeaders = new HttpHeaders();
 		originalHeaders.addAll("Accept", List.of("text/plain", "application/json"));
-		Mockito.when(originalRequest.getHeaders()).thenReturn(originalHeaders);
+		Mockito.when(this.originalRequest.getHeaders()).thenReturn(originalHeaders);
 
-		requestFactory.createRequest(originalRequest, body, execution).apply(instance);
+		this.requestFactory.createRequest(this.originalRequest, this.body, this.execution).apply(this.instance);
 
 		var httpRequestCaptor = ArgumentCaptor.forClass(HttpRequest.class);
-		verify(execution).execute(httpRequestCaptor.capture(), eq(body));
+		verify(this.execution).execute(httpRequestCaptor.capture(), eq(this.body));
 
 		var transformedRequest = httpRequestCaptor.getValue();
 		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "application/json");

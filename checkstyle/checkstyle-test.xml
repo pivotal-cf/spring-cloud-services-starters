@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+<module name="com.puppycrawl.tools.checkstyle.Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <module name="Header">
+        <property name="headerFile" value="${config_loc}/license.header"/>
+        <property name="fileExtensions" value="java"/>
+        <property name="ignoreLines" value="2"/>
+    </module>
+    <module name="SuppressionFilter">
+        <property name="file" value="${config_loc}/suppressions.xml"/>
+    </module>
+    <module name="TreeWalker">
+        <module name="ImportOrder">
+            <property name="groups" value="/^java\./,javax,*,org.springframework,io.pivotal"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="bottom"/>
+            <property name="sortStaticImportsAlphabetically" value="true"/>
+        </module>
+    </module>
+    <module name="io.spring.javaformat.checkstyle.SpringChecks">
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringAvoidStaticImportCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringCatchCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringHeaderCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringHideUtilityClassConstructor"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringImportOrderCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringJavadocCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringLambdaCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringMethodOrderCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringMethodVisibilityCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringTernaryCheck"/>
+        <property name="excludes" value="io.spring.javaformat.checkstyle.check.SpringTestFileNameCheck"/>
+    </module>
+</module>

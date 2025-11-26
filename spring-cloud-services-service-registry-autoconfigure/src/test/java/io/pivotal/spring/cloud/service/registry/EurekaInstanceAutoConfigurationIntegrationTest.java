@@ -17,10 +17,10 @@ package io.pivotal.spring.cloud.service.registry;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,19 +47,19 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 
 		@Test
 		public void eurekaConfigBean() {
-			assertThat(config.getInstanceId()).isEqualTo("1.2.3.4:instance-id");
-			assertThat(config.getAppname()).isEqualTo("app-name-");
-			assertThat(config.getVirtualHostName()).isEqualTo("app-name-");
-			assertThat(config.getSecureVirtualHostName()).isEqualTo("app-name-");
-			assertThat(config.getHostname()).isEqualTo("1.2.3.4");
-			assertThat(config.getNonSecurePort()).isEqualTo(54321);
-			assertThat(config.getMetadataMap().get("zone")).isEqualTo("east.my-cf.com");
-			assertThat(config.getSecurePortEnabled()).isFalse();
+			assertThat(this.config.getInstanceId()).isEqualTo("1.2.3.4:instance-id");
+			assertThat(this.config.getAppname()).isEqualTo("app-name-");
+			assertThat(this.config.getVirtualHostName()).isEqualTo("app-name-");
+			assertThat(this.config.getSecureVirtualHostName()).isEqualTo("app-name-");
+			assertThat(this.config.getHostname()).isEqualTo("1.2.3.4");
+			assertThat(this.config.getNonSecurePort()).isEqualTo(54321);
+			assertThat(this.config.getMetadataMap().get("zone")).isEqualTo("east.my-cf.com");
+			assertThat(this.config.getSecurePortEnabled()).isFalse();
 		}
 
 		@Test
 		public void loadBalancerConfigurations() {
-			assertThat(loadBalancerConfigurations).isEmpty();
+			assertThat(this.loadBalancerConfigurations).isEmpty();
 		}
 
 	}
@@ -80,20 +80,20 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 
 		@Test
 		public void eurekaConfigBean() {
-			assertThat(config.getInstanceId()).isEqualTo("www.route.local:instance-id");
-			assertThat(config.getAppname()).isEqualTo("app-name-");
-			assertThat(config.getVirtualHostName()).isEqualTo("app-name-");
-			assertThat(config.getSecureVirtualHostName()).isEqualTo("app-name-");
-			assertThat(config.getHostname()).isEqualTo("www.route.local");
-			assertThat(config.getNonSecurePort()).isEqualTo(80);
-			assertThat(config.getSecurePort()).isEqualTo(443);
-			assertThat(config.getMetadataMap().get("zone")).isEqualTo("west.my-cf.com");
-			assertThat(config.getSecurePortEnabled()).isTrue();
+			assertThat(this.config.getInstanceId()).isEqualTo("www.route.local:instance-id");
+			assertThat(this.config.getAppname()).isEqualTo("app-name-");
+			assertThat(this.config.getVirtualHostName()).isEqualTo("app-name-");
+			assertThat(this.config.getSecureVirtualHostName()).isEqualTo("app-name-");
+			assertThat(this.config.getHostname()).isEqualTo("www.route.local");
+			assertThat(this.config.getNonSecurePort()).isEqualTo(80);
+			assertThat(this.config.getSecurePort()).isEqualTo(443);
+			assertThat(this.config.getMetadataMap().get("zone")).isEqualTo("west.my-cf.com");
+			assertThat(this.config.getSecurePortEnabled()).isTrue();
 		}
 
 		@Test
 		public void loadBalancerConfigurations() {
-			assertThat(loadBalancerConfigurations).isEmpty();
+			assertThat(this.loadBalancerConfigurations).isEmpty();
 		}
 
 	}
@@ -113,12 +113,12 @@ public class EurekaInstanceAutoConfigurationIntegrationTest {
 
 		@Test
 		public void eurekaConfigBean() {
-			assertThat(config.getMetadataMap().get("zone")).isEqualTo("eureka-123.west.my-cf.com");
+			assertThat(this.config.getMetadataMap().get("zone")).isEqualTo("eureka-123.west.my-cf.com");
 		}
 
 		@Test
 		public void loadBalancerConfigurations() {
-			assertThat(loadBalancerConfigurations).isEqualTo("zone-preference");
+			assertThat(this.loadBalancerConfigurations).isEqualTo("zone-preference");
 		}
 
 	}

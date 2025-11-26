@@ -20,13 +20,15 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter")
     api("org.springframework.security:spring-security-oauth2-client")
     api("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    api("io.pivotal.cfenv:java-cfenv")
+    api(libs.java.cfenv)
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation(libs.wiremock.standalone)
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    checkstyle(libs.spring.javaformat)
 }
 
 publishing {

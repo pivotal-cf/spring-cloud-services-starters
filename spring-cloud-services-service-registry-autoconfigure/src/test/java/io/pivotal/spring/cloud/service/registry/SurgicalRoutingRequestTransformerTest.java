@@ -22,8 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -50,15 +50,15 @@ public class SurgicalRoutingRequestTransformerTest {
 		var existingHeaders = new HttpHeaders();
 		existingHeaders.addAll("Accept", List.of("text/plain", "text/html"));
 
-		when(request.getHeaders()).thenReturn(HttpHeaders.readOnlyHttpHeaders(existingHeaders));
+		when(this.request.getHeaders()).thenReturn(HttpHeaders.readOnlyHttpHeaders(existingHeaders));
 	}
 
 	@Test
 	public void headerIsSetWhenMetadataPresent() {
 		var metadata = Map.of(CF_APP_GUID, "::guid::", CF_INSTANCE_INDEX, "::index::");
-		when(instance.getMetadata()).thenReturn(metadata);
+		when(this.instance.getMetadata()).thenReturn(metadata);
 
-		var transformedRequest = transformer.transformRequest(request, instance);
+		var transformedRequest = this.transformer.transformRequest(this.request, this.instance);
 
 		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
 		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER))
@@ -68,9 +68,9 @@ public class SurgicalRoutingRequestTransformerTest {
 	@Test
 	public void headerIsNotSetWhenAppGuidNotPresentInMetadata() {
 		var metadata = Map.of(CF_INSTANCE_INDEX, "::index::");
-		when(instance.getMetadata()).thenReturn(metadata);
+		when(this.instance.getMetadata()).thenReturn(metadata);
 
-		var transformedRequest = transformer.transformRequest(request, instance);
+		var transformedRequest = this.transformer.transformRequest(this.request, this.instance);
 
 		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
 		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();
@@ -79,9 +79,9 @@ public class SurgicalRoutingRequestTransformerTest {
 	@Test
 	public void headerIsNotSetWhenInstanceIndexPresentInMetadata() {
 		var metadata = Map.of(CF_APP_GUID, "::guid::");
-		when(instance.getMetadata()).thenReturn(metadata);
+		when(this.instance.getMetadata()).thenReturn(metadata);
 
-		var transformedRequest = transformer.transformRequest(request, instance);
+		var transformedRequest = this.transformer.transformRequest(this.request, this.instance);
 
 		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
 		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();
@@ -90,7 +90,7 @@ public class SurgicalRoutingRequestTransformerTest {
 	@Test
 	public void headerIsNotSetWhenServiceInstanceIsNull() {
 
-		var transformedRequest = transformer.transformRequest(request, null);
+		var transformedRequest = this.transformer.transformRequest(this.request, null);
 
 		assertThat(transformedRequest.getHeaders().get("Accept")).contains("text/plain", "text/html");
 		assertThat(transformedRequest.getHeaders().getFirst(SURGICAL_ROUTING_HEADER)).isNull();

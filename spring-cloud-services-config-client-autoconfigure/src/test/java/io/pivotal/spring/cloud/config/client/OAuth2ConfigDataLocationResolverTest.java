@@ -55,23 +55,25 @@ class OAuth2ConfigDataLocationResolverTest {
 	void setup() {
 		this.environment = new MockEnvironment();
 		this.bootstrapContext = new DefaultBootstrapContext();
-		this.binder = Binder.get(environment);
+		this.binder = Binder.get(this.environment);
 	}
 
 	@Test
 	void shouldNotRegisterAnyBeanWhenLocationIsNotConfigServer() {
 
-		assertThat(resolver.isResolvable(context, ConfigDataLocation.of("not-a-configserver:address"))).isFalse();
+		assertThat(this.resolver.isResolvable(this.context, ConfigDataLocation.of("not-a-configserver:address")))
+			.isFalse();
 
-		verifyNoInteractions(context);
+		verifyNoInteractions(this.context);
 	}
 
 	@Test
 	void shouldNotRegisterAnyBeanWhenConfigIsNotEnabled() {
-		environment.setProperty("spring.cloud.config.enabled", "false");
-		when(context.getBinder()).thenReturn(binder);
+		this.environment.setProperty("spring.cloud.config.enabled", "false");
+		when(this.context.getBinder()).thenReturn(this.binder);
 
-		assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address"))).isFalse();
+		assertThat(this.resolver.isResolvable(this.context, ConfigDataLocation.of("optional:configserver:address")))
+			.isFalse();
 	}
 
 	@Nested
@@ -79,50 +81,63 @@ class OAuth2ConfigDataLocationResolverTest {
 
 		@BeforeEach
 		void setup() {
-			when(context.getBinder()).thenReturn(binder);
-			when(context.getBootstrapContext()).thenReturn(bootstrapContext);
+			when(OAuth2ConfigDataLocationResolverTest.this.context.getBinder())
+				.thenReturn(OAuth2ConfigDataLocationResolverTest.this.binder);
+			when(OAuth2ConfigDataLocationResolverTest.this.context.getBootstrapContext())
+				.thenReturn(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext);
 		}
 
 		@Test
 		void shouldRegisterRequestTemplateFactoryAndRestTemplate() {
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(ConfigClientRequestTemplateFactory.class)).isTrue();
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext
+				.isRegistered(ConfigClientRequestTemplateFactory.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.isRegistered(RestTemplate.class))
+				.isTrue();
 
-			var template = bootstrapContext.get(RestTemplate.class);
+			var template = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).isEmpty();
 		}
 
 		@Test
 		void shouldThrowExceptionWhenRequestReadTimeoutIsNegative() {
-			environment.setProperty("spring.cloud.config.request-read-timeout", "-1");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.request-read-timeout", "-1");
 
-			assertThatThrownBy(
-					() -> resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThatThrownBy(() -> OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isInstanceOf(IllegalStateException.class);
 		}
 
 		@Test
 		void shouldThrowExceptionWhenRequestConnectTimeoutIsNegative() {
-			environment.setProperty("spring.cloud.config.request-connect-timeout", "-1");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.request-connect-timeout", "-1");
 
-			assertThatThrownBy(
-					() -> resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThatThrownBy(() -> OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isInstanceOf(IllegalStateException.class);
 		}
 
 		@Test
 		void shouldRegisterGenericRequestHeaderInterceptorIfAnyHeaderProvided() {
-			environment.setProperty("spring.cloud.config.headers.foo", "bar");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.headers.foo", "bar");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.isRegistered(RestTemplate.class))
+				.isTrue();
 
-			var template = bootstrapContext.get(RestTemplate.class);
+			var template = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).hasSize(1);
 
 			var interceptor = template.getInterceptors().get(0);
@@ -132,28 +147,37 @@ class OAuth2ConfigDataLocationResolverTest {
 
 		@Test
 		void shouldRemoveAuthorizationHeaderWhenRegisteringInterceptor() {
-			environment.setProperty("spring.cloud.config.headers.authorization", "basic foo:bar");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.headers.authorization", "basic foo:bar");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.isRegistered(RestTemplate.class))
+				.isTrue();
 
-			var template = bootstrapContext.get(RestTemplate.class);
+			var template = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).isEmpty();
 		}
 
 		@Test
 		void shouldRegisterOAuth2InterceptorIfOauthPropertiesProvided() {
-			environment.setProperty("spring.cloud.config.client.oauth2.client-id", "client-id");
-			environment.setProperty("spring.cloud.config.client.oauth2.access-token-uri", "https://url");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.client.oauth2.client-id", "client-id");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.client.oauth2.access-token-uri", "https://url");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.isRegistered(RestTemplate.class))
+				.isTrue();
 
-			var template = bootstrapContext.get(RestTemplate.class);
+			var template = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).hasSize(1);
 
 			var interceptor = template.getInterceptors().get(0);
@@ -162,22 +186,32 @@ class OAuth2ConfigDataLocationResolverTest {
 
 		@Test
 		void shouldOverridesPropertiesOfExistingRequestTemplateFactory() {
-			environment.setProperty("spring.cloud.config.label", "default-label");
-			environment.setProperty("spring.cloud.config.profile", "default-profile");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.label",
+					"default-label");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.profile",
+					"default-profile");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(ConfigClientRequestTemplateFactory.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext
+				.isRegistered(ConfigClientRequestTemplateFactory.class)).isTrue();
 
-			var factory = bootstrapContext.get(ConfigClientRequestTemplateFactory.class);
+			var factory = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext
+				.get(ConfigClientRequestTemplateFactory.class);
 			assertThat(factory.getProperties().getLabel()).isEqualTo("default-label");
 			assertThat(factory.getProperties().getProfile()).isEqualTo("default-profile");
 
-			environment.setProperty("spring.cloud.config.label", "updated-label");
-			environment.setProperty("spring.cloud.config.profile", "updated-profile");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.label",
+					"updated-label");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.profile",
+					"updated-profile");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
 			assertThat(factory.getProperties().getLabel()).isEqualTo("updated-label");
@@ -186,19 +220,26 @@ class OAuth2ConfigDataLocationResolverTest {
 
 		@Test
 		void shouldNotRegisterDuplicateInterceptorsWhenCalledMultipleTimes() {
-			environment.setProperty("spring.cloud.config.headers.foo", "bar");
-			environment.setProperty("spring.cloud.config.client.oauth2.client-id", "client-id");
-			environment.setProperty("spring.cloud.config.client.oauth2.access-token-uri", "https://url");
+			OAuth2ConfigDataLocationResolverTest.this.environment.setProperty("spring.cloud.config.headers.foo", "bar");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.client.oauth2.client-id", "client-id");
+			OAuth2ConfigDataLocationResolverTest.this.environment
+				.setProperty("spring.cloud.config.client.oauth2.access-token-uri", "https://url");
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 
-			assertThat(bootstrapContext.isRegistered(RestTemplate.class)).isTrue();
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.isRegistered(RestTemplate.class))
+				.isTrue();
 
-			var template = bootstrapContext.get(RestTemplate.class);
+			var template = OAuth2ConfigDataLocationResolverTest.this.bootstrapContext.get(RestTemplate.class);
 			assertThat(template.getInterceptors()).hasSize(2);
 
-			assertThat(resolver.isResolvable(context, ConfigDataLocation.of("optional:configserver:address")))
+			assertThat(OAuth2ConfigDataLocationResolverTest.this.resolver.isResolvable(
+					OAuth2ConfigDataLocationResolverTest.this.context,
+					ConfigDataLocation.of("optional:configserver:address")))
 				.isFalse();
 			assertThat(template.getInterceptors()).hasSize(2);
 		}

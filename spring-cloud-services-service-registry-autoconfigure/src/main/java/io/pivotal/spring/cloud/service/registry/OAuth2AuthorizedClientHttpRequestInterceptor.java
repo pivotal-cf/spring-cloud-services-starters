@@ -22,7 +22,11 @@ import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.security.oauth2.client.*;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 
@@ -46,7 +50,7 @@ public class OAuth2AuthorizedClientHttpRequestInterceptor implements ClientHttpR
 		this.authorizedManager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(repository, service);
 
 		var authorizedClientProvider = OAuth2AuthorizedClientProviderBuilder.builder().clientCredentials().build();
-		authorizedManager.setAuthorizedClientProvider(authorizedClientProvider);
+		this.authorizedManager.setAuthorizedClientProvider(authorizedClientProvider);
 
 		this.authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(registration.getRegistrationId())
 			.principal(registration.getRegistrationId())

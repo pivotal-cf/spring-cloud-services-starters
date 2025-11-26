@@ -25,7 +25,7 @@ final class VirtualHostNamesBean {
 	private String secureVirtualHostName;
 
 	public String getVirtualHostName() {
-		return virtualHostName;
+		return this.virtualHostName;
 	}
 
 	public void setVirtualHostName(String virtualHostName) {
@@ -33,7 +33,7 @@ final class VirtualHostNamesBean {
 	}
 
 	public String getSecureVirtualHostName() {
-		return secureVirtualHostName;
+		return this.secureVirtualHostName;
 	}
 
 	public void setSecureVirtualHostName(String secureVirtualHostName) {

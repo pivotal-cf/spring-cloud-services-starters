@@ -36,7 +36,7 @@ public class ConfigClientOAuth2Properties {
 	private Set<String> scope;
 
 	public String getClientId() {
-		return clientId;
+		return this.clientId;
 	}
 
 	public void setClientId(String clientId) {
@@ -44,7 +44,7 @@ public class ConfigClientOAuth2Properties {
 	}
 
 	public String getClientSecret() {
-		return clientSecret;
+		return this.clientSecret;
 	}
 
 	public void setClientSecret(String clientSecret) {
@@ -52,7 +52,7 @@ public class ConfigClientOAuth2Properties {
 	}
 
 	public String getAccessTokenUri() {
-		return accessTokenUri;
+		return this.accessTokenUri;
 	}
 
 	public void setAccessTokenUri(String accessTokenUri) {
@@ -60,7 +60,7 @@ public class ConfigClientOAuth2Properties {
 	}
 
 	public Set<String> getScope() {
-		return scope;
+		return this.scope;
 	}
 
 	public void setScope(Set<String> scope) {

@@ -25,11 +25,11 @@ import org.springframework.http.client.support.HttpRequestWrapper;
  * Adds a surgical routing header to the request if CF App GUID and CF Instance Index are
  * present in metadata.
  *
+ * @author William Tran
  * @see <a href=
  * 'https://docs.cloudfoundry.org/devguide/deploy-apps/routes-domains.html#surgical-routing'>
  * https://docs.cloudfoundry.org/devguide/deploy-apps/routes-domains.html#
  * surgical-routing</a>
- * @author William Tran
  */
 public class SurgicalRoutingRequestTransformer implements LoadBalancerRequestTransformer {
 
