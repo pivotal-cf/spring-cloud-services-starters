@@ -43,6 +43,11 @@
       "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
       "allowedVersions": "< 2025.0.0",
       "matchBaseBranches": ["4.2.x"]
+    },
+    {
+      "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
+      "allowedVersions": "< 2025.1.0",
+      "matchBaseBranches": ["4.3.x"]
     }
   ],
   "prConcurrentLimit": 0,
