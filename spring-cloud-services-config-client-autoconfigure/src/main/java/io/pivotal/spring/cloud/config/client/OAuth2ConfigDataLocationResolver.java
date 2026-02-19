@@ -103,11 +103,15 @@ public class OAuth2ConfigDataLocationResolver
 		// Add the RestTemplate and RestClient as beans, once the startup is finished.
 		bootstrapContext.addCloseListener(event -> {
 			var beanFactory = event.getApplicationContext().getBeanFactory();
-			var eventBootstrapContext = event.getBootstrapContext();
-			var restTemplate = eventBootstrapContext.get(RestTemplate.class);
-			beanFactory.registerSingleton("configClientRestClient", RestClient.create(restTemplate));
-			// Legacy
-			beanFactory.registerSingleton("configClientRestTemplate", restTemplate);
+			// Avoid duplicate registration
+			if (!beanFactory.containsBean("configClientRestClient")) {
+				var eventBootstrapContext = event.getBootstrapContext();
+				var restTemplate = eventBootstrapContext.get(RestTemplate.class);
+
+				beanFactory.registerSingleton("configClientRestClient", RestClient.create(restTemplate));
+				// Legacy
+				beanFactory.registerSingleton("configClientRestTemplate", restTemplate);
+			}
 		});
 
 		return false;
