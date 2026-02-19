@@ -86,13 +86,15 @@ public class OAuth2ConfigDataLocationResolver
 		var clientProperties = binder.bind(ConfigClientProperties.PREFIX, ConfigClientProperties.class)
 			.orElse(new ConfigClientProperties(new StandardEnvironment()));
 
+		var tokenProvider = buildAccessTokenProvider(oAuth2Properties);
+
 		// Register the custom factory with oauth2 interceptor.
 		bootstrapContext.registerIfAbsent(ConfigClientRequestTemplateFactory.class,
-				context -> new OAuth2ConfigClientRequestTemplateFactory(this.log, clientProperties, oAuth2Properties));
+				context -> new OAuth2ConfigClientRequestTemplateFactory(this.log, clientProperties, tokenProvider));
 		var factory = (OAuth2ConfigClientRequestTemplateFactory) bootstrapContext
 			.get(ConfigClientRequestTemplateFactory.class);
 		// Update the factory, in case it was registered earlier
-		factory.update(clientProperties, oAuth2Properties);
+		factory.update(clientProperties, tokenProvider);
 
 		// Register the template with oauth2 interceptor.
 		bootstrapContext.registerIfAbsent(RestTemplate.class, context -> factory.create());
@@ -100,15 +102,21 @@ public class OAuth2ConfigDataLocationResolver
 		// Update the template, in case it was registered earlier
 		factory.updateTemplate(template);
 
-		// Add the RestTemplate and RestClient as beans, once the startup is finished.
+		// Add the RestTemplate RestClient, and OAuth2AccessTokenProvider as beans, once
+		// the startup is finished.
 		bootstrapContext.addCloseListener(event -> {
 			var beanFactory = event.getApplicationContext().getBeanFactory();
+			// Avoid duplicate registration
+			if (tokenProvider != null && !beanFactory.containsBean("configClientAccessTokenProvider")) {
+				beanFactory.registerSingleton("configClientAccessTokenProvider", tokenProvider);
+			}
+
 			// Avoid duplicate registration
 			if (!beanFactory.containsBean("configClientRestClient")) {
 				var eventBootstrapContext = event.getBootstrapContext();
 				var restTemplate = eventBootstrapContext.get(RestTemplate.class);
-
 				beanFactory.registerSingleton("configClientRestClient", RestClient.create(restTemplate));
+
 				// Legacy
 				beanFactory.registerSingleton("configClientRestTemplate", restTemplate);
 			}
@@ -139,23 +147,37 @@ public class OAuth2ConfigDataLocationResolver
 		return -2;
 	}
 
+	private OAuth2AccessTokenProvider buildAccessTokenProvider(ConfigClientOAuth2Properties oAuth2Properties) {
+		if (oAuth2Properties == null) {
+			return null;
+		}
+
+		return new OAuth2AccessTokenProvider(ClientRegistration.withRegistrationId("config-client")
+			.clientId(oAuth2Properties.getClientId())
+			.clientSecret(oAuth2Properties.getClientSecret())
+			.tokenUri(oAuth2Properties.getAccessTokenUri())
+			.scope(oAuth2Properties.getScope())
+			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+			.build());
+	}
+
 	private static class OAuth2ConfigClientRequestTemplateFactory extends ConfigClientRequestTemplateFactory {
 
 		private ConfigClientProperties properties;
 
-		private ConfigClientOAuth2Properties oAuth2Properties;
+		private OAuth2AccessTokenProvider tokenProvider;
 
 		public OAuth2ConfigClientRequestTemplateFactory(Log log, ConfigClientProperties clientProperties,
-				ConfigClientOAuth2Properties oAuth2Properties) {
+				OAuth2AccessTokenProvider tokenProvider) {
 			super(log, clientProperties);
 
 			this.properties = clientProperties;
-			this.oAuth2Properties = oAuth2Properties;
+			this.tokenProvider = tokenProvider;
 		}
 
-		public void update(ConfigClientProperties clientProperties, ConfigClientOAuth2Properties oAuth2Properties) {
+		public void update(ConfigClientProperties clientProperties, OAuth2AccessTokenProvider tokenProvider) {
 			this.properties = clientProperties;
-			this.oAuth2Properties = oAuth2Properties;
+			this.tokenProvider = tokenProvider;
 		}
 
 		@Override
@@ -204,16 +226,8 @@ public class OAuth2ConfigDataLocationResolver
 				interceptors.add(new GenericRequestHeaderInterceptor(headers));
 			}
 
-			if (this.oAuth2Properties != null) {
-				var clientRegistration = ClientRegistration.withRegistrationId("config-client")
-					.clientId(this.oAuth2Properties.getClientId())
-					.clientSecret(this.oAuth2Properties.getClientSecret())
-					.tokenUri(this.oAuth2Properties.getAccessTokenUri())
-					.scope(this.oAuth2Properties.getScope())
-					.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-					.build();
-
-				interceptors.add(new OAuth2AuthorizedClientHttpRequestInterceptor(clientRegistration));
+			if (this.tokenProvider != null) {
+				interceptors.add(new OAuth2AuthorizedClientHttpRequestInterceptor(this.tokenProvider));
 			}
 
 			template.setInterceptors(interceptors);
