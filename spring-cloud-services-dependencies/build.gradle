@@ -23,6 +23,7 @@ dependencyManagement {
         mavenBom "${libs.spring.cloud.dependencies.get().module}:${libs.versions.spring.cloud.get()}"
     }
     dependencies {
+        dependency "io.pivotal.spring.cloud:spring-cloud-services-oauth2-client:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-config-client:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-config-client-autoconfigure:${project.version}"

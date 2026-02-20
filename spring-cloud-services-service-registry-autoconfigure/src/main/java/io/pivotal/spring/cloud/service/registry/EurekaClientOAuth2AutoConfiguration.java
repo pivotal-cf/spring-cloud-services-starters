@@ -32,6 +32,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AccessTokenProvider;
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AuthorizedClientHttpRequestInterceptor;
+
 /**
  * @author Will Tran
  * @author Dylan Roberts
@@ -54,8 +57,9 @@ public class EurekaClientOAuth2AutoConfiguration {
 			.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
 			.build();
 
+		var tokenProvider = new OAuth2AccessTokenProvider(clientRegistration);
 		var oAuth2AuthorizedClientHttpRequestInterceptor = new OAuth2AuthorizedClientHttpRequestInterceptor(
-				clientRegistration);
+				tokenProvider);
 		var defaultEurekaClientHttpRequestFactorySupplier = new DefaultEurekaClientHttpRequestFactorySupplier(
 				timeoutProperties, Set.of());
 

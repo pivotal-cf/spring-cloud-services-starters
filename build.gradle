@@ -259,6 +259,7 @@ allprojects {
 def getProjectsWithSource() {
     [
             project(":spring-cloud-services-config-client-autoconfigure"),
+            project(":spring-cloud-services-oauth2-client"),
             project(":spring-cloud-services-service-registry-autoconfigure")
     ]
 }

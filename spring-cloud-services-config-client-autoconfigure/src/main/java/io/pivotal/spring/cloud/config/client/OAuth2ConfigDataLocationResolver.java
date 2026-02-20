@@ -42,6 +42,9 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AccessTokenProvider;
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AuthorizedClientHttpRequestInterceptor;
+
 import static org.springframework.cloud.config.client.ConfigClientProperties.AUTHORIZATION;
 
 /**

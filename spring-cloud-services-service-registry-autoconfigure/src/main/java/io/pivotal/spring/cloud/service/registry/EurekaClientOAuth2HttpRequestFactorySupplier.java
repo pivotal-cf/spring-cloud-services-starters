@@ -25,6 +25,8 @@ import org.springframework.cloud.netflix.eureka.http.EurekaClientHttpRequestFact
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.InterceptingClientHttpRequestFactory;
 
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AuthorizedClientHttpRequestInterceptor;
+
 /**
  * {@link EurekaClientHttpRequestFactorySupplier} implementation to add authorization
  * interceptor to the {@link ClientHttpRequestFactory}.
