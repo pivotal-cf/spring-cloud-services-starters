@@ -32,6 +32,8 @@ import org.springframework.cloud.config.client.ConfigClientRequestTemplateFactor
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.client.RestTemplate;
 
+import io.pivotal.spring.cloud.oauth2.client.OAuth2AuthorizedClientHttpRequestInterceptor;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verifyNoInteractions;

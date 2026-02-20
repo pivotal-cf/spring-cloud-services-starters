@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.pivotal.spring.cloud.config.client;
+package io.pivotal.spring.cloud.oauth2.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class OAuth2AccessTokenProvider {
 			.build();
 	}
 
-	OAuth2AccessToken getAccessToken() {
+	public OAuth2AccessToken getAccessToken() {
 		OAuth2AuthorizedClient authorizedClient = null;
 		try {
 			authorizedClient = this.authorizedManager.authorize(this.authorizeRequest);

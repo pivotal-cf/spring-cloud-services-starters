@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2024 the original author or authors.
+ * Copyright 2002-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-description = "Spring Cloud Services Config Client Autoconfigure"
+description = "Spring Cloud Services OAuth2 Client"
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter")
-    api('org.springframework.cloud:spring-cloud-starter-config')
-    api('org.springframework.retry:spring-retry')
     api("org.springframework.security:spring-security-oauth2-client")
-    api(project(":spring-cloud-services-oauth2-client"))
-    api(libs.java.cfenv)
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation("org.springframework.cloud:spring-cloud-config-server")
-    testImplementation(libs.wiremock.standalone)
-    testImplementation(libs.awaitility)
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     checkstyle(libs.spring.javaformat)
 }
