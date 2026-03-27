@@ -1,5 +1,5 @@
 [versions]
-spring-boot = "4.0.4"
+spring-boot = "4.0.5"
 spring-cloud = "2025.1.1"
 java-cfenv = "4.0.0"
 wiremock = "3.13.2"
