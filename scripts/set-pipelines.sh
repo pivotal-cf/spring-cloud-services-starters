@@ -9,8 +9,9 @@ function main() {
 
 	pushd "$(dirname "$0")/../ci" >/dev/null
 	echo "Setting starters pipeline..."
-	fly --target "$FLY_TARGET" set-pipeline --pipeline starters-4.3.x \
+	fly --target "$FLY_TARGET" set-pipeline --pipeline starters \
 		--config pipeline.yml \
+		--instance-var "branch=4.3.x" \
 		--var branch="4.3.x"
 	popd >/dev/null
 }
