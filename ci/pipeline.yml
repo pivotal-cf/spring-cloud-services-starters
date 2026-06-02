@@ -232,6 +232,7 @@ resources:
   - name: src
     type: git
     icon: github
+    check_every: 10m
     source:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
@@ -241,6 +242,7 @@ resources:
   - name: staging-src
     type: git
     icon: github
+    check_every: 10m
     source:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((github.git-email))/staging-((branch))
@@ -248,6 +250,7 @@ resources:
   - name: ci-images-src
     type: git
     icon: github
+    check_every: 10m
     source:
       uri: https://((github.token))@github.com/pivotal-cf/spring-cloud-services-starters.git
       branch: ((branch))
