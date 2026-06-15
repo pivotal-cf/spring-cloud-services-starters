@@ -12,7 +12,7 @@ aliases:
     signing_passphrase: ((broadcom-jfrog-artifactory/signing.passphrase))
     folder: distribution-repository
     build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
-    build_number: "${BUILD_PIPELINE_NAME}-${BUILD_JOB_NAME}-${BUILD_NAME}"
+    build_number: "${BUILD_PIPELINE_NAME}-((branch))-${BUILD_JOB_NAME}-${BUILD_NAME}-${BUILD_ID}"
     disable_checksum_uploads: true
 
 jobs:
