@@ -14,6 +14,10 @@ aliases:
     build_uri: "${ATC_EXTERNAL_URL}/teams/${BUILD_TEAM_NAME}/pipelines/${BUILD_PIPELINE_NAME}/jobs/${BUILD_JOB_NAME}/builds/${BUILD_NAME}"
     build_number: "${BUILD_PIPELINE_NAME}-((branch))-${BUILD_JOB_NAME}-${BUILD_NAME}-${BUILD_ID}"
     disable_checksum_uploads: true
+  - &gradle-mirror-params
+    ARTIFACTORY_VIRTUAL_REPO_URL: "https://((broadcom-jfrog-artifactory/host))/artifactory/spring-scs-gradle-virtual"
+    ARTIFACTORY_USERNAME: ((broadcom-jfrog-artifactory/robot-account.username))
+    ARTIFACTORY_PASSWORD: ((broadcom-jfrog-artifactory/robot-account.password))
 
 jobs:
   - name: build-ci-images
@@ -71,6 +75,7 @@ jobs:
       - task: build-project
         image: ci-image
         file: src/ci/tasks/build-project.yml
+        params: *gradle-mirror-params
       - put: artifactory
         params:
           <<: *artifactory-params
@@ -100,6 +105,7 @@ jobs:
         image: ci-image
         file: src/ci/tasks/stage.yml
         params:
+          <<: *gradle-mirror-params
           RELEASE_TYPE: M
       - put: artifactory
         params:
@@ -120,6 +126,7 @@ jobs:
         image: ci-image
         file: src/ci/tasks/stage.yml
         params:
+          <<: *gradle-mirror-params
           RELEASE_TYPE: RC
       - put: artifactory
         params:
@@ -140,6 +147,7 @@ jobs:
         image: ci-image
         file: src/ci/tasks/stage.yml
         params:
+          <<: *gradle-mirror-params
           RELEASE_TYPE: RELEASE
       - put: artifactory
         params:
