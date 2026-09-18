@@ -7,7 +7,7 @@ nohttp = "0.0.11"
 awaitility = "4.3.0"
 spring-dependency-management = "1.1.7"
 build-info-extractor-gradle = "6.0.4"
-spring-javaformat = "0.0.47"
+spring-javaformat = "0.0.48"
 
 [libraries]
 spring-boot-dependencies = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
