@@ -8,7 +8,7 @@ It is composed of three different groups:
 
 - The first group is a basic build so that we can always be sure which build we will be getting when releasing, followed by the acceptance tests.
 - The second group is the releases.
-- The last group is the CI image used by the different tasks and the source can be found here: `ci/images/release-ci-image/Dockerfile`.
+- The last group is the CI image used by the different tasks and the source can be found here: `ci/images/scs-starters-ci/Dockerfile`.
 
 ### Releases
 
@@ -19,7 +19,7 @@ The original pipeline was decomposed into different jobs so that we could recove
 The pipeline can be deployed to Concourse using the following script:
 
 ```$bash
-$ ./ci/scripts/set-pipeline.sh
+$ ./scripts/set-pipelines.sh
 ```
 
 ### Release commands
