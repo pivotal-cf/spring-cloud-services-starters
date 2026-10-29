@@ -31,10 +31,6 @@ plugins {
     alias(libs.plugins.nohttp)
 }
 
-checkstyle {
-    configDirectory.set(file("${project.rootDir}/checkstyle/"))
-}
-
 configure(allprojects) {
     group = "io.pivotal.spring.cloud"
 
