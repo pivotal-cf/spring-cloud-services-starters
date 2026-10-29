@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "baseBranches": ["main", "4.3.x"],
   "rebaseWhen": "behind-base-branch",
-  "enabledManagers": ["custom.regex", "gradle", "gradle-wrapper"],
+  "enabledManagers": ["gradle", "gradle-wrapper"],
   "extends": ["config:recommended"],
   "ignorePaths": ["**/gradle.properties"],
   "packageRules": [
@@ -15,22 +15,11 @@
       "matchFileNames": ["**/*.gradle", "**/gradle.*"]
     },
     {
-      "matchPackageNames": ["org.springframework.boot:spring-boot-dependencies", "org.springframework.boot:spring-boot-gradle-plugin"],
-      "allowedVersions": "< 3.2.0",
-      "matchBaseBranches": ["4.0.x"]
-    },
-    {
-      "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
-      "allowedVersions": "< 2023.0.0",
-      "matchBaseBranches": ["4.0.x"]
-    },
-    {
       "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
       "allowedVersions": "< 2025.1.0",
       "matchBaseBranches": ["4.3.x"]
     }
   ],
   "prConcurrentLimit": 0,
-  "prHourlyLimit": 0,
-  "customManagers": []
+  "prHourlyLimit": 0
 }
