@@ -13,3 +13,4 @@ bin
 .idea
 out
 .history/
+.claude/
