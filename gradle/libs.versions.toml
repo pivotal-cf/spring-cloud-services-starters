@@ -1,6 +1,6 @@
 [versions]
 spring-boot = "4.2.0-RC1"
-spring-cloud = "2026.0.0-RC1"
+spring-cloud = "2026.0.0-SNAPSHOT"
 java-cfenv = "4.0.2"
 wiremock = "3.13.2"
 nohttp = "0.0.11"
