@@ -211,6 +211,7 @@ configure(subprojects) {
         dependencies {
             dependency "io.pivotal.cfenv:java-cfenv-boot-pivotal-scs:${libs.versions.java.cfenv.get()}"
             dependency "io.pivotal.cfenv:java-cfenv:${libs.versions.java.cfenv.get()}"
+            dependency "org.bouncycastle:bcprov-jdk18on:1.85.2"
         }
     }
 }
