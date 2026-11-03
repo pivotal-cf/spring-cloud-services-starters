@@ -23,6 +23,7 @@ dependencyManagement {
         mavenBom "${libs.spring.cloud.dependencies.get().module}:${libs.versions.spring.cloud.get()}"
     }
     dependencies {
+        dependency "org.bouncycastle:bcprov-jdk18on:1.85.2"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-config-client:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-starter-service-registry:${project.version}"
         dependency "io.pivotal.spring.cloud:spring-cloud-services-config-client-autoconfigure:${project.version}"
