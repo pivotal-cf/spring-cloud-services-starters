@@ -205,6 +205,38 @@ jobs:
         params:
           RELEASE_TYPE: RELEASE
 
+  - name: sync-milestone-to-maven-central
+    serial: true
+    plan:
+      - in_parallel:
+          - get: src
+          - get: artifactory
+            passed: [promote-milestone]
+            params:
+              save_build_info: true
+          - get: ci-image
+      - task: sync-to-maven-central
+        image: ci-image
+        file: src/ci/tasks/sync-to-maven-central.yml
+        params:
+          RELEASE_TYPE: M
+
+  - name: sync-rc-to-maven-central
+    serial: true
+    plan:
+      - in_parallel:
+          - get: src
+          - get: artifactory
+            passed: [promote-rc]
+            params:
+              save_build_info: true
+          - get: ci-image
+      - task: sync-to-maven-central
+        image: ci-image
+        file: src/ci/tasks/sync-to-maven-central.yml
+        params:
+          RELEASE_TYPE: RC
+
   - name: sync-to-maven-central
     serial: true
     plan:
@@ -218,6 +250,8 @@ jobs:
       - task: sync-to-maven-central
         image: ci-image
         file: src/ci/tasks/sync-to-maven-central.yml
+        params:
+          RELEASE_TYPE: RELEASE
 
 resource_types:
   - name: artifactory-resource
@@ -335,10 +369,12 @@ groups:
     jobs:
       - stage-milestone
       - promote-milestone
+      - sync-milestone-to-maven-central
   - name: "rc"
     jobs:
       - stage-rc
       - promote-rc
+      - sync-rc-to-maven-central
   - name: "release"
     jobs:
       - stage-release

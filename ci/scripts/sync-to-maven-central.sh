@@ -6,6 +6,6 @@ readonly CONFIG_DIR="$(pwd)/src/ci/config"
 
 java -jar /concourse-release-scripts*.jar \
 	--spring.config.location="${CONFIG_DIR}/release-scripts.yml" \
-	publishToCentral 'RELEASE' "$BUILD_INFO_LOCATION" "artifactory"
+	publishToCentral "$RELEASE_TYPE" "$BUILD_INFO_LOCATION" "artifactory"
 
 echo "Sync complete"

@@ -31,6 +31,7 @@ To release a milestone:
 ```$bash
 $ fly -t scs trigger-job -j release-test/stage-milestone
 $ fly -t scs trigger-job -j release-test/promote-milestone
+$ fly -t scs trigger-job -j release-test/sync-milestone-to-maven-central
 ```
 
 To release an RC:
@@ -38,6 +39,7 @@ To release an RC:
 ```$bash
 $ fly -t scs trigger-job -j release-test/stage-rc
 $ fly -t scs trigger-job -j release-test/promote-rc
+$ fly -t scs trigger-job -j release-test/sync-rc-to-maven-central
 ```
 
 To release a GA:
