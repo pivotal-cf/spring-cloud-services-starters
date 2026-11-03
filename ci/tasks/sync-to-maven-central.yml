@@ -6,7 +6,6 @@ inputs:
   - name: artifactory
 
 params:
-  RELEASE_TYPE:
   SONATYPE_URL: ((sonatype.url))
   SONATYPE_USERNAME: ((sonatype.user-token))
   SONATYPE_PASSWORD: ((sonatype.user-token-password))

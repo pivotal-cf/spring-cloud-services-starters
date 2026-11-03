@@ -218,8 +218,6 @@ jobs:
       - task: sync-to-maven-central
         image: ci-image
         file: src/ci/tasks/sync-to-maven-central.yml
-        params:
-          RELEASE_TYPE: M
 
   - name: sync-rc-to-maven-central
     serial: true
@@ -234,8 +232,6 @@ jobs:
       - task: sync-to-maven-central
         image: ci-image
         file: src/ci/tasks/sync-to-maven-central.yml
-        params:
-          RELEASE_TYPE: RC
 
   - name: sync-to-maven-central
     serial: true
@@ -250,8 +246,6 @@ jobs:
       - task: sync-to-maven-central
         image: ci-image
         file: src/ci/tasks/sync-to-maven-central.yml
-        params:
-          RELEASE_TYPE: RELEASE
 
 resource_types:
   - name: artifactory-resource
