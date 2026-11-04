@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "baseBranches": ["main", "4.4.x", "4.3.x"],
+  "baseBranches": ["main", "4.4.x"],
   "rebaseWhen": "behind-base-branch",
   "enabledManagers": ["gradle", "gradle-wrapper"],
   "extends": ["config:recommended"],
@@ -23,11 +23,6 @@
       "matchPackageNames": ["org.springframework.boot:spring-boot-dependencies"],
       "allowedVersions": "< 4.2.0",
       "matchBaseBranches": ["4.4.x"]
-    },
-    {
-      "matchPackageNames": ["org.springframework.cloud:spring-cloud-dependencies"],
-      "allowedVersions": "< 2025.1.0",
-      "matchBaseBranches": ["4.3.x"]
     }
   ],
   "prConcurrentLimit": 0,
