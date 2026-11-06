@@ -1,2 +1,1 @@
 io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration
-io.pivotal.spring.cloud.config.client.ConfigResourceClientAutoConfiguration
