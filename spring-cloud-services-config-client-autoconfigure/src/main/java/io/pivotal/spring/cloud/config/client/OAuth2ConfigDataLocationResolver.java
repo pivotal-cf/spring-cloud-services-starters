@@ -58,8 +58,7 @@ import static org.springframework.cloud.config.client.ConfigClientProperties.AUT
  * server.
  * <p>
  * Finally, it registers the <code>RestTemplate</code> and <code>RestClient</code> beans
- * to be consumed by {@link ConfigResourceClientAutoConfiguration} and
- * {@link VaultTokenRenewalAutoConfiguration} after application startup.
+ * to be consumed by {@link VaultTokenRenewalAutoConfiguration} after application startup.
  */
 public class OAuth2ConfigDataLocationResolver
 		implements ConfigDataLocationResolver<ConfigServerConfigDataResource>, Ordered {
