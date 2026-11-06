@@ -24,8 +24,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.client.RestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -41,11 +44,18 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 @SpringBootTest(classes = ConfigClientOAuth2InterceptorTest.TestApplication.class,
 		properties = { "spring.config.import=optional:configserver:", "spring.cloud.config.enabled=true",
 				"spring.cloud.config.label=main", "spring.cloud.config.uri=http://localhost:8888",
-				"spring.cloud.config.client.oauth2.client-id=id",
-				"spring.cloud.config.client.oauth2.client-secret=secret",
-				"spring.cloud.config.client.oauth2.scope=profile,email",
-				"spring.cloud.config.client.oauth2.access-token-uri=http://localhost:9999/token/uri" })
+				"spring.cloud.config.oauth2.enabled=true",
+				"spring.cloud.config.oauth2.client-registration-id=config-server",
+				"spring.security.oauth2.client.registration.config-server.client-id=id",
+				"spring.security.oauth2.client.registration.config-server.client-secret=secret",
+				"spring.security.oauth2.client.registration.config-server.authorization-grant-type=client_credentials",
+				"spring.security.oauth2.client.registration.config-server.scope=profile,email",
+				"spring.security.oauth2.client.provider.config-server.token-uri=http://localhost:9999/token/uri" })
 public class ConfigClientOAuth2InterceptorTest {
+
+	@Autowired
+	@Qualifier("configClientRestClient")
+	private RestClient configClientRestClient;
 
 	private static WireMockServer uaaServer;
 
@@ -64,6 +74,7 @@ public class ConfigClientOAuth2InterceptorTest {
 
 		configServer = new WireMockServer(wireMockConfig().port(8888));
 		configServer.start();
+		configServer.stubFor(get("/probe").willReturn(aResponse().withStatus(200)));
 		configServer.stubFor(get(urlMatching("/application/.*"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json;charset=UTF-8").withBody("""
 					{
@@ -104,6 +115,14 @@ public class ConfigClientOAuth2InterceptorTest {
 			.withHeader("Authorization", equalTo("Basic " + base64Credentials))
 			.withRequestBody(containing("grant_type=client_credentials"))
 			.withRequestBody(containing("scope=profile+email")));
+	}
+
+	@Test
+	void configClientRestClientSendsAccessToken() {
+		this.configClientRestClient.get().uri("http://localhost:8888/probe").retrieve().toBodilessEntity();
+
+		configServer
+			.verify(getRequestedFor(urlEqualTo("/probe")).withHeader("Authorization", equalTo("Bearer access-token")));
 	}
 
 	@SpringBootApplication

@@ -21,7 +21,7 @@ dependencies {
     api('org.springframework.cloud:spring-cloud-starter-config')
     api('org.springframework.retry:spring-retry')
     api("org.springframework.security:spring-security-oauth2-client")
-    api(project(":spring-cloud-services-oauth2-client"))
+    api("org.springframework.boot:spring-boot-security-oauth2-client")
     api(libs.java.cfenv)
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
