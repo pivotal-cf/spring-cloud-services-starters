@@ -39,6 +39,12 @@ public class ConfigClientEnvironmentPostProcessor implements EnvironmentPostProc
 
 	private static final String PROPERTY_SOURCE_NAME = ConfigClientEnvironmentPostProcessor.class.getSimpleName();
 
+	private static final String REGISTRATION_ID = "config-server";
+
+	private static final String REGISTRATION_PREFIX = "spring.security.oauth2.client.registration." + REGISTRATION_ID;
+
+	private static final String PROVIDER_PREFIX = "spring.security.oauth2.client.provider." + REGISTRATION_ID;
+
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
 		var configServices = new CfEnv().findServicesByTag("configuration");
@@ -49,11 +55,13 @@ public class ConfigClientEnvironmentPostProcessor implements EnvironmentPostProc
 		var credentials = configServices.get(0).getCredentials();
 
 		var map = new HashMap<String, Object>();
-		map.put(ConfigClientOAuth2Properties.PREFIX + ".client-id", credentials.getString("client_id"));
-		map.put(ConfigClientOAuth2Properties.PREFIX + ".client-secret", credentials.getString("client_secret"));
-		map.put(ConfigClientOAuth2Properties.PREFIX + ".access-token-uri", credentials.getString("access_token_uri"));
-		map.put(ConfigClientOAuth2Properties.PREFIX + ".scope", "");
-
+		map.put("spring.cloud.config.oauth2.enabled", "true");
+		map.put("spring.cloud.config.oauth2.client-registration-id", REGISTRATION_ID);
+		map.put(REGISTRATION_PREFIX + ".client-id", credentials.getString("client_id"));
+		map.put(REGISTRATION_PREFIX + ".client-secret", credentials.getString("client_secret"));
+		map.put(REGISTRATION_PREFIX + ".authorization-grant-type", "client_credentials");
+		map.put(REGISTRATION_PREFIX + ".provider", REGISTRATION_ID);
+		map.put(PROVIDER_PREFIX + ".token-uri", credentials.getString("access_token_uri"));
 		map.put("spring.config.import", "optional:configserver:" + credentials.getUri());
 		map.put("spring.cloud.refresh.additional-property-sources-to-retain", PROPERTY_SOURCE_NAME);
 
