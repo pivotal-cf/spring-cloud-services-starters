@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.WebApplicationContextRunner;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
+import org.springframework.cloud.config.client.ConfigServerRestClientHolder;
 import org.springframework.web.client.RestClient;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -38,6 +39,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static io.pivotal.spring.cloud.config.client.VaultTokenRenewalAutoConfiguration.VaultTokenRefresher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Roy Clarkson
@@ -50,7 +53,7 @@ public class VaultTokenRenewalAutoConfigurationTest {
 		.withConfiguration(
 				AutoConfigurations.of(ConfigClientAutoConfiguration.class, VaultTokenRenewalAutoConfiguration.class))
 		.withPropertyValues(applicationProperties())
-		.withBean("configClientRestClient", RestClient.class, RestClient::create);
+		.withBean(ConfigServerRestClientHolder.class, VaultTokenRenewalAutoConfigurationTest::holder);
 
 	@Test
 	void configurationIsNotEnabledWhenTokenIsMissing() {
@@ -78,6 +81,12 @@ public class VaultTokenRenewalAutoConfigurationTest {
 							.withHeader("X-Vault-Token", equalTo("vault-token"))
 							.withRequestBody(containing("{\"increment\":300}"))));
 		});
+	}
+
+	private static ConfigServerRestClientHolder holder() {
+		var holder = mock(ConfigServerRestClientHolder.class);
+		given(holder.getRestClient()).willReturn(RestClient.create());
+		return holder;
 	}
 
 	private String[] applicationProperties() {
