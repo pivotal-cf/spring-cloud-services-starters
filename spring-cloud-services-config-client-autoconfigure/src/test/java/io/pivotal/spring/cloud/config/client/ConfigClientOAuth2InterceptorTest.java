@@ -25,10 +25,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.client.RestClient;
+import org.springframework.cloud.config.client.ConfigServerRestClientHolder;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
@@ -54,8 +53,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class ConfigClientOAuth2InterceptorTest {
 
 	@Autowired
-	@Qualifier("configClientRestClient")
-	private RestClient configClientRestClient;
+	private ConfigServerRestClientHolder configServerRestClientHolder;
 
 	private static WireMockServer uaaServer;
 
@@ -118,8 +116,12 @@ public class ConfigClientOAuth2InterceptorTest {
 	}
 
 	@Test
-	void configClientRestClientSendsAccessToken() {
-		this.configClientRestClient.get().uri("http://localhost:8888/probe").retrieve().toBodilessEntity();
+	void configServerRestClientSendsAccessToken() {
+		this.configServerRestClientHolder.getRestClient()
+			.get()
+			.uri("http://localhost:8888/probe")
+			.retrieve()
+			.toBodilessEntity();
 
 		configServer
 			.verify(getRequestedFor(urlEqualTo("/probe")).withHeader("Authorization", equalTo("Bearer access-token")));

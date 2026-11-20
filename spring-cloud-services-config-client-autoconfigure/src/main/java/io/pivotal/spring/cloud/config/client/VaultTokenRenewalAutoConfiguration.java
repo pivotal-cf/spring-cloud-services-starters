@@ -20,7 +20,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.config.client.ConfigClientAutoConfiguration;
 import org.springframework.cloud.config.client.ConfigClientProperties;
+import org.springframework.cloud.config.client.ConfigServerRestClientHolder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -66,17 +66,16 @@ public class VaultTokenRenewalAutoConfiguration {
 	long ttl;
 
 	@Bean
-	@ConditionalOnBean(value = RestClient.class, name = "configClientRestClient")
-	public VaultTokenRefresher vaultTokenRefresher(
-			@Qualifier("configClientRestClient") RestClient configClientRestClient,
+	@ConditionalOnBean(ConfigServerRestClientHolder.class)
+	public VaultTokenRefresher vaultTokenRefresher(ConfigServerRestClientHolder configServerRestClientHolder,
 			ConfigClientProperties configClientProperties) {
 
 		var refreshUri = configClientProperties.getUri()[0] + REFRESH_PATH;
 		String vaultToken = configClientProperties.getToken();
 		var obscuredToken = vaultToken.substring(0, 4) + "[*]" + vaultToken.substring(vaultToken.length() - 4);
 
-		return new VaultTokenRefresher(configClientRestClient, obscuredToken, this.ttl, refreshUri,
-				buildTokenRenewRequest(vaultToken));
+		return new VaultTokenRefresher(configServerRestClientHolder.getRestClient(), obscuredToken, this.ttl,
+				refreshUri, buildTokenRenewRequest(vaultToken));
 	}
 
 	private HttpEntity<Map<String, Long>> buildTokenRenewRequest(String vaultToken) {
